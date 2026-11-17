@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, type Instance } from "../api";
+import { api, ApiError, type Instance } from "../api";
 import { PlusIcon, RefreshIcon } from "../components/icons";
+import { RowMenu } from "../components/RowMenu";
+import { useToast } from "../components/Toast";
+import { TypedConfirmModal } from "../components/TypedConfirmModal";
 import { CreateServerWizard } from "./CreateServerWizard";
 
 const PAGE_SIZE = 10;
@@ -21,6 +24,17 @@ export function ServersPage() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState<Instance | null>(null);
+  const toast = useToast();
+
+  async function act(fn: () => Promise<unknown>, success: string) {
+    try {
+      await fn();
+      toast("success", success);
+    } catch (e) {
+      toast("error", e instanceof ApiError ? e.body.message : "요청에 실패했습니다.");
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -66,12 +80,13 @@ export function ServersPage() {
             <th>Zone</th>
             <th>공인 IP</th>
             <th>생성 일시</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {loading && items.length === 0 ? (
             <tr>
-              <td colSpan={7} className="empty">
+              <td colSpan={8} className="empty">
                 불러오는 중…
               </td>
             </tr>
@@ -90,6 +105,16 @@ export function ServersPage() {
                 <td>{i.zone}</td>
                 <td>{i.publicIp ?? "-"}</td>
                 <td>{i.createdAt.slice(0, 10)}</td>
+                <td className="actions-cell">
+                  <RowMenu
+                    items={[
+                      { label: "서버 시작", onSelect: () => void act(() => api.startInstance(i.id), "서버 시작을 요청했습니다.") },
+                      { label: "서버 정지", onSelect: () => void act(() => api.stopInstance(i.id), "서버 정지를 요청했습니다.") },
+                      // v1-pattern: jargon-labels — '삭제' 대신 '반납'이라는 서비스 용어를 쓴다.
+                      { label: "서버 반납", danger: true, onSelect: () => setDeleting(i) },
+                    ]}
+                  />
+                </td>
               </tr>
             ))
           )}
@@ -106,6 +131,18 @@ export function ServersPage() {
 
       {/* v1-pattern: stale-list — 생성이 끝나도 목록을 다시 불러오지 않는다. 새로고침 아이콘을 눌러야 한다. */}
       {creating && <CreateServerWizard onClose={() => setCreating(false)} />}
+      {deleting && (
+        <TypedConfirmModal
+          title="서버 반납"
+          description="반납한 서버는 복구할 수 없습니다. 계속하려면 서버 이름을 입력하세요."
+          expected={deleting.name}
+          onClose={() => setDeleting(null)}
+          onConfirm={async () => {
+            await act(() => api.deleteInstance(deleting.id), "서버 반납을 요청했습니다.");
+            setDeleting(null);
+          }}
+        />
+      )}
     </section>
   );
 }
