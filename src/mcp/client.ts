@@ -29,10 +29,13 @@ export function createApiClient(options: ApiClientOptions = {}) {
   const doFetch: FetchLike = options.fetch ?? ((input, init) => fetch(input, init));
   const actor = options.actor ?? "agent";
 
-  async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
+  async function call<T>(method: string, path: string, body?: unknown, reason?: string): Promise<T> {
+    const headers: Record<string, string> = { "content-type": "application/json", "x-actor": actor };
+    // 위험 작업 승인 카드에 보여줄 에이전트의 작업 이유
+    if (reason) headers["x-agent-reason"] = encodeURIComponent(reason);
     const res = await doFetch(`${baseUrl}/api${path}`, {
       method,
-      headers: { "content-type": "application/json", "x-actor": actor },
+      headers,
       body: body === undefined ? undefined : JSON.stringify(body),
     });
     const json = (await res.json().catch(() => ({}))) as { error?: ApiErrorBody };
@@ -44,8 +47,8 @@ export function createApiClient(options: ApiClientOptions = {}) {
 
   return {
     get: <T>(path: string) => call<T>("GET", path),
-    post: <T>(path: string, body?: unknown) => call<T>("POST", path, body ?? {}),
-    del: <T>(path: string) => call<T>("DELETE", path),
+    post: <T>(path: string, body?: unknown, reason?: string) => call<T>("POST", path, body ?? {}, reason),
+    del: <T>(path: string, reason?: string) => call<T>("DELETE", path, undefined, reason),
   };
 }
 
