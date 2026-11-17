@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import { api, type Instance } from "../api";
 import { ActionMenu } from "./ActionMenu";
+import { useCloudChanged } from "./cloudEvents";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { CreateServerDialog } from "./CreateServerDialog";
 import { useHashParams } from "./hashParams";
@@ -31,6 +32,7 @@ export function ServersPageV2() {
   useEffect(() => {
     void load();
   }, [load]);
+  useCloudChanged(load);
 
   // P3: 생성 중·정지 중 같은 전이 상태가 있으면 끝날 때까지 자동으로 다시 불러온다.
   const hasTransitional = items.some((i) => TRANSITIONAL.has(i.status));

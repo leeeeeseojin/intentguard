@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, type Bucket } from "../api";
 import { ActionMenu } from "./ActionMenu";
+import { useCloudChanged } from "./cloudEvents";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { ENV_LABEL } from "./labels";
 import { useStatus } from "./StatusRegion";
@@ -16,6 +17,7 @@ export function StoragePageV2() {
   useEffect(() => {
     void load();
   }, [load]);
+  useCloudChanged(load);
 
   // P3: 모든 변경 뒤에 목록을 다시 불러와 화면과 실제 상태를 맞춘다.
   async function act(fn: () => Promise<unknown>, success: string) {

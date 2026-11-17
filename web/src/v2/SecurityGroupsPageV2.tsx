@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import { api, type SecurityGroup } from "../api";
+import { useCloudChanged } from "./cloudEvents";
 import { useStatus } from "./StatusRegion";
 
 export function SecurityGroupsPageV2() {
@@ -21,6 +22,7 @@ export function SecurityGroupsPageV2() {
   useEffect(() => {
     void load();
   }, [load]);
+  useCloudChanged(load);
 
   const selected = groups.find((g) => g.id === selectedId);
   const portNum = Number(port);
