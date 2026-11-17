@@ -25,7 +25,7 @@ test.describe("콘솔 v2 · 서버", () => {
     await page.getByLabel("서버 이름 검색").fill("api-server-dev");
     const row = serverRow(page, "api-server-dev");
 
-    await row.getByRole("button", { name: "api-server-dev 작업" }).click();
+    await row.getByRole("button", { name: "api-server-dev 작업", exact: true }).click();
     const del = page.getByRole("menuitem", { name: /서버 삭제/ });
     await expect(del).toHaveAttribute("aria-disabled", "true");
     await expect(del).toContainText("먼저 서버를 정지해야 삭제할 수 있습니다");
@@ -35,7 +35,7 @@ test.describe("콘솔 v2 · 서버", () => {
     // 새로고침 버튼을 누르지 않아도 전이 상태가 끝날 때까지 자동 갱신된다.
     await expect(row).toContainText("정지됨 (stopped)");
 
-    await row.getByRole("button", { name: "api-server-dev 작업" }).click();
+    await row.getByRole("button", { name: "api-server-dev 작업", exact: true }).click();
     await page.getByRole("menuitem", { name: "서버 삭제" }).click();
     const dialog = page.getByRole("dialog", { name: "api-server-dev 서버 삭제" });
     await dialog.getByLabel("확인을 위해 이름 api-server-dev 을(를) 입력하세요").fill("api-server-dev");
@@ -74,7 +74,7 @@ test.describe("콘솔 v2 · 버킷", () => {
     await page.getByRole("switch", { name: "assets-prod 외부 공개" }).click();
     await expect(page.getByRole("switch", { name: "assets-prod 외부 공개" })).toHaveAttribute("aria-checked", "false");
 
-    await page.getByRole("button", { name: "tmp-dev 작업" }).click();
+    await page.getByRole("button", { name: "tmp-dev 작업", exact: true }).click();
     await expect(page.getByRole("menuitem", { name: /버킷 삭제/ })).toContainText("객체 37개가 남아 있어 먼저 비워야 합니다");
     await page.getByRole("menuitem", { name: "버킷 비우기" }).click();
     const dialog = page.getByRole("dialog", { name: "tmp-dev 버킷 비우기" });
@@ -82,7 +82,7 @@ test.describe("콘솔 v2 · 버킷", () => {
     await dialog.getByRole("button", { name: "tmp-dev 버킷 비우기" }).click();
     await expect(page.getByRole("status", { name: "최근 작업 결과" })).toContainText("이제 삭제할 수 있습니다");
 
-    await page.getByRole("button", { name: "tmp-dev 작업" }).click();
+    await page.getByRole("button", { name: "tmp-dev 작업", exact: true }).click();
     await page.getByRole("menuitem", { name: "버킷 삭제" }).click();
     await page.getByRole("dialog").getByLabel(/확인을 위해 이름 tmp-dev/).fill("tmp-dev");
     await page.getByRole("dialog").getByRole("button", { name: "tmp-dev 버킷 삭제" }).click();
