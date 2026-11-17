@@ -46,3 +46,26 @@ export const api = {
   emptyBucket: (id: string) => call<Bucket>("POST", `/buckets/${id}/empty`),
   deleteBucket: (id: string) => call<Bucket>("DELETE", `/buckets/${id}`),
 };
+
+// ---------- v2 · IntentGuard ----------
+
+export type { Approval, PendingResponse } from "../../src/guard/guard";
+export type { AuditEntry } from "../../src/domain/types";
+import type { Approval, PendingResponse } from "../../src/guard/guard";
+import type { AuditEntry } from "../../src/domain/types";
+
+export const currentActor = actor;
+
+/** 변경 요청의 결과가 사람 승인 대기인지 */
+export function isPending(result: unknown): result is PendingResponse {
+  return (result as { status?: string } | null)?.status === "pending_approval";
+}
+
+export const guardApi = {
+  listApprovals: () => call<{ items: Approval[] }>("GET", "/approvals").then((r) => r.items),
+  approve: (id: string) => call<Approval>("POST", `/approvals/${id}/approve`),
+  reject: (id: string, reason: string) => call<Approval>("POST", `/approvals/${id}/reject`, { reason }),
+  getControl: () => call<{ paused: boolean }>("GET", "/agent-control"),
+  setPaused: (paused: boolean) => call<{ paused: boolean }>("POST", "/agent-control", { paused }),
+  listActivity: () => call<{ items: AuditEntry[] }>("GET", "/activity").then((r) => r.items),
+};
