@@ -5,6 +5,9 @@ import { ApiError, type ApiClient } from "./client.js";
 
 const env = z.enum(["dev", "staging", "prod"]);
 const id = (what: string) => z.string().describe(`${what} id (예: srv-0008). 이름이 아니라 id를 넣어야 한다.`);
+const reason = z.string().optional().describe("이 작업을 하는 이유. 사람 승인이 필요할 때 승인 화면에 그대로 보여준다.");
+const APPROVAL_NOTE =
+  " 위험한 작업(운영 리소스 삭제, 외부 공개, 고비용 등)은 IntentGuard가 사람 승인을 요구할 수 있다. 결과의 status가 pending_approval이면 같은 요청을 반복하지 말고 get_approval로 결정을 확인한다.";
 
 function ok(data: unknown): CallToolResult {
   return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -85,11 +88,12 @@ export function createMcpServer(api: ApiClient) {
         zone: z.enum(["KR-1", "KR-2"]).optional(),
         security_group_id: z.string().optional().describe("기본값 sg-default"),
         assign_public_ip: z.boolean().optional(),
+        reason,
       },
       annotations: { readOnlyHint: false, destructiveHint: false },
     },
-    ({ security_group_id, assign_public_ip, ...rest }) =>
-      run(() => api.post("/instances", { ...rest, securityGroupId: security_group_id, assignPublicIp: assign_public_ip })),
+    ({ security_group_id, assign_public_ip, reason, ...rest }) =>
+      run(() => api.post("/instances", { ...rest, securityGroupId: security_group_id, assignPublicIp: assign_public_ip }, reason)),
   );
 
   server.registerTool(
@@ -118,11 +122,11 @@ export function createMcpServer(api: ApiClient) {
     "delete_instance",
     {
       title: "서버 삭제",
-      description: "서버를 영구 삭제(반납)한다. stopped 상태인 서버만 삭제할 수 있다. 되돌릴 수 없다.",
-      inputSchema: { id: id("서버") },
+      description: `서버를 영구 삭제(반납)한다. stopped 상태인 서버만 삭제할 수 있다. 되돌릴 수 없다.${APPROVAL_NOTE}`,
+      inputSchema: { id: id("서버"), reason },
       annotations: { readOnlyHint: false, destructiveHint: true },
     },
-    ({ id }) => run(() => api.del(`/instances/${encodeURIComponent(id)}`)),
+    ({ id, reason }) => run(() => api.del(`/instances/${encodeURIComponent(id)}`, reason)),
   );
 
   // ---------- 보안 그룹 ----------
@@ -148,10 +152,12 @@ export function createMcpServer(api: ApiClient) {
         port: z.number().int().min(1).max(65535),
         source: z.string().describe("CIDR, 예: 203.0.113.7/32"),
         description: z.string().optional(),
+        reason,
       },
       annotations: { readOnlyHint: false, destructiveHint: false },
     },
-    ({ security_group_id, ...rule }) => run(() => api.post(`/security-groups/${encodeURIComponent(security_group_id)}/rules`, rule)),
+    ({ security_group_id, reason, ...rule }) =>
+      run(() => api.post(`/security-groups/${encodeURIComponent(security_group_id)}/rules`, rule, reason)),
   );
 
   server.registerTool(
@@ -183,32 +189,45 @@ export function createMcpServer(api: ApiClient) {
     {
       title: "버킷 공개 설정 변경",
       description: "버킷을 공개(public=true) 또는 비공개로 바꾼다. 공개하면 인터넷 누구나 객체를 읽을 수 있다.",
-      inputSchema: { id: z.string(), public: z.boolean() },
+      inputSchema: { id: z.string(), public: z.boolean(), reason },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
     },
-    ({ id, public: isPublic }) => run(() => api.post(`/buckets/${encodeURIComponent(id)}/public`, { public: isPublic })),
+    ({ id, public: isPublic, reason }) => run(() => api.post(`/buckets/${encodeURIComponent(id)}/public`, { public: isPublic }, reason)),
   );
 
   server.registerTool(
     "empty_bucket",
     {
       title: "버킷 비우기",
-      description: "버킷의 모든 객체를 영구 삭제한다. 되돌릴 수 없다.",
-      inputSchema: { id: z.string() },
+      description: `버킷의 모든 객체를 영구 삭제한다. 되돌릴 수 없다.${APPROVAL_NOTE}`,
+      inputSchema: { id: z.string(), reason },
       annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true },
     },
-    ({ id }) => run(() => api.post(`/buckets/${encodeURIComponent(id)}/empty`)),
+    ({ id, reason }) => run(() => api.post(`/buckets/${encodeURIComponent(id)}/empty`, undefined, reason)),
   );
 
   server.registerTool(
     "delete_bucket",
     {
       title: "버킷 삭제",
-      description: "빈 버킷을 삭제한다. 객체가 남아 있으면 실패한다.",
-      inputSchema: { id: z.string() },
+      description: `빈 버킷을 삭제한다. 객체가 남아 있으면 실패한다.${APPROVAL_NOTE}`,
+      inputSchema: { id: z.string(), reason },
       annotations: { readOnlyHint: false, destructiveHint: true },
     },
-    ({ id }) => run(() => api.del(`/buckets/${encodeURIComponent(id)}`)),
+    ({ id, reason }) => run(() => api.del(`/buckets/${encodeURIComponent(id)}`, reason)),
+  );
+
+  // ---------- IntentGuard ----------
+  server.registerTool(
+    "get_approval",
+    {
+      title: "승인 요청 상태 조회",
+      description:
+        "pending_approval로 보류된 작업의 사람 결정을 조회한다. approved면 IntentGuard가 이미 실행했으므로 다시 요청하지 않는다. rejected면 note의 사유를 사용자에게 전하고 작업을 멈춘다.",
+      inputSchema: { id: z.string().describe("승인 요청 id (예: apv-1)") },
+      annotations: { readOnlyHint: true },
+    },
+    ({ id }) => run(() => api.get(`/approvals/${encodeURIComponent(id)}`)),
   );
 
   return server;
