@@ -29,7 +29,7 @@ describe("MiniCloud MCP 서버", () => {
   it("도구 목록과 destructive annotation을 노출한다", async () => {
     const { tools } = await ctx.client.listTools();
     const del = tools.find((t) => t.name === "delete_instance");
-    expect(tools.length).toBe(13);
+    expect(tools.length).toBe(14);
     expect(del?.annotations?.destructiveHint).toBe(true);
     expect(tools.find((t) => t.name === "list_instances")?.annotations?.readOnlyHint).toBe(true);
   });
@@ -54,5 +54,22 @@ describe("MiniCloud MCP 서버", () => {
       ["agent", "instance.stop", true],
       ["agent", "instance.delete", true],
     ]);
+  });
+});
+
+describe("MCP · IntentGuard 승인", () => {
+  it("위험 작업은 pending_approval을 돌려주고 get_approval로 결정을 확인한다", async () => {
+    const ctx = await connect();
+    const r = (await ctx.client.callTool({
+      name: "set_bucket_public",
+      arguments: { id: "bkt-1", public: true, reason: "외부 파트너에게 로그 공유" },
+    })) as CallToolResult;
+    const pending = JSON.parse(text(r));
+    expect(pending.status).toBe("pending_approval");
+    expect(pending.approval.agentReason).toBe("외부 파트너에게 로그 공유");
+
+    const status = JSON.parse(text(await ctx.client.callTool({ name: "get_approval", arguments: { id: pending.approval.id } })));
+    expect(status.status).toBe("pending");
+    expect(ctx.cloud.listBuckets().find((b) => b.id === "bkt-1")?.public).toBe(false);
   });
 });
