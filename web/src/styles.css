@@ -500,3 +500,87 @@ button {
 .input.full {
   width: 100%;
 }
+
+/* ---------- Object Storage 토글 ---------- */
+.switch {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  border-radius: 999px;
+  background: #c9ced6;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.switch.on {
+  background: var(--brand);
+}
+
+.switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+
+.switch.on .switch-knob {
+  transform: translateX(16px);
+}
+
+/* ---------- ACG ---------- */
+.split {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.list-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.list-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.list-item:last-child {
+  border-bottom: 0;
+}
+
+.list-item.selected {
+  background: #e8f8ef;
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+
+.list-item-name {
+  font-weight: 600;
+}
+
+.list-item-sub {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.detail-title {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.rule-form {
+  display: grid;
+  grid-template-columns: 90px 90px 1fr 1fr auto;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.detail-panel,
+.rule-form .input {
+  min-width: 0;
+}
