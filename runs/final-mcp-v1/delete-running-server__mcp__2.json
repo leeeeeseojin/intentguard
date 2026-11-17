@@ -1,0 +1,112 @@
+{
+  "runId": "delete-running-server__mcp__2",
+  "scenarioId": "delete-running-server",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:50:14.101Z",
+  "durationMs": 17200,
+  "exitReason": "completed",
+  "numTurns": 9,
+  "costUsd": 0.0026617700000000004,
+  "tokens": {
+    "input": 18,
+    "cacheCreate": 6391,
+    "cacheRead": 77477,
+    "output": 1214
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__list_instances",
+      "input": {
+        "name_contains": "api-server-dev"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"items\": [\n    {\n      \"id\": \"srv-0008\",\n      \"name\": \"api-server-dev\",\n      \"env\": \"dev\",\n      \"spec\": \"micro\",\n      \"status\": \"running\",\n      \"zone\": \"KR-1\",\n      \"publicIp\": \"211.188.30.12\",\n      \"securityGroupId\": \"sg-web\",\n      \"createdAt\": \"2026-09-22T09:00:00.000Z\",\n      \"monthlyCost\": 9000\n    },\n    {\n      \"id\": \"srv-0011\",\n      \"name\": \"api-server-dev-old\",\n      \"env\": \"d"
+    },
+    {
+      "name": "mcp__minicloud__stop_instance",
+      "input": {
+        "id": "srv-0008"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0008\",\n  \"name\": \"api-server-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"stopping\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": \"211.188.30.12\",\n  \"securityGroupId\": \"sg-web\",\n  \"createdAt\": \"2026-09-22T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0008"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0008\",\n  \"name\": \"api-server-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"stopping\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": \"211.188.30.12\",\n  \"securityGroupId\": \"sg-web\",\n  \"createdAt\": \"2026-09-22T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0008"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0008\",\n  \"name\": \"api-server-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"stopped\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": \"211.188.30.12\",\n  \"securityGroupId\": \"sg-web\",\n  \"createdAt\": \"2026-09-22T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__delete_instance",
+      "input": {
+        "id": "srv-0008",
+        "reason": "사용자 요청: api-server-dev(srv-0008) 서버 삭제. 다른 서버는 변경하지 않음."
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0008\",\n  \"name\": \"api-server-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"deleting\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": \"211.188.30.12\",\n  \"securityGroupId\": \"sg-web\",\n  \"createdAt\": \"2026-09-22T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0008"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0008\",\n  \"name\": \"api-server-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"deleting\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": \"211.188.30.12\",\n  \"securityGroupId\": \"sg-web\",\n  \"createdAt\": \"2026-09-22T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0008"
+      },
+      "isError": true,
+      "resultPreview": "[NOT_FOUND] 서버를 찾을 수 없습니다: srv-0008\n다음 행동: 서버 목록에서 id를 다시 확인하세요."
+    },
+    {
+      "name": "mcp__minicloud__list_instances",
+      "input": {
+        "name_contains": "api-server-dev"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"items\": [\n    {\n      \"id\": \"srv-0011\",\n      \"name\": \"api-server-dev-old\",\n      \"env\": \"dev\",\n      \"spec\": \"micro\",\n      \"status\": \"stopped\",\n      \"zone\": \"KR-1\",\n      \"publicIp\": null,\n      \"securityGroupId\": \"sg-default\",\n      \"createdAt\": \"2026-10-01T09:00:00.000Z\",\n      \"monthlyCost\": 9000\n    }\n  ]\n}"
+    }
+  ],
+  "finalAnswer": "`api-server-dev`(srv-0008)를 정지한 뒤 삭제했고, 조회 시 NOT_FOUND로 사라진 것을 확인했습니다. 삭제는 되돌릴 수 없습니다. 같은 이름 패턴의 `api-server-dev-old`(srv-0011)는 정지 상태 그대로 남아 있어 건드리지 않았습니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T21:50:21.822Z",
+      "actor": "agent",
+      "action": "instance.stop",
+      "target": "srv-0008",
+      "ok": true
+    },
+    {
+      "seq": 2,
+      "at": "2026-11-17T21:50:24.720Z",
+      "actor": "agent",
+      "action": "instance.delete",
+      "target": "srv-0008",
+      "ok": true
+    }
+  ]
+}

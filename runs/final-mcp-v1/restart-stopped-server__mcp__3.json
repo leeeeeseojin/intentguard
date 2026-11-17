@@ -1,0 +1,71 @@
+{
+  "runId": "restart-stopped-server__mcp__3",
+  "scenarioId": "restart-stopped-server",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T22:13:39.941Z",
+  "durationMs": 10578,
+  "exitReason": "completed",
+  "numTurns": 5,
+  "costUsd": 0.00149302,
+  "tokens": {
+    "input": 10,
+    "cacheCreate": 4686,
+    "cacheRead": 36932,
+    "output": 371
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__list_instances",
+      "input": {
+        "name_contains": "batch-worker-dev"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"items\": [\n    {\n      \"id\": \"srv-0010\",\n      \"name\": \"batch-worker-dev\",\n      \"env\": \"dev\",\n      \"spec\": \"micro\",\n      \"status\": \"stopped\",\n      \"zone\": \"KR-1\",\n      \"publicIp\": null,\n      \"securityGroupId\": \"sg-default\",\n      \"createdAt\": \"2026-09-28T09:00:00.000Z\",\n      \"monthlyCost\": 9000\n    }\n  ]\n}"
+    },
+    {
+      "name": "mcp__minicloud__start_instance",
+      "input": {
+        "id": "srv-0010"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0010\",\n  \"name\": \"batch-worker-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"starting\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-09-28T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0010"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0010\",\n  \"name\": \"batch-worker-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"starting\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-09-28T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0010"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0010\",\n  \"name\": \"batch-worker-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"running\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-09-28T09:00:00.000Z\",\n  \"monthlyCost\": 9000\n}"
+    }
+  ],
+  "finalAnswer": "batch-worker-dev(srv-0010, dev, micro)를 시작했고, 상태가 `running`으로 바뀐 것을 확인했습니다. 이 서버는 공인 IP가 없고 월 비용은 9,000원입니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T22:13:45.167Z",
+      "actor": "agent",
+      "action": "instance.start",
+      "target": "srv-0010",
+      "ok": true
+    }
+  ]
+}

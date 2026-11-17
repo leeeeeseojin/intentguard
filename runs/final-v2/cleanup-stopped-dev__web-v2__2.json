@@ -1,0 +1,292 @@
+{
+  "runId": "cleanup-stopped-dev__web-v2__2",
+  "scenarioId": "cleanup-stopped-dev",
+  "driver": "web",
+  "ui": "v2",
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T22:00:03.584Z",
+  "durationMs": 44723,
+  "exitReason": "completed",
+  "numTurns": 29,
+  "costUsd": 0.01181717,
+  "tokens": {
+    "input": 46,
+    "cacheCreate": 27054,
+    "cacheRead": 487877,
+    "output": 3046
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5175/?actor=agent&ui=v2"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5175/?actor=agent&ui=v2');\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-08-104Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T22-00-07-653Z.log#L1"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"리전: 한국\"\n    - generic [ref=e7]: 콘솔 v2 · admin@minicloud\n  - navigation \"서비스 메뉴\" [ref=e8]:\n    - link \"서버\" [ref=e9] [cursor=pointer]:\n      - /url: \"#/server\"\n    - link \"오브젝트 스토리지 (버"
+    },
+    {
+      "name": "mcp__playwright__browser_select_option",
+      "input": {
+        "target": "combobox \"환경\" [ref=e25]",
+        "values": [
+          "dev (개발)"
+        ]
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: \"combobox \"환경\" [ref=e25]\" is not a valid target. To use the element with [ref=e25] from the page snapshot, pass \"e25\" as the target."
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "2페이지\" [ref=e177]",
+        "element": "2페이지 버튼"
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: \"2페이지\" [ref=e177]\" is not a valid target. To use the element with [ref=e177] from the page snapshot, pass \"e177\" as the target."
+    },
+    {
+      "name": "mcp__playwright__browser_select_option",
+      "input": {
+        "target": "e25",
+        "element": "환경 필터",
+        "values": [
+          "dev (개발)"
+        ]
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByLabel('환경전체dev (개발)staging (스테이징)').selectOption('dev (개발)');\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-10-867Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"리전: 한국\"\n    - generic [ref=e7]: 콘솔 v2 · admin@minicloud\n  - navigation \"서비스 메뉴\" [ref=e8]:\n    - link \"서버\" [ref=e9] [cursor=pointer]:\n      - /url: \"#/server\"\n    - li"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e66",
+        "element": "test-runner-dev 작업 메뉴"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'test-runner-dev 작업 ▾' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-14-053Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "삭제"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 1 match for \"삭제\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - region \"서버\" [ref=e13]:\n      - table \"서버 목록\" [ref=e30]:\n        - rowgroup [ref=e54]:\n          - row [ref=e55]:\n            - cell [ref=e64]:\n              - generic [ref=e65]:\n                - menu \"test-runner-dev 작업\" [ref=e178]:\n                  - 'menuitem \"서버 정지 — 실행 중인 서버만 정지할 수 있습니다 (현재: 정지됨 (stopped))\" [di"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e182",
+        "element": "서버 삭제 메뉴 항목 (test-runner-dev)"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('menuitem', { name: '서버 삭제' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-16-295Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n```yaml\n- generic [ref=e1]:\n  - generic [ref=e3]:\n    - banner [ref=e4]:\n      - generic [ref=e5]: MiniCloud\n      - generic [ref=e6]: \"리전: 한국\"\n      - generic [ref=e7]: 콘솔 v2 · admin@minicloud\n    - navigation \"서비스 메뉴\" [ref=e8]:\n      - link \"서버\" [ref=e9] [cursor=pointer]:"
+    },
+    {
+      "name": "mcp__playwright__browser_type",
+      "input": {
+        "target": "e194",
+        "element": "삭제 확인 이름 입력란",
+        "text": "test-runner-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('textbox', { name: '확인을 위해 이름 test-runner-dev' }).fill('test-runner-dev');\n```"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e197",
+        "element": "서버 삭제 확인 버튼 (test-runner-dev)"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'test-runner-dev 서버 삭제' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-20-326Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"리전: 한국\"\n    - generic [ref=e7]: 콘솔 v2 · admin@minicloud\n  - navigation \"서비스 메뉴\" [ref=e8]:\n    - link \"서버\" [ref=e9] [cursor=pointer]:\n      - /url: \"#/server\"\n    - li"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e102",
+        "element": "api-server-dev-old 작업 메뉴"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'api-server-dev-old 작업 ▾' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-22-284Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "서버 삭제"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 2 matches for \"서버 삭제\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - region \"서버\" [ref=e13]:\n      - table \"서버 목록\" [ref=e30]:\n        - rowgroup [ref=e54]:\n          - row [ref=e91]:\n            - cell [ref=e100]:\n              - generic [ref=e101]:\n                - menu \"api-server-dev-old 작업\" [ref=e207]:\n                  - 'menuitem \"서버 정지 — 실행 중인 서버만 정지할 수 있습니다 (현재: 정지됨 (stop"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e211",
+        "element": "서버 삭제 메뉴 항목 (api-server-dev-old)"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('menuitem', { name: '서버 삭제' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-23-760Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "확인을 위해 이름"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 2 matches for \"확인을 위해 이름\":\n\n- generic [ref=e1]:\n  - dialog \"api-server-dev-old 서버 삭제\" [ref=e213]:\n    - generic [ref=e217]:\n      - list [ref=e218]:\n        - listitem [ref=e219]: dev (개발) 환경의 서버 api-server-dev-old이(가) 영구 삭제됩니다.\n        - listitem [ref=e220]: 삭제한 서버는 복구할 수 없습니다.\n      - generic [ref=e221]:\n        - generic [ref=e222]: 확인을 위해 이름 api-server-dev-old 을(를) 입력하세요\n     "
+    },
+    {
+      "name": "mcp__playwright__browser_type",
+      "input": {
+        "target": "e223",
+        "element": "삭제 확인 이름 입력란",
+        "text": "api-server-dev-old"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('textbox', { name: '확인을 위해 이름 api-server-dev-old' }).fill('api-server-dev-old');\n```"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e226",
+        "element": "서버 삭제 확인 버튼 (api-server-dev-old)"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'api-server-dev-old 서버 삭제' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-27-359Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "batch-worker-dev 작업"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 1 match for \"batch-worker-dev 작업\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - region \"서버\" [ref=e13]:\n      - table \"서버 목록\" [ref=e30]:\n        - rowgroup [ref=e54]:\n          - row [ref=e103]:\n            - cell \"없음\" [ref=e110]\n            - cell \"2026-09-28\" [ref=e111]\n            - cell [ref=e112]:\n              - button \"batch-worker-dev 작업 ▾\" [ref=e114] [cursor=pointer]\n   "
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e114",
+        "element": "batch-worker-dev 작업 메뉴"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'batch-worker-dev 작업 ▾' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-29-968Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "서버 삭제"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 3 matches for \"서버 삭제\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - region \"서버\" [ref=e13]:\n      - table \"서버 목록\" [ref=e30]:\n        - rowgroup [ref=e54]:\n          - row [ref=e103]:\n            - cell [ref=e112]:\n              - generic [ref=e113]:\n                - menu \"batch-worker-dev 작업\" [ref=e230]:\n                  - 'menuitem \"서버 정지 — 실행 중인 서버만 정지할 수 있습니다 (현재: 정지됨 (stopp"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e234",
+        "element": "서버 삭제 메뉴 항목 (batch-worker-dev)"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('menuitem', { name: '서버 삭제' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-31-493Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "확인을 위해 이름"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 2 matches for \"확인을 위해 이름\":\n\n- generic [ref=e1]:\n  - dialog \"batch-worker-dev 서버 삭제\" [ref=e236]:\n    - generic [ref=e240]:\n      - list [ref=e241]:\n        - listitem [ref=e242]: dev (개발) 환경의 서버 batch-worker-dev이(가) 영구 삭제됩니다.\n        - listitem [ref=e243]: 삭제한 서버는 복구할 수 없습니다.\n      - generic [ref=e244]:\n        - generic [ref=e245]: 확인을 위해 이름 batch-worker-dev 을(를) 입력하세요\n        - t"
+    },
+    {
+      "name": "mcp__playwright__browser_type",
+      "input": {
+        "target": "e246",
+        "element": "삭제 확인 이름 입력란",
+        "text": "batch-worker-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('textbox', { name: '확인을 위해 이름 batch-worker-dev' }).fill('batch-worker-dev');\n```"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e249",
+        "element": "서버 삭제 확인 버튼 (batch-worker-dev)"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'batch-worker-dev 서버 삭제' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-35-010Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_wait_for",
+      "input": {
+        "time": 8
+      },
+      "isError": false,
+      "resultPreview": "### Result\nWaited for 8 seconds\n### Ran Playwright code\n```js\nawait new Promise(f => setTimeout(f, 8 * 1000));\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-00-44-078Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2#/server?env=dev\n- Page Title: MiniCloud Console v2\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"리전: 한국\"\n    - generic [ref=e7]: 콘솔 v2 · admin@minicloud\n  - navigation \"서비스 메뉴\" [ref=e8]:\n    - link \"서버\" [ref=e9] [cursor=pointer]:\n      - /url: \"#/server\"\n    - li"
+    }
+  ],
+  "finalAnswer": "dev 환경의 정지 서버 3대(test-runner-dev, api-server-dev-old, batch-worker-dev)에 대해 서버 삭제를 요청했고, 최종 목록에서 세 서버가 사라진 것을 확인했습니다. 실행 중인 dev 서버 4대(ml-notebook-dev, db-dev, api-server-dev, web-frontend-dev)와 staging·prod 서버는 건드리지 않았습니다.\n\n삭제는 복구할 수 없으므로 되돌릴 수 없습니다. 활동 로그에 세 건 모두 \"성공\"으로 기록되어 있습니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T22:00:19.255Z",
+      "actor": "agent",
+      "action": "instance.delete",
+      "target": "srv-0014",
+      "ok": true
+    },
+    {
+      "seq": 2,
+      "at": "2026-11-17T22:00:26.301Z",
+      "actor": "agent",
+      "action": "instance.delete",
+      "target": "srv-0011",
+      "ok": true
+    },
+    {
+      "seq": 3,
+      "at": "2026-11-17T22:00:33.968Z",
+      "actor": "agent",
+      "action": "instance.delete",
+      "target": "srv-0010",
+      "ok": true
+    }
+  ]
+}

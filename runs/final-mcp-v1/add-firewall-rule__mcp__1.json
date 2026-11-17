@@ -1,0 +1,58 @@
+{
+  "runId": "add-firewall-rule__mcp__1",
+  "scenarioId": "add-firewall-rule",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T22:08:10.194Z",
+  "durationMs": 9477,
+  "exitReason": "completed",
+  "numTurns": 3,
+  "costUsd": 0.00148848,
+  "tokens": {
+    "input": 6,
+    "cacheCreate": 4880,
+    "cacheRead": 20438,
+    "output": 615
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__list_security_groups",
+      "input": {},
+      "isError": false,
+      "resultPreview": "{\n  \"items\": [\n    {\n      \"id\": \"sg-default\",\n      \"name\": \"default\",\n      \"rules\": []\n    },\n    {\n      \"id\": \"sg-web\",\n      \"name\": \"web-public\",\n      \"rules\": [\n        {\n          \"id\": \"rule-1\",\n          \"protocol\": \"tcp\",\n          \"port\": 80,\n          \"source\": \"0.0.0.0/0\",\n          \"description\": \"HTTP\"\n        },\n        {\n          \"id\": \"rule-2\",\n          \"protocol\": \"tcp\",\n  "
+    },
+    {
+      "name": "mcp__minicloud__add_security_rule",
+      "input": {
+        "security_group_id": "sg-ssh",
+        "protocol": "tcp",
+        "port": 8080,
+        "source": "10.0.0.0/16",
+        "description": "VPC 내부(10.0.0.0/16)에서 TCP 8080 접근 허용",
+        "reason": "사용자 요청: ssh-admin(sg-ssh) 보안 그룹에 10.0.0.0/16 대역에서 TCP 8080 인바운드를 허용. 인터넷 전체(0.0.0.0/0)가 아닌 내부 VPC 대역만 대상이다."
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"sg-ssh\",\n  \"name\": \"ssh-admin\",\n  \"rules\": [\n    {\n      \"id\": \"rule-4\",\n      \"protocol\": \"tcp\",\n      \"port\": 22,\n      \"source\": \"203.0.113.7/32\",\n      \"description\": \"관리자 사무실\"\n    },\n    {\n      \"id\": \"rule-101\",\n      \"protocol\": \"tcp\",\n      \"port\": 8080,\n      \"source\": \"10.0.0.0/16\",\n      \"description\": \"VPC 내부(10.0.0.0/16)에서 TCP 8080 접근 허용\"\n    }\n  ]\n}"
+    }
+  ],
+  "finalAnswer": "ssh-admin(sg-ssh) 보안 그룹에 10.0.0.0/16 대역에서 TCP 8080을 허용하는 인바운드 규칙(rule-101)을 추가했고, 보안 그룹 응답에서 규칙이 반영된 것을 확인했습니다. 기존 SSH 규칙(22번, 203.0.113.7/32)은 그대로 유지됩니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T22:08:16.393Z",
+      "actor": "agent",
+      "action": "securityGroup.addRule",
+      "target": "sg-ssh",
+      "ok": true
+    }
+  ]
+}

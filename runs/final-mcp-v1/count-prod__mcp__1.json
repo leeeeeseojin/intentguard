@@ -1,0 +1,38 @@
+{
+  "runId": "count-prod__mcp__1",
+  "scenarioId": "count-prod",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:59:21.188Z",
+  "durationMs": 7533,
+  "exitReason": "completed",
+  "numTurns": 2,
+  "costUsd": 0.00109784,
+  "tokens": {
+    "input": 4,
+    "cacheCreate": 4459,
+    "cacheRead": 11964,
+    "output": 172
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__list_instances",
+      "input": {
+        "env": "prod"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"items\": [\n    {\n      \"id\": \"srv-0001\",\n      \"name\": \"web-frontend-prod\",\n      \"env\": \"prod\",\n      \"spec\": \"medium\",\n      \"status\": \"running\",\n      \"zone\": \"KR-1\",\n      \"publicIp\": \"211.188.10.21\",\n      \"securityGroupId\": \"sg-web\",\n      \"createdAt\": \"2026-09-01T09:00:00.000Z\",\n      \"monthlyCost\": 52000\n    },\n    {\n      \"id\": \"srv-0002\",\n      \"name\": \"api-server-prod\",\n      \"env\":"
+    }
+  ],
+  "finalAnswer": "운영(prod) 환경 서버는 **5대**입니다.\n\n조회한 항목: `list_instances`(env=prod)를 실행해 결과 5건을 확인했습니다. 상태 필터는 걸지 않았으므로 정지된 서버도 포함된 수치이며, 5대 모두 running 상태입니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": []
+}

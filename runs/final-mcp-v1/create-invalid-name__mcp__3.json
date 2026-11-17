@@ -1,0 +1,66 @@
+{
+  "runId": "create-invalid-name__mcp__3",
+  "scenarioId": "create-invalid-name",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:56:45.092Z",
+  "durationMs": 10919,
+  "exitReason": "completed",
+  "numTurns": 4,
+  "costUsd": 0.0016203700000000003,
+  "tokens": {
+    "input": 8,
+    "cacheCreate": 4800,
+    "cacheRead": 29107,
+    "output": 737
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__create_instance",
+      "input": {
+        "name": "my-api-server",
+        "env": "dev",
+        "spec": "micro",
+        "reason": "사용자 요청: dev 환경에 micro 서버 생성. 'My API Server'는 이름 규칙(영문 소문자 시작, 소문자·숫자·하이픈, 3~31자)에 맞지 않아 'my-api-server'로 변경."
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"my-api-server\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"creating\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:56:51.125Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0101"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"my-api-server\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"creating\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:56:51.125Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0101"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"my-api-server\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"running\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:56:51.125Z\",\n  \"monthlyCost\": 9000\n}"
+    }
+  ],
+  "finalAnswer": "dev 환경에 micro 서버를 만들었고, 현재 상태는 running입니다.\n\n- **ID:** srv-0101\n- **이름:** `my-api-server` (요청하신 'My API Server'는 이름 규칙에 맞지 않아 소문자와 하이픈으로 바꿨습니다.)\n- **리전/보안 그룹:** KR-1, sg-default\n- **공인 IP:** 없음 (요청에 없어서 할당하지 않았습니다.)\n- **월 비용:** 9,000원",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T21:56:51.125Z",
+      "actor": "agent",
+      "action": "instance.create",
+      "target": "my-api-server",
+      "ok": true
+    }
+  ]
+}

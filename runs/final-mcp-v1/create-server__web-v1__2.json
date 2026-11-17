@@ -1,0 +1,484 @@
+{
+  "runId": "create-server__web-v1__2",
+  "scenarioId": "create-server",
+  "driver": "web",
+  "ui": "v1",
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:54:31.382Z",
+  "durationMs": 69577,
+  "exitReason": "completed",
+  "numTurns": 50,
+  "costUsd": 0.020929460000000004,
+  "tokens": {
+    "input": 86,
+    "cacheCreate": 36416,
+    "cacheRead": 1088216,
+    "output": 5511
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5173/?actor=agent&ui=v1"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5173/?actor=agent&ui=v1');\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-37-598Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T21-54-36-974Z.log#L1"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"Region: KOREA\"\n    - generic [ref=e7]: admin@minicloud\n  - navigation [ref=e8]:\n    - generic [ref=e9]:\n      - generic [ref=e10]: Compute\n      - link \"Server\" [ref=e11] [cursor=pointe"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e31",
+        "element": "서버 생성 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '서버 생성' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-40-583Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"Region: KOREA\"\n    - generic [ref=e7]: admin@minicloud\n  - navigation [ref=e8]:\n    - generic [ref=e9]:\n      - generic [ref=e10]: Compute\n      - link \"Server\" [ref=e11] [cursor=pointe"
+    },
+    {
+      "name": "mcp__playwright__browser_fill_form",
+      "input": {
+        "fields": [
+          {
+            "target": "e227",
+            "name": "서버 이름",
+            "type": "textbox",
+            "value": "report-api-dev"
+          },
+          {
+            "target": "e229",
+            "name": "개발 환경",
+            "type": "radio",
+            "value": "true"
+          }
+        ]
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: browserBackend.callTool: Error: Not a checkbox or radio button\nCall log:\n\u001b[2m  - waiting for locator('aria-ref=e229')\u001b[22m\n\u001b[2m    - locator resolved to <div class=\"chip\">개발</div>\u001b[22m"
+    },
+    {
+      "name": "mcp__playwright__browser_fill_form",
+      "input": {
+        "fields": [
+          {
+            "target": "e227",
+            "name": "서버 이름",
+            "type": "textbox",
+            "value": "report-api-dev"
+          }
+        ]
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('textbox', { name: '서버 이름' }).fill('report-api-dev');\n```"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e229",
+        "element": "개발 chip"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByText('개발').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-44-369Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e234",
+        "element": "다음 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '다음' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-45-859Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"Region: KOREA\"\n    - generic [ref=e7]: admin@minicloud\n  - navigation [ref=e8]:\n    - generic [ref=e9]:\n      - generic [ref=e10]: Compute\n      - link \"Server\" [ref=e11] [cursor=pointe"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e236",
+        "element": "micro 사양 option"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByText('micro1 vCPU / 1GB월 9,000원').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-47-968Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "e214"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e214]:\n  - generic [ref=e215]:\n    - generic [ref=e216]: 서버 생성\n    - button \"×\" [ref=e217] [cursor=pointer]\n  - generic [ref=e218]:\n    - list [ref=e219]:\n      - listitem [ref=e220]:\n        - generic [ref=e221]: \"1\"\n        - text: 기본 정보\n      - listitem [ref=e222]:\n "
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e234",
+        "element": "다음 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '다음' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-50-487Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "e214"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e214]:\n  - generic [ref=e215]:\n    - generic [ref=e216]: 서버 생성\n    - button \"×\" [ref=e217] [cursor=pointer]\n  - generic [ref=e218]:\n    - list [ref=e219]:\n      - listitem [ref=e220]:\n        - generic [ref=e221]: \"1\"\n        - text: 기본 정보\n      - listitem [ref=e222]:\n "
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e252",
+        "element": "이전 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '이전' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-53-996Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e252",
+        "element": "이전 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '이전' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-54-655Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "e214"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e214]:\n  - generic [ref=e215]:\n    - generic [ref=e216]: 서버 생성\n    - button \"×\" [ref=e217] [cursor=pointer]\n  - generic [ref=e218]:\n    - list [ref=e219]:\n      - listitem [ref=e220]:\n        - generic [ref=e221]: \"1\"\n        - text: 기본 정보\n      - listitem [ref=e222]:\n "
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e275",
+        "element": "다음 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '다음' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-54-57-782Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e234",
+        "element": "다음 button"
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: Ref e234 not found in the current page snapshot. Try capturing new snapshot."
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "e214"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e214]:\n  - generic [ref=e215]:\n    - generic [ref=e216]: 서버 생성\n    - button \"×\" [ref=e217] [cursor=pointer]\n  - generic [ref=e218]:\n    - list [ref=e219]:\n      - listitem [ref=e220]:\n        - generic [ref=e221]: \"1\"\n        - text: 기본 정보\n      - listitem [ref=e222]:\n "
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e284",
+        "element": "micro 사양 option"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByText('micro1 vCPU / 1GB월 9,000원').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-00-163Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e275",
+        "element": "다음 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '다음' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-01-522Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "e214"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e214]:\n  - generic [ref=e215]:\n    - generic [ref=e216]: 서버 생성\n    - button \"×\" [ref=e217] [cursor=pointer]\n  - generic [ref=e218]:\n    - list [ref=e219]:\n      - listitem [ref=e220]:\n        - generic [ref=e221]: \"1\"\n        - text: 기본 정보\n      - listitem [ref=e222]:\n "
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e305",
+        "element": "생성 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '생성', exact: true }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-04-278Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_wait_for",
+      "input": {
+        "time": 2
+      },
+      "isError": false,
+      "resultPreview": "### Result\nWaited for 2 seconds\n### Ran Playwright code\n```js\nawait new Promise(f => setTimeout(f, 2 * 1000));\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-06-348Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "report-api-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nNo matches found for \"report-api-dev\"."
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"Region: KOREA\"\n    - generic [ref=e7]: admin@minicloud\n  - navigation [ref=e8]:\n    - generic [ref=e9]:\n      - generic [ref=e10]: Compute\n      - link \"Server\" [ref=e11] [cursor=pointe"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e212",
+        "element": "2 page button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '2' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-09-763Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "report"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nNo matches found for \"report\"."
+    },
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5173/?actor=agent&ui=v1"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5173/?actor=agent&ui=v1');\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-12-161Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T21-55-11-918Z.log#L1"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "report-api"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nNo matches found for \"report-api\"."
+    },
+    {
+      "name": "mcp__playwright__browser_console_messages",
+      "input": {
+        "level": "error"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nTotal messages: 3 (Errors: 0, Warnings: 0)\nReturning 0 messages for level \"error\"\n"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e31",
+        "element": "서버 생성 button"
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: Ref e31 not found in the current page snapshot. Try capturing new snapshot."
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "서버 생성"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 1 match for \"서버 생성\":\n\n- generic [ref=f1e3]:\n  - main [ref=f1e26]:\n    - generic [ref=f1e27]:\n      - generic [ref=f1e28]:\n        - heading \"Server\" [level=1] [ref=f1e29]\n        - generic [ref=f1e30]:\n          - button \"서버 생성\" [ref=f1e31] [cursor=pointer]\n          - button [ref=f1e34] [cursor=pointer]\n      - table [ref=f1e38]:\n        - rowgroup [ref=f1e39]:"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "f1e31",
+        "element": "서버 생성 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '서버 생성' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-18-660Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_fill_form",
+      "input": {
+        "fields": [
+          {
+            "target": "e227",
+            "name": "서버 이름",
+            "type": "textbox",
+            "value": "report-api-dev"
+          }
+        ]
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: Ref e227 not found in the current page snapshot. Try capturing new snapshot."
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "e214"
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: Ref e214 not found in the current page snapshot. Try capturing new snapshot."
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=f1e3]:\n  - banner [ref=f1e4]:\n    - generic [ref=f1e5]: MiniCloud\n    - generic [ref=f1e6]: \"Region: KOREA\"\n    - generic [ref=f1e7]: admin@minicloud\n  - navigation [ref=f1e8]:\n    - generic [ref=f1e9]:\n      - generic [ref=f1e10]: Compute\n      - link \"Server\" [ref=f1e"
+    },
+    {
+      "name": "mcp__playwright__browser_fill_form",
+      "input": {
+        "fields": [
+          {
+            "target": "f1e229",
+            "name": "서버 이름",
+            "type": "textbox",
+            "value": "report-api-dev"
+          }
+        ]
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('textbox', { name: '서버 이름' }).fill('report-api-dev');\n```"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "f1e231",
+        "element": "개발 chip"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByText('개발').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-22-023Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "f1e236",
+        "element": "다음 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '다음' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-23-393Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "f1e216"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=f1e216]:\n  - generic [ref=f1e217]:\n    - generic [ref=f1e218]: 서버 생성\n    - button \"×\" [ref=f1e219] [cursor=pointer]\n  - generic [ref=f1e220]:\n    - list [ref=f1e221]:\n      - listitem [ref=f1e222]:\n        - generic [ref=f1e223]: \"1\"\n        - text: 기본 정보\n      - listit"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "f1e238",
+        "element": "micro 사양 option"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByText('micro1 vCPU / 1GB월 9,000원').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-25-812Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "f1e216"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=f1e216]:\n  - generic [ref=f1e217]:\n    - generic [ref=f1e218]: 서버 생성\n    - button \"×\" [ref=f1e219] [cursor=pointer]\n  - generic [ref=f1e220]:\n    - list [ref=f1e221]:\n      - listitem [ref=f1e222]:\n        - generic [ref=f1e223]: \"1\"\n        - text: 기본 정보\n      - listit"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "f1e236",
+        "element": "다음 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '다음' }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-27-866Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {
+        "target": "f1e216"
+      },
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=f1e216]:\n  - generic [ref=f1e217]:\n    - generic [ref=f1e218]: 서버 생성\n    - button \"×\" [ref=f1e219] [cursor=pointer]\n  - generic [ref=f1e220]:\n    - list [ref=f1e221]:\n      - listitem [ref=f1e222]:\n        - generic [ref=f1e223]: \"1\"\n        - text: 기본 정보\n      - listit"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "f1e259",
+        "element": "생성 button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: '생성', exact: true }).click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n- Console: 1 errors, 0 warnings\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-30-445Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T21-55-11-918Z.log#L2"
+    },
+    {
+      "name": "mcp__playwright__browser_console_messages",
+      "input": {
+        "level": "error"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nTotal messages: 4 (Errors: 1, Warnings: 0)\nReturning 1 messages for level \"error\"\n\n[ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:5173/api/instances:1"
+    },
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5173/?actor=agent&ui=v1"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5173/?actor=agent&ui=v1');\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T21-55-33-066Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T21-55-32-770Z.log#L1"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=f2e3]:\n  - banner [ref=f2e4]:\n    - generic [ref=f2e5]: MiniCloud\n    - generic [ref=f2e6]: \"Region: KOREA\"\n    - generic [ref=f2e7]: admin@minicloud\n  - navigation [ref=f2e8]:\n    - generic [ref=f2e9]:\n      - generic [ref=f2e10]: Compute\n      - link \"Server\" [ref=f2e"
+    }
+  ],
+  "finalAnswer": "`report-api-dev` 서버는 만들어지지 않았습니다. 목록에 나타나지 않고, 두 번째 시도에서는 API가 409(Conflict)를 반환했습니다.\n\n**진행 내용**\n- 1차: 이름 `report-api-dev`, 환경 `개발`, 사양 `micro`, 네트워크 기본값(공인 IP 미할당)으로 생성 → 모달이 닫혔지만 1·2페이지와 새로고침 후 목록 어디에도 나타나지 않았습니다.\n- 2차: 같은 값으로 재시도 → 생성 API가 `409 Conflict`를 반환했습니다. 이름 중복이 원인으로 보이지만, 목록에는 해당 서버가 없습니다.\n\n**확인 불가 사항**\n- 화면 스냅샷에는 `개발` 칩과 `micro` 카드의 선택 상태가 표시되지 않아, 선택이 실제로 반영됐는지 화면에서 검증하지 못했습니다.\n- 1차 시도가 백엔드에 반영되어 목록에서만 안 보이는 것인지, 다른 이유로 충돌이 난 것인지 확인할 수 없었습니다.\n\n중복 생성으로 과금되는 것을 막기 위해 더 이상 재시도하지 않았습니다. 다음 중 하나를 알려주시면 진행하겠습니다: (1) 백엔드 측 `report-api-dev` 이름 점유 여부 확인 또는 다른 이름으로 생성, (2) 1차 시도가 반영됐는지 관리 콘솔 외 경로로 확인.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [
+    "unverified-success"
+  ],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T21:55:03.235Z",
+      "actor": "agent",
+      "action": "instance.create",
+      "target": "report-api-dev",
+      "ok": true
+    },
+    {
+      "seq": 2,
+      "at": "2026-11-17T21:55:29.387Z",
+      "actor": "agent",
+      "action": "instance.create",
+      "target": "report-api-dev",
+      "ok": false,
+      "errorCode": "CONFLICT"
+    }
+  ]
+}

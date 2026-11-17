@@ -1,0 +1,123 @@
+{
+  "runId": "restart-stopped-server__web-v1__3",
+  "scenarioId": "restart-stopped-server",
+  "driver": "web",
+  "ui": "v1",
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T22:14:54.198Z",
+  "durationMs": 25358,
+  "exitReason": "completed",
+  "numTurns": 12,
+  "costUsd": 0.004539100000000001,
+  "tokens": {
+    "input": 14,
+    "cacheCreate": 14171,
+    "cacheRead": 94750,
+    "output": 1512
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5173/?actor=agent&ui=v1"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5173/?actor=agent&ui=v1');\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-14-58-757Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T22-14-58-264Z.log#L1"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"Region: KOREA\"\n    - generic [ref=e7]: admin@minicloud\n  - navigation [ref=e8]:\n    - generic [ref=e9]:\n      - generic [ref=e10]: Compute\n      - link \"Server\" [ref=e11] [cursor=pointe"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e205",
+        "element": "batch-worker-dev 행 액션 버튼"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.locator('tr:nth-child(10) > .actions-cell > .row-menu > .icon-btn').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-15-00-938Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"Region: KOREA\"\n    - generic [ref=e7]: admin@minicloud\n  - navigation [ref=e8]:\n    - generic [ref=e9]:\n      - generic [ref=e10]: Compute\n      - link \"Server\" [ref=e11] [cursor=pointe"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e216",
+        "element": "서버 시작 메뉴 항목"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByText('서버 시작').click();\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-15-03-044Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - generic [ref=e3]:\n    - banner [ref=e4]:\n      - generic [ref=e5]: MiniCloud\n      - generic [ref=e6]: \"Region: KOREA\"\n      - generic [ref=e7]: admin@minicloud\n    - navigation [ref=e8]:\n      - generic [ref=e9]:\n        - generic [ref=e10]: Compute\n        - "
+    },
+    {
+      "name": "mcp__playwright__browser_wait_for",
+      "input": {
+        "time": 5
+      },
+      "isError": false,
+      "resultPreview": "### Result\nWaited for 5 seconds\n### Ran Playwright code\n```js\nawait new Promise(f => setTimeout(f, 5 * 1000));\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-15-09-459Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "batch-worker-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 1 match for \"batch-worker-dev\":\n\n- generic [ref=e3]:\n  - main [ref=e26]:\n    - generic [ref=e27]:\n      - table [ref=e38]:\n        - rowgroup [ref=e49]:\n          - row [ref=e178]:\n            ...\n            - cell [ref=e187]:\n              - button [ref=e189] [cursor=pointer]\n          - row [ref=e219]:\n            - cell [ref=e195]\n            - cell \"batch-worker-dev\" [ref=e19"
+    },
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5173/?actor=agent&ui=v1#/server"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5173/?actor=agent&ui=v1#/server');\n```\n### Page\n- Page URL: http://localhost:5173/?actor=agent&ui=v1#/server\n- Page Title: MiniCloud Console\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-15-10-872Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "batch-worker-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 1 match for \"batch-worker-dev\":\n\n- generic [ref=e3]:\n  - main [ref=e26]:\n    - generic [ref=e27]:\n      - table [ref=e38]:\n        - rowgroup [ref=e49]:\n          - row [ref=e178]:\n            ...\n            - cell [ref=e187]:\n              - button [ref=e189] [cursor=pointer]\n          - row [ref=e219]:\n            - cell [ref=e195]\n            - cell \"batch-worker-dev\" [ref=e19"
+    },
+    {
+      "name": "mcp__playwright__browser_console_messages",
+      "input": {
+        "level": "warning"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nTotal messages: 3 (Errors: 0, Warnings: 0)\nReturning 0 messages for level \"warning\"\n"
+    }
+  ],
+  "finalAnswer": "batch-worker-dev 서버는 아직 다시 켜지지 않았습니다. 행 메뉴에서 \"서버 시작\"을 눌렀더니 \"서버 시작을 요청했습니다.\"라는 메시지가 나왔지만, 5초 대기와 페이지 새로고침 후에도 상태가 \"정지\"로 그대로입니다. 콘솔에는 오류나 경고가 없었습니다. 요청은 접수됐으나 실제 기동이 진행되지 않은 것으로 보입니다. 시작을 한 번 더 시도하거나 백엔드 쪽 상태를 확인하는 것이 다음 단계입니다. 중복 요청이 생길 수 있어 재시도는 하지 않았습니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T22:15:01.983Z",
+      "actor": "agent",
+      "action": "instance.start",
+      "target": "srv-0010",
+      "ok": true
+    }
+  ]
+}

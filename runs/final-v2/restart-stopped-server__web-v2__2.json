@@ -1,0 +1,113 @@
+{
+  "runId": "restart-stopped-server__web-v2__2",
+  "scenarioId": "restart-stopped-server",
+  "driver": "web",
+  "ui": "v2",
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T22:02:00.358Z",
+  "durationMs": 17952,
+  "exitReason": "completed",
+  "numTurns": 10,
+  "costUsd": 0.0037214000000000006,
+  "tokens": {
+    "input": 20,
+    "cacheCreate": 10629,
+    "cacheRead": 117910,
+    "output": 829
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__playwright__browser_navigate",
+      "input": {
+        "url": "http://localhost:5175/?actor=agent&ui=v2"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:5175/?actor=agent&ui=v2');\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-02-05-414Z.yml)\n### Events\n- New console entries: pw-out\\console-2026-11-17T22-02-04-882Z.log#L1"
+    },
+    {
+      "name": "mcp__playwright__browser_snapshot",
+      "input": {},
+      "isError": false,
+      "resultPreview": "### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n```yaml\n- generic [ref=e3]:\n  - banner [ref=e4]:\n    - generic [ref=e5]: MiniCloud\n    - generic [ref=e6]: \"리전: 한국\"\n    - generic [ref=e7]: 콘솔 v2 · admin@minicloud\n  - navigation \"서비스 메뉴\" [ref=e8]:\n    - link \"서버\" [ref=e9] [cursor=pointer]:\n      - /url: \"#/server\"\n    - link \"오브젝트 스토리지 (버"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "batch-worker-dev 작업 ▾",
+        "element": "batch-worker-dev 작업 ▾ button"
+      },
+      "isError": true,
+      "resultPreview": "### Error\nError: \"batch-worker-dev 작업 ▾\" does not match any elements."
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e101",
+        "element": "batch-worker-dev 작업 ▾ button"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('button', { name: 'batch-worker-dev 작업 ▾' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-02-09-084Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "시작"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 1 match for \"시작\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - region \"서버\" [ref=e13]:\n      - table \"서버 목록\" [ref=e30]:\n        - rowgroup [ref=e41]:\n          - row [ref=e90]:\n            - cell [ref=e99]:\n              - generic [ref=e100]:\n                - button \"batch-worker-dev 작업 ▾\" [expanded] [active] [ref=e101] [cursor=pointer]\n                - menu \"batch-worker-dev 작"
+    },
+    {
+      "name": "mcp__playwright__browser_click",
+      "input": {
+        "target": "e179",
+        "element": "서버 시작 menuitem"
+      },
+      "isError": false,
+      "resultPreview": "### Ran Playwright code\n```js\nawait page.getByRole('menuitem', { name: '서버 시작' }).click();\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-02-11-788Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "batch-worker-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 3 matches for \"batch-worker-dev\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - status \"최근 작업 결과\" [ref=e183]:\n      - generic [ref=e184]:\n        - strong [ref=e186]: \"[완료] batch-worker-dev 시작을 요청했습니다. 상태가 바뀔 때까지 자동 갱신합니다.\"\n        - button \"결과 메시지 닫기\" [ref=e187] [cursor=pointer]\n    - region \"서버\" [ref=e13]:\n      - generic [ref=e14]:\n\n----\n\n- generic [ref=e3]:\n  - main [ref=e12]"
+    },
+    {
+      "name": "mcp__playwright__browser_wait_for",
+      "input": {
+        "text": "실행 중 (running)",
+        "time": 15
+      },
+      "isError": false,
+      "resultPreview": "### Result\nWaited for 실행 중 (running)\n### Ran Playwright code\n```js\nawait page.getByText(\"실행 중 (running)\").first().waitFor({ state: 'visible' });\n```\n### Page\n- Page URL: http://localhost:5175/?actor=agent&ui=v2\n- Page Title: MiniCloud Console v2\n### Snapshot\n- [Snapshot](pw-out\\page-2026-11-17T22-02-13-665Z.yml)"
+    },
+    {
+      "name": "mcp__playwright__browser_find",
+      "input": {
+        "text": "batch-worker-dev"
+      },
+      "isError": false,
+      "resultPreview": "### Result\nFound 3 matches for \"batch-worker-dev\":\n\n- generic [ref=e3]:\n  - main [ref=e12]:\n    - status \"최근 작업 결과\" [ref=e183]:\n      - generic [ref=e184]:\n        - strong [ref=e186]: \"[완료] batch-worker-dev 시작을 요청했습니다. 상태가 바뀔 때까지 자동 갱신합니다.\"\n        - button \"결과 메시지 닫기\" [ref=e187] [cursor=pointer]\n    - region \"서버\" [ref=e13]:\n      - generic [ref=e14]:\n\n----\n\n- generic [ref=e3]:\n  - main [ref=e12]"
+    }
+  ],
+  "finalAnswer": "batch-worker-dev 서버를 시작했고, 목록에서 상태가 '정지됨 (stopped)'에서 '실행 중 (running)'으로 바뀐 것을 확인했습니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": [],
+  "permissionDenials": 0,
+  "audit": [
+    {
+      "seq": 1,
+      "at": "2026-11-17T22:02:10.712Z",
+      "actor": "agent",
+      "action": "instance.start",
+      "target": "srv-0010",
+      "ok": true
+    }
+  ]
+}
