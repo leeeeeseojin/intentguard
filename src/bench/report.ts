@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SCENARIOS } from "./scenarios.js";
+import { classify } from "./classify.js";
 import type { RunRecord } from "./types.js";
 
 /**
@@ -24,7 +25,9 @@ const records: RunRecord[] = labels.flatMap((label) => {
   const dir = path.join(repoRoot, "runs", label);
   return readdirSync(dir)
     .filter((f) => f.endsWith(".json"))
-    .map((f) => JSON.parse(readFileSync(path.join(dir, f), "utf8")) as RunRecord);
+    .map((f) => JSON.parse(readFileSync(path.join(dir, f), "utf8")) as RunRecord)
+    // 분류 규칙이 바뀌어도 예전 기록에 같은 기준을 적용하도록 태그를 다시 계산한다.
+    .map((r) => ({ ...r, failureTags: classify(r, r.permissionDenials ?? 0) }));
 });
 
 const pathOf = (r: RunRecord) => (r.driver === "mcp" ? "MCP" : `Web ${r.ui}`);
@@ -51,16 +54,20 @@ out();
 // 1. 경로별 요약
 out("## 경로별 요약");
 out();
-out("| 경로 | 실행 | 성공률 | 평균 턴 | 평균 시간 | 평균 컨텍스트 토큰 | 평균 비용(API 환산) | 거짓 성공 보고 |");
-out("| --- | --- | --- | --- | --- | --- | --- | --- |");
+out("| 경로 | 실행 | 성공률 | 확인된 성공률 | 평균 턴 | 평균 시간 | 평균 컨텍스트 토큰 | 평균 비용(API 환산) | 보고 불일치 |");
+out("| --- | --- | --- | --- | --- | --- | --- | --- | --- |");
 for (const p of paths) {
   const rs = valid.filter((r) => pathOf(r) === p);
   const ok = rs.filter((r) => r.grade.success).length;
-  const falseClaims = rs.filter((r) => r.failureTags.includes("false-success-claim")).length;
+  const verified = rs.filter((r) => r.grade.success && !r.failureTags.includes("unverified-success")).length;
+  const mismatch = rs.filter((r) => r.failureTags.some((t) => t === "false-success-claim" || t === "unverified-success")).length;
   out(
-    `| ${p} | ${rs.length} | **${pct(ok, rs.length)}** (${ok}/${rs.length}) | ${avg(rs.map((r) => r.numTurns)).toFixed(1)} | ${(avg(rs.map((r) => r.durationMs)) / 1000).toFixed(0)}초 | ${Math.round(avg(rs.map(contextTokens))).toLocaleString()} | $${avg(rs.map((r) => r.costUsd)).toFixed(4)} | ${falseClaims} |`,
+    `| ${p} | ${rs.length} | **${pct(ok, rs.length)}** (${ok}/${rs.length}) | ${pct(verified, rs.length)} (${verified}/${rs.length}) | ${avg(rs.map((r) => r.numTurns)).toFixed(1)} | ${(avg(rs.map((r) => r.durationMs)) / 1000).toFixed(0)}초 | ${Math.round(avg(rs.map(contextTokens))).toLocaleString()} | $${avg(rs.map((r) => r.costUsd)).toFixed(4)} | ${mismatch} |`,
   );
 }
+out();
+out("- **확인된 성공률**: 실제로 성공했고, 에이전트도 화면·도구에서 결과를 확인했다고 보고한 비율");
+out("- **보고 불일치**: 에이전트의 보고와 실제 상태가 어긋난 실행 수 (실패했는데 완료했다고 보고 + 성공했는데 확인 못 했다고 보고)");
 out();
 
 // 2. 시나리오 × 경로
