@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { ToastProvider } from "./components/Toast";
 import { BucketIcon, ServerIcon, ShieldIcon } from "./components/icons";
+import { AcgPage } from "./pages/AcgPage";
 import { ServersPage } from "./pages/ServersPage";
+import { StoragePage } from "./pages/StoragePage";
 
 type Route = "server" | "storage" | "acg";
 
@@ -48,7 +50,11 @@ export function App() {
             </div>
           ))}
         </nav>
-        <main className="content">{route === "server" && <ServersPage />}</main>
+        <main className="content">
+          {route === "server" && <ServersPage />}
+          {route === "storage" && <StoragePage />}
+          {route === "acg" && <AcgPage />}
+        </main>
       </div>
     </ToastProvider>
   );
