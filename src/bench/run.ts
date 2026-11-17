@@ -124,7 +124,8 @@ async function main() {
           rawLogPath: path.join(rawDir, `${runId}.jsonl`),
         });
 
-        const grade = scenario.grade(await settledSnapshot(), result.finalAnswer);
+        const snap = await settledSnapshot();
+        const grade = scenario.grade(snap, result.finalAnswer);
         const base: Omit<RunRecord, "failureTags"> = {
           runId,
           scenarioId: scenario.id,
@@ -141,7 +142,12 @@ async function main() {
           finalAnswer: result.finalAnswer,
           grade,
         };
-        const record: RunRecord = { ...base, failureTags: classify(base, result.permissionDenials) };
+        const record: RunRecord = {
+          ...base,
+          failureTags: classify(base, result.permissionDenials),
+          permissionDenials: result.permissionDenials,
+          audit: snap.audit,
+        };
         records.push(record);
         writeFileSync(path.join(outDir, `${runId}.json`), JSON.stringify(record, null, 2));
         console.log(

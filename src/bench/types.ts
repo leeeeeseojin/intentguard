@@ -51,4 +51,8 @@ export interface RunRecord {
   finalAnswer: string;
   grade: GradeResult;
   failureTags: string[];
+  /** 권한 거부된 도구 호출 수 (분류 재계산용) */
+  permissionDenials?: number;
+  /** 채점 시점의 서버 감사 로그 — 에이전트 보고와 실제 동작을 대조하는 근거 */
+  audit?: AuditEntry[];
 }
