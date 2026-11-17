@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, type Instance } from "../api";
-import { RefreshIcon } from "../components/icons";
+import { PlusIcon, RefreshIcon } from "../components/icons";
+import { CreateServerWizard } from "./CreateServerWizard";
 
 const PAGE_SIZE = 10;
 
@@ -19,6 +20,7 @@ export function ServersPage() {
   const [items, setItems] = useState<Instance[]>([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -43,6 +45,10 @@ export function ServersPage() {
       <div className="page-header">
         <h1>Server</h1>
         <div className="toolbar">
+          <button className="btn btn-primary" onClick={() => setCreating(true)}>
+            <PlusIcon />
+            서버 생성
+          </button>
           {/* v1-pattern: icon-only-buttons — 접근성 이름(aria-label/title)이 없는 아이콘 버튼 */}
           <button className="icon-btn" onClick={() => void load()}>
             <RefreshIcon />
@@ -97,6 +103,9 @@ export function ServersPage() {
           </button>
         ))}
       </div>
+
+      {/* v1-pattern: stale-list — 생성이 끝나도 목록을 다시 불러오지 않는다. 새로고침 아이콘을 눌러야 한다. */}
+      {creating && <CreateServerWizard onClose={() => setCreating(false)} />}
     </section>
   );
 }
