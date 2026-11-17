@@ -1,0 +1,46 @@
+{
+  "runId": "add-firewall-rule__mcp__1",
+  "scenarioId": "add-firewall-rule",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:23:11.755Z",
+  "durationMs": 9177,
+  "exitReason": "completed",
+  "numTurns": 3,
+  "costUsd": 0.0013316299999999999,
+  "tokens": {
+    "input": 6,
+    "cacheCreate": 4709,
+    "cacheRead": 17773,
+    "output": 423
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__list_security_groups",
+      "input": {},
+      "isError": false,
+      "resultPreview": "{\n  \"items\": [\n    {\n      \"id\": \"sg-default\",\n      \"name\": \"default\",\n      \"rules\": []\n    },\n    {\n      \"id\": \"sg-web\",\n      \"name\": \"web-public\",\n      \"rules\": [\n        {\n          \"id\": \"rule-1\",\n          \"protocol\": \"tcp\",\n          \"port\": 80,\n          \"source\": \"0.0.0.0/0\",\n          \"description\": \"HTTP\"\n        },\n        {\n          \"id\": \"rule-2\",\n          \"protocol\": \"tcp\",\n  "
+    },
+    {
+      "name": "mcp__minicloud__add_security_rule",
+      "input": {
+        "security_group_id": "sg-ssh",
+        "protocol": "tcp",
+        "port": 8080,
+        "source": "10.0.0.0/16",
+        "description": "VPC 내부 TCP 8080 허용"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"sg-ssh\",\n  \"name\": \"ssh-admin\",\n  \"rules\": [\n    {\n      \"id\": \"rule-4\",\n      \"protocol\": \"tcp\",\n      \"port\": 22,\n      \"source\": \"203.0.113.7/32\",\n      \"description\": \"관리자 사무실\"\n    },\n    {\n      \"id\": \"rule-101\",\n      \"protocol\": \"tcp\",\n      \"port\": 8080,\n      \"source\": \"10.0.0.0/16\",\n      \"description\": \"VPC 내부 TCP 8080 허용\"\n    }\n  ]\n}"
+    }
+  ],
+  "finalAnswer": "ssh-admin(sg-ssh)에 TCP 8080 인바운드 규칙을 추가했고, 소스는 10.0.0.0/16입니다(규칙 ID rule-101). 기존 SSH 22번 규칙(203.0.113.7/32)은 그대로 유지됐습니다.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": []
+}

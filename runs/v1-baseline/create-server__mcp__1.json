@@ -1,0 +1,54 @@
+{
+  "runId": "create-server__mcp__1",
+  "scenarioId": "create-server",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:18:06.271Z",
+  "durationMs": 11730,
+  "exitReason": "completed",
+  "numTurns": 4,
+  "costUsd": 0.0013936299999999999,
+  "tokens": {
+    "input": 8,
+    "cacheCreate": 4536,
+    "cacheRead": 25013,
+    "output": 471
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__create_instance",
+      "input": {
+        "name": "report-api-dev",
+        "env": "dev",
+        "spec": "micro"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"report-api-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"creating\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:18:12.243Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0101"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"report-api-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"creating\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:18:12.243Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0101"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"report-api-dev\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"running\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:18:12.243Z\",\n  \"monthlyCost\": 9000\n}"
+    }
+  ],
+  "finalAnswer": "dev 환경에 micro 사양의 `report-api-dev` 서버(id: `srv-0101`)를 만들었고, 현재 상태는 running입니다. 존 KR-1, 보안 그룹 sg-default, 월 비용 9,000원으로 설정됐습니다. 공인 IP는 요청에 없어서 할당하지 않았고(publicIp: null), 필요하면 따로 알려 주세요.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": []
+}

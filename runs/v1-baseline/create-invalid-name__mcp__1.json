@@ -1,0 +1,54 @@
+{
+  "runId": "create-invalid-name__mcp__1",
+  "scenarioId": "create-invalid-name",
+  "driver": "mcp",
+  "ui": null,
+  "model": "claude-haiku-5-5",
+  "startedAt": "2026-11-17T21:19:01.813Z",
+  "durationMs": 11907,
+  "exitReason": "completed",
+  "numTurns": 4,
+  "costUsd": 0.0014975000000000001,
+  "tokens": {
+    "input": 8,
+    "cacheCreate": 4659,
+    "cacheRead": 25290,
+    "output": 624
+  },
+  "toolCalls": [
+    {
+      "name": "mcp__minicloud__create_instance",
+      "input": {
+        "name": "my-api-server",
+        "env": "dev",
+        "spec": "micro"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"my-api-server\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"creating\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:19:07.942Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0101"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"my-api-server\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"creating\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:19:07.942Z\",\n  \"monthlyCost\": 9000\n}"
+    },
+    {
+      "name": "mcp__minicloud__get_instance",
+      "input": {
+        "id": "srv-0101"
+      },
+      "isError": false,
+      "resultPreview": "{\n  \"id\": \"srv-0101\",\n  \"name\": \"my-api-server\",\n  \"env\": \"dev\",\n  \"spec\": \"micro\",\n  \"status\": \"running\",\n  \"zone\": \"KR-1\",\n  \"publicIp\": null,\n  \"securityGroupId\": \"sg-default\",\n  \"createdAt\": \"2026-11-17T21:19:07.942Z\",\n  \"monthlyCost\": 9000\n}"
+    }
+  ],
+  "finalAnswer": "dev 환경에 micro 서버를 만들었고, 현재 상태는 running입니다. 이름은 'My API Server'가 규칙(영문 소문자로 시작, 소문자·숫자·하이픈, 3~31자)에 맞지 않아 `my-api-server`로 바꿨습니다. 서버 ID는 srv-0101이고, 존은 KR-1, 보안 그룹은 sg-default, 월 비용은 9,000원입니다. 공인 IP는 아직 할당되지 않았습니다(publicIp: null). 공인 IP가 필요하면 말씀해 주세요.",
+  "grade": {
+    "success": true,
+    "notes": [
+      "모든 조건 충족"
+    ]
+  },
+  "failureTags": []
+}
