@@ -10,7 +10,7 @@
 | 단계 | 내용 | 상태 |
 | --- | --- | --- |
 | 1 | MiniCloud 도메인 · REST API · MCP 서버 · 콘솔 v1 · 스크립트 E2E · CI | ✅ |
-| 2 | 에이전트 실행기(Web/MCP) · 시나리오 · 실패 자동 분류 리포트 | ⏳ |
+| 2 | 에이전트 실행기(Web/MCP) · 시나리오 · 실패 자동 분류 리포트 → [기준선 결과](docs/results/v1-baseline.md) · [실패 분석](docs/analysis-v1.md) | ✅ |
 | 3 | 에이전트 친화 원칙 도출 · 콘솔 v2 · IntentGuard 승인 패널 | ⏳ |
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 | ⏳ |
 
