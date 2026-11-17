@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "minicloud": {
+      "command": "pnpm",
+      "args": ["--silent", "mcp"],
+      "env": { "MINICLOUD_URL": "http://localhost:8787" }
+    }
+  }
+}
