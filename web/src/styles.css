@@ -446,3 +446,57 @@ button {
   align-items: center;
   gap: 6px;
 }
+
+/* ---------- 행 메뉴·확인 모달 ---------- */
+.actions-cell {
+  width: 40px;
+}
+
+.row-menu {
+  position: relative;
+}
+
+.icon-btn.ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.row-menu-list {
+  position: absolute;
+  right: 0;
+  top: 32px;
+  min-width: 120px;
+  padding: 4px 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.12);
+  z-index: 10;
+}
+
+.row-menu-item {
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.row-menu-item:hover {
+  background: #f0f2f5;
+}
+
+.row-menu-item.danger {
+  color: var(--danger);
+}
+
+.row-menu-item.disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.confirm-desc {
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+
+.input.full {
+  width: 100%;
+}
