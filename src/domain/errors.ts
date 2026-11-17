@@ -4,9 +4,13 @@ export type CloudErrorCode =
   | "CONFLICT"
   | "INVALID_STATE"
   | "QUOTA_EXCEEDED"
-  | "BUCKET_NOT_EMPTY";
+  | "BUCKET_NOT_EMPTY"
+  | "AGENT_PAUSED"
+  | "FORBIDDEN";
 
 const HTTP_STATUS: Record<CloudErrorCode, number> = {
+  AGENT_PAUSED: 423,
+  FORBIDDEN: 403,
   NOT_FOUND: 404,
   INVALID_ARGUMENT: 400,
   CONFLICT: 409,
