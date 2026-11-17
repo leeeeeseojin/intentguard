@@ -3,6 +3,8 @@ import { z } from "zod";
 import { CloudError } from "../domain/errors.js";
 import type { MiniCloud } from "../domain/store.js";
 import type { Actor } from "../domain/types.js";
+import { IntentGuard, type ApprovalStatus } from "../guard/guard.js";
+import type { Operation } from "../guard/operations.js";
 
 const envSchema = z.enum(["dev", "staging", "prod"]);
 const specSchema = z.enum(["micro", "small", "medium", "large"]);
@@ -24,6 +26,8 @@ const addRuleSchema = z.object({
 });
 
 const bucketPublicSchema = z.object({ public: z.boolean() });
+const rejectSchema = z.object({ reason: z.string().optional() });
+const agentControlSchema = z.object({ paused: z.boolean() });
 
 function actorOf(c: Context): Actor {
   const value = c.req.header("x-actor");
@@ -45,7 +49,7 @@ async function body<T>(c: Context, schema: z.ZodType<T>): Promise<T> {
   return parsed.data;
 }
 
-export function createApp(cloud: MiniCloud) {
+export function createApp(cloud: MiniCloud, guard: IntentGuard = new IntentGuard(cloud)) {
   const app = new Hono().basePath("/api");
 
   app.onError((err, c) => {
@@ -58,38 +62,63 @@ export function createApp(cloud: MiniCloud) {
 
   app.notFound((c) => c.json({ error: { code: "NOT_FOUND", message: `경로를 찾을 수 없습니다: ${c.req.path}` } }, 404));
 
+  /** 상태를 바꾸는 요청은 모두 IntentGuard를 거친다. 승인이 필요하면 202로 대기 상태를 돌려준다. */
+  const mutate = (c: Context, op: Operation, okStatus: 200 | 201 = 200) => {
+    const reasonHeader = c.req.header("x-agent-reason");
+    const reason = reasonHeader ? decodeURIComponent(reasonHeader) : undefined;
+    const result = guard.run(op, actorOf(c), reason);
+    const pending = (result as { status?: string })?.status === "pending_approval";
+    return c.json(result as object, pending ? 202 : okStatus);
+  };
+
   // 서버
   app.get("/instances", (c) =>
     c.json({ items: cloud.listInstances({ env: c.req.query("env"), status: c.req.query("status"), q: c.req.query("q") }) }),
   );
   app.get("/instances/:id", (c) => c.json(cloud.getInstance(c.req.param("id"))));
-  app.post("/instances", async (c) => c.json(cloud.createInstance(await body(c, createInstanceSchema), actorOf(c)), 201));
-  app.post("/instances/:id/stop", (c) => c.json(cloud.stopInstance(c.req.param("id"), actorOf(c))));
-  app.post("/instances/:id/start", (c) => c.json(cloud.startInstance(c.req.param("id"), actorOf(c))));
-  app.delete("/instances/:id", (c) => c.json(cloud.deleteInstance(c.req.param("id"), actorOf(c))));
+  app.post("/instances", async (c) => mutate(c, { kind: "instance.create", input: await body(c, createInstanceSchema) }, 201));
+  app.post("/instances/:id/stop", (c) => mutate(c, { kind: "instance.stop", id: c.req.param("id") }));
+  app.post("/instances/:id/start", (c) => mutate(c, { kind: "instance.start", id: c.req.param("id") }));
+  app.delete("/instances/:id", (c) => mutate(c, { kind: "instance.delete", id: c.req.param("id") }));
 
   // 보안 그룹
   app.get("/security-groups", (c) => c.json({ items: cloud.listSecurityGroups() }));
   app.get("/security-groups/:id", (c) => c.json(cloud.getSecurityGroup(c.req.param("id"))));
   app.post("/security-groups/:id/rules", async (c) =>
-    c.json(cloud.addSecurityRule(c.req.param("id"), await body(c, addRuleSchema), actorOf(c)), 201),
+    mutate(c, { kind: "securityGroup.addRule", sgId: c.req.param("id"), input: await body(c, addRuleSchema) }, 201),
   );
   app.delete("/security-groups/:id/rules/:ruleId", (c) =>
-    c.json(cloud.removeSecurityRule(c.req.param("id"), c.req.param("ruleId"), actorOf(c))),
+    mutate(c, { kind: "securityGroup.removeRule", sgId: c.req.param("id"), ruleId: c.req.param("ruleId") }),
   );
 
   // 버킷
   app.get("/buckets", (c) => c.json({ items: cloud.listBuckets() }));
   app.post("/buckets/:id/public", async (c) =>
-    c.json(cloud.setBucketPublic(c.req.param("id"), (await body(c, bucketPublicSchema)).public, actorOf(c))),
+    mutate(c, { kind: "bucket.setPublic", id: c.req.param("id"), public: (await body(c, bucketPublicSchema)).public }),
   );
-  app.post("/buckets/:id/empty", (c) => c.json(cloud.emptyBucket(c.req.param("id"), actorOf(c))));
-  app.delete("/buckets/:id", (c) => c.json(cloud.deleteBucket(c.req.param("id"), actorOf(c))));
+  app.post("/buckets/:id/empty", (c) => mutate(c, { kind: "bucket.empty", id: c.req.param("id") }));
+  app.delete("/buckets/:id", (c) => mutate(c, { kind: "bucket.delete", id: c.req.param("id") }));
+
+  // IntentGuard: 승인 대기열과 에이전트 제어
+  app.get("/approvals", (c) => c.json({ items: guard.list(c.req.query("status") as ApprovalStatus | undefined) }));
+  app.get("/approvals/:id", (c) => c.json(guard.get(c.req.param("id"))));
+  app.post("/approvals/:id/approve", (c) => c.json(guard.approve(c.req.param("id"), actorOf(c))));
+  app.post("/approvals/:id/reject", async (c) => {
+    const { reason } = await body(c, rejectSchema);
+    return c.json(guard.reject(c.req.param("id"), actorOf(c), reason));
+  });
+  app.get("/agent-control", (c) => c.json({ paused: guard.isPaused }));
+  app.post("/agent-control", async (c) => {
+    guard.setPaused((await body(c, agentControlSchema)).paused, actorOf(c));
+    return c.json({ paused: guard.isPaused });
+  });
+  app.get("/activity", (c) => c.json({ items: cloud.getAudit() }));
 
   // 실험용
   app.get("/_audit", (c) => c.json({ items: cloud.getAudit() }));
   app.post("/_reset", (c) => {
     cloud.reset();
+    guard.reset();
     return c.json({ ok: true });
   });
 
