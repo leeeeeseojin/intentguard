@@ -58,3 +58,48 @@ describe("REST API", () => {
     expect((await res.json()).error.code).toBe("NOT_FOUND");
   });
 });
+
+describe("REST API · IntentGuard", () => {
+  let app: ReturnType<typeof createApp>;
+  beforeEach(() => {
+    app = createApp(new MiniCloud({ transitionDelayMs: 0 }));
+  });
+
+  const req = (method: string, path: string, actor: string, data?: unknown, extra: Record<string, string> = {}) =>
+    app.request(path, {
+      method,
+      headers: { "content-type": "application/json", "x-actor": actor, ...extra },
+      body: data === undefined ? undefined : JSON.stringify(data),
+    });
+
+  it("에이전트의 위험 작업은 202 승인 대기, 사람이 승인하면 실행된다", async () => {
+    const res = await req("POST", "/api/buckets/bkt-1/public", "agent", { public: true }, { "x-agent-reason": encodeURIComponent("로그 공유") });
+    expect(res.status).toBe(202);
+    const pending = await res.json();
+    expect(pending).toMatchObject({ status: "pending_approval", approval: { status: "pending", agentReason: "로그 공유" } });
+
+    expect((await req("POST", `/api/approvals/${pending.approval.id}/approve`, "agent")).status).toBe(403);
+    const approved = await (await req("POST", `/api/approvals/${pending.approval.id}/approve`, "human")).json();
+    expect(approved.status).toBe("approved");
+
+    const buckets = await (await app.request("/api/buckets")).json();
+    expect(buckets.items.find((b: { id: string }) => b.id === "bkt-1").public).toBe(true);
+  });
+
+  it("일시정지하면 에이전트 변경은 423, 사람은 계속 가능", async () => {
+    expect((await req("POST", "/api/agent-control", "agent", { paused: true })).status).toBe(403);
+    await req("POST", "/api/agent-control", "human", { paused: true });
+    const blocked = await req("POST", "/api/instances/srv-0008/stop", "agent");
+    expect(blocked.status).toBe(423);
+    expect((await blocked.json()).error.code).toBe("AGENT_PAUSED");
+    expect((await req("POST", "/api/instances/srv-0008/stop", "human")).status).toBe(200);
+  });
+
+  it("reset하면 승인 대기열과 일시정지도 초기화된다", async () => {
+    await req("POST", "/api/buckets/bkt-1/public", "agent", { public: true });
+    await req("POST", "/api/agent-control", "human", { paused: true });
+    await req("POST", "/api/_reset", "human");
+    expect((await (await app.request("/api/approvals")).json()).items).toHaveLength(0);
+    expect((await (await app.request("/api/agent-control")).json()).paused).toBe(false);
+  });
+});
