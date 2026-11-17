@@ -11,6 +11,8 @@
     "dev:web": "vite",
     "start:api": "tsx src/server/index.ts",
     "mcp": "tsx src/mcp/index.ts",
+    "bench": "tsx src/bench/run.ts",
+    "bench:report": "tsx src/bench/report.ts",
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
