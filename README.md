@@ -95,33 +95,36 @@ API와 MCP의 오류는 `code`, `message`, 그리고 **다음에 무엇을 하�
 
 v1은 클라우드 콘솔에서 흔히 보이는 패턴을 **의도적으로** 재현한다. 코드에는 `// v1-pattern: <이름>` 주석으로 표시했다.
 
-| 패턴 | v1에서의 모습 | 에이전트 실험에서 관찰된 것 | NCP 공식 가이드 | 콘솔 직접 관찰 |
+| 패턴 | v1에서의 모습 | 에이전트 실험에서 관찰된 것 | NCP 공식 가이드 (본문) | NCP 가이드 스크린샷 관찰 |
 | --- | --- | --- | --- | --- |
-| `icon-only-buttons` | 새로고침·⋮·휴지통 버튼에 접근성 이름이 없음 | Web v1 8회 실행에서 새로고침 버튼 사용 0회, 대신 페이지 재이동 8회 ([F1](docs/analysis-v1.md)) | ❌ 새로고침은 텍스트 버튼 [새로고침]으로 안내됨 [^screen] | 확인 예정 |
-| `overflow-menu` | 시작·정지·반납이 ⋮ 메뉴 뒤에 숨어 있음 | 이웃 행의 메뉴를 잘못 엶 ([F5](docs/analysis-v1.md)) | ➖ NCP는 목록에서 서버를 선택한 뒤 상단 [정지]·[반납] 버튼을 쓰는 방식 [^screen] | 확인 예정 |
-| `hidden-pagination` | 생성일 오래된 순 10개씩, 검색창 없음 | 2페이지 서버를 찾느라 snapshot 증가 | ❌ 서버 이름·IP·VPC·Subnet 검색 제공 [^screen] | 확인 예정 |
-| `color-only-env` | dev/staging/prod를 색 점으로만 구분 | 환경 컬럼이 없어 이름 접미사로 추측 ([F3](docs/analysis-v1.md)) | ➖ NCP에는 환경 구분 개념이 없어 사용자가 이름 등으로 구분 | 확인 예정 |
-| `jargon-labels` | Server / Object Storage / ACG, 삭제 대신 "반납", running이 "운영중" | 메뉴명으로 기능을 추측해야 함 | ✅ 서버 삭제를 "반납", 방화벽을 "ACG"로 부르고 메뉴 경로가 All Services > Compute > Server [^return] [^acg] | 확인 예정 |
-| `stale-list` | 작업 후 목록이 자동 갱신되지 않음 | 미확인 성공 6/30, 재시도·포기 ([F1](docs/analysis-v1.md)) | ⚠️ 반납은 "수 분" 걸리고 완료되면 목록에서 사라진다고만 안내. 자동 갱신 여부는 기재 없음 [^return] | 확인 예정 |
-| `vanishing-toast` | 오류가 2.5초 뒤 사라지고 hint 없음 | 오류를 놓치거나 규칙을 추측 ([F4](docs/analysis-v1.md)) | ➖ 기재 없음 | 확인 예정 |
-| `silent-disabled` | 무엇이 빠졌는지 알려주지 않고 "다음"만 비활성화 | — | ➖ 기재 없음 | 확인 예정 |
-| `late-validation` | 이름 형식 오류를 마지막 단계에서야 알림 | 마법사를 왕복하며 62턴 소요 ([F4](docs/analysis-v1.md)) | ➖ 기재 없음 | 확인 예정 |
-| `multi-step-wizard` | 3단계 마법사, 현재 단계가 시각적으로만 표시 | 단계 왕복 ([F4](docs/analysis-v1.md)) | ✅ 서버 생성은 6단계: 이미지 선택 → 서버 설정 → 스토리지 → 인증키 → 네트워크 접근 → 최종 확인 [^create] | 확인 예정 |
-| `placeholder-as-label` | 입력칸에 라벨 없이 placeholder만 | — | ➖ 문서로 판단 불가 | 확인 예정 |
-| `div-controls` | 환경·사양 선택, 공개 토글, 목록 선택이 div | 공개 토글 상태를 몰라 CSS로 찍어 누름, 우연히 성공 ([F2](docs/analysis-v1.md)) | ➖ DOM 구조는 문서로 판단 불가 | 확인 예정 |
-| `typed-confirmation` | 이름을 입력해야 "확인" 활성화, 버튼이 동작을 말하지 않음 | 이름 입력 자체는 에이전트가 잘 처리 | ✅ 버킷 삭제 시 버킷 이름을 입력해 확인. 서버 반납은 확인 팝업 [예] → 진행 팝업 [확인] [^bucket] [^return] | 확인 예정 |
+| `icon-only-buttons` | 새로고침·⋮·휴지통 버튼에 접근성 이름이 없음 | Web v1 8회 실행에서 새로고침 버튼 사용 0회, 대신 페이지 재이동 8회 ([F1](docs/analysis-v1.md)) | ❌ 새로고침은 텍스트 버튼 [새로고침]으로 안내됨 [^screen] | ⚠️ 새로고침은 아이콘+텍스트. 다만 행 펼침(⌄), 페이지 이동(« ‹ › »), 버킷 메뉴(⋮)는 아이콘만 보임. 접근성 이름은 이미지로 확인 불가 [^shot-server] [^shot-acg] |
+| `overflow-menu` | 시작·정지·반납이 ⋮ 메뉴 뒤에 숨어 있음 | 이웃 행의 메뉴를 잘못 엶 ([F5](docs/analysis-v1.md)) | ➖ 서버는 목록에서 선택한 뒤 상단 [정지]·[반납] 버튼을 쓰는 방식 [^screen] | ✅ Object Storage는 버킷 이름 옆 ⋮ 버튼 뒤에 버킷 정보·삭제·접근 제어·권한 관리 등 9개 기능이 숨어 있음 [^shot-bucket] |
+| `hidden-pagination` | 생성일 오래된 순 10개씩, 검색창 없음 | 2페이지 서버를 찾느라 snapshot 증가 | ❌ 서버 이름·IP·VPC·Subnet 검색 제공 [^screen] | ❌ 검색 대상 선택 + 입력창과 Filter(상태·스토리지 등) 제공 [^shot-server] |
+| `color-only-env` | dev/staging/prod를 색 점으로만 구분 | 환경 컬럼이 없어 이름 접미사로 추측 ([F3](docs/analysis-v1.md)) | ➖ NCP에는 환경 구분 개념이 없어 사용자가 이름 등으로 구분 | ➖ 상태는 색 점과 "운영중" 텍스트를 함께 표시 [^shot-server] |
+| `jargon-labels` | Server / Object Storage / ACG, 삭제 대신 "반납", running이 "운영중" | 메뉴명으로 기능을 추측해야 함 | ✅ 서버 삭제를 "반납", 방화벽을 "ACG"로 부르고 메뉴 경로가 All Services > Compute > Server [^return] [^acg] | ✅ 실행 중 상태가 "운영중", 화면 제목이 설명 없는 "ACG"·"Bucket Management", 탭 이름이 "Inbound 규칙"·"Outbound 규칙" [^shot-server] [^shot-acg] [^shot-bucket] |
+| `stale-list` | 작업 후 목록이 자동 갱신되지 않음 | 미확인 성공 6/30, 재시도·포기 ([F1](docs/analysis-v1.md)) | ⚠️ 반납은 "수 분" 걸리고 완료되면 목록에서 사라진다고만 안내. 자동 갱신 여부는 기재 없음 [^return] | ➖ 정지 화면이라 확인 불가. 모든 화면에 [새로고침] 버튼이 있음 |
+| `vanishing-toast` | 오류가 2.5초 뒤 사라지고 hint 없음 | 오류를 놓치거나 규칙을 추측 ([F4](docs/analysis-v1.md)) | ➖ 기재 없음 | ➖ 확인 불가 |
+| `silent-disabled` | 무엇이 빠졌는지 알려주지 않고 버튼만 비활성화 | 실행 중 서버 삭제가 거부되자 "다른 방법이 없다"며 포기 ([analysis-v2](docs/analysis-v2.md)) | ➖ 기재 없음 | ✅ 운영중 서버를 선택하면 [시작]·[반납]·[강제 정지]·[강제 반납]이 이유 표시 없이 회색으로 비활성. 버킷 ⋮ 메뉴의 일부 항목도 이유 없이 비활성 [^shot-server] [^shot-bucket] |
+| `late-validation` | 이름 형식 오류를 마지막 단계에서야 알림 | 마법사를 왕복하며 62턴 소요 ([F4](docs/analysis-v1.md)) | ➖ 기재 없음 | ➖ 생성 화면 스크린샷 없음 |
+| `multi-step-wizard` | 3단계 마법사, 현재 단계가 시각적으로만 표시 | 단계 왕복 ([F4](docs/analysis-v1.md)) | ✅ 서버 생성은 6단계: 이미지 선택 → 서버 설정 → 스토리지 → 인증키 → 네트워크 접근 → 최종 확인 [^create] | ➖ 생성 화면 스크린샷 없음 |
+| `placeholder-as-label` | 입력칸에 라벨 없이 placeholder만 | — | ➖ 문서로 판단 불가 | ➖ 검색창은 라벨 대신 대상 선택 드롭다운("서버 이름")만 있음. 입력칸 라벨 여부는 판단 불가 |
+| `div-controls` | 환경·사양 선택, 공개 토글, 목록 선택이 div | 공개 토글 상태를 몰라 CSS로 찍어 누름, 우연히 성공 ([F2](docs/analysis-v1.md)) | ➖ DOM 구조는 문서로 판단 불가 | ➖ DOM 구조는 이미지로 판단 불가 |
+| `typed-confirmation` | 이름을 입력해야 "확인" 활성화, 버튼이 동작을 말하지 않음 | 이름 입력 자체는 에이전트가 잘 처리 | ✅ 버킷 삭제 시 버킷 이름을 입력해 확인. 서버 반납은 확인 팝업 [예] → 진행 팝업 [확인] [^bucket] [^return] | ➖ 팝업 스크린샷 없음 |
 
-✅ 같은 패턴 확인 · ⚠️ 부분 일치 · ❌ NCP는 이 문제가 없음 · ➖ 문서로는 판단 불가
+✅ 같은 패턴 확인 · ⚠️ 부분 일치 · ❌ NCP는 이 문제가 없음 · ➖ 판단 불가
 
-**NCP와 다른 점도 그대로 남긴다.** NCP 공식 가이드 기준으로 `icon-only-buttons`(새로고침)와 `hidden-pagination`(검색 없음)은 **v1이 NCP보다 불리하게 설정된 패턴**이다. 이 두 패턴이 원인이 된 v1 실패는 실제 NCP 콘솔에서는 덜 나타날 수 있으므로, v1 → v2 개선 폭의 일부는 과대평가되었을 수 있다. 반대로 서비스 용어, 다단계 생성, 이름 입력 확인, 비동기 반납은 NCP에도 있는 패턴이다.
+**NCP와 다른 점도 그대로 남긴다.** `icon-only-buttons`(새로고침)와 `hidden-pagination`(검색 없음)은 **v1이 NCP보다 불리하게 설정된 패턴**이다. 이 두 패턴이 원인이 된 v1 실패는 실제 NCP 콘솔에서는 덜 나타날 수 있으므로, v1 → v2 개선 폭의 일부는 과대평가되었을 수 있다. 반대로 서비스 용어, 숨은 메뉴, **이유 없이 비활성화된 동작**, 다단계 생성, 이름 입력 확인, 비동기 반납은 NCP에도 있는 패턴이다. 특히 이유 없는 비활성화는 v1 실험에서 에이전트가 "실행 중 서버는 삭제할 방법이 없다"며 포기한 원인과 같은 종류여서, v2의 원칙 P8(할 수 없는 동작은 이유를 말한다)이 실제 콘솔에도 적용될 수 있다는 근거가 된다.
 
-"콘솔 직접 관찰" 칸은 실제 NCP 콘솔에서 리소스를 만들거나 바꾸지 않고 화면만 관찰해 채운다.
+스크린샷 관찰은 공식 가이드에 실린 콘솔 캡처(촬영 시점이 문서마다 다르며 2022~2023년 데이터가 보임)를 기준으로 했다. 실제 콘솔에 로그인해 확인하지는 않았다.
 
 [^screen]: [서버 정보 확인 - Server](https://guide.ncloud-docs.com/docs/server-screen-vpc)
 [^return]: [Server 반납](https://guide.ncloud-docs.com/docs/server-return-vpc)
 [^acg]: [ACG - 사용 가이드](https://guide.ncloud-docs.com/docs/server-acg-vpc)
 [^create]: [서버 생성](https://guide.ncloud-docs.com/docs/server-create-vpc)
 [^bucket]: [버킷 사용](https://guide.ncloud-docs.com/docs/objectstorage-use-bucket)
+[^shot-server]: [서버 정보 확인](https://guide.ncloud-docs.com/docs/server-screen-vpc) 페이지의 Server 화면 캡처
+[^shot-acg]: [ACG](https://guide.ncloud-docs.com/docs/server-acg-vpc) 페이지의 ACG 화면 캡처
+[^shot-bucket]: [버킷 사용](https://guide.ncloud-docs.com/docs/objectstorage-use-bucket) 페이지의 Bucket Management 화면 캡처
 
 ### 스크립트 E2E를 작성하며 먼저 발견한 것
 
