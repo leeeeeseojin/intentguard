@@ -30,11 +30,30 @@ async function stopServer(page: import("@playwright/test").Page, name: string) {
 
 test("소개 화면은 정정된 수치를 보여주고 콘솔로 이어진다", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("어디서 실패할까");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("내 사이트를 쓸 수 있을까요");
+  const example = page.getByRole("figure", { name: "실제 검사 결과 예시" });
+  await expect(example).toContainText("my-dugout.vercel.app");
+  await expect(example).toContainText("경기가 시작되지 않음");
+  await expect(example).toContainText("2번 막힘");
   const row = page.getByRole("region", { name: "경로별 결과 표" }).getByRole("row", { name: /확인된 성공률/ });
   await expect(row.getByRole("cell")).toHaveText(["53% (16/30)", "100% (30/30)", "73% (22/30)"]);
   await page.getByRole("link", { name: "개선된 v2 체험" }).click();
   await expect(page.getByRole("rowheader", { name: "log-collector-prod" })).toBeVisible();
+});
+
+test("실제 검사 기록은 시킨 일·판정·화면을 보여주고 내 URL 명령을 만든다", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("group", { name: "모델별 결과" }).getByRole("button")).not.toHaveCount(0);
+  await page.getByLabel("테스트한 사이트").selectOption({ label: "deallens-jet.vercel.app" });
+  await page.getByRole("button", { name: /gpt-oss.*실패했는데 성공으로 보고/ }).click();
+  const shot = page.getByRole("img", { name: /gpt-oss/ });
+  await shot.scrollIntoViewIfNeeded();
+  await expect.poll(() => shot.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1280);
+
+  await page.getByLabel("검사할 주소").fill("https://example.com/");
+  await page.getByLabel("시킬 일").fill("요금 안내를 열어줘");
+  await page.getByLabel("끝났을 때 보여야 할 글자").fill("요금");
+  await expect(page.getByLabel("실행 명령")).toHaveValue("pnpm exec tsx src/audit/cli.ts --url 'https://example.com/' --task '요금 안내를 열어줘' --expect '요금'");
 });
 
 test("v1은 서버 없이 동작하고 새로고침 전까지 목록이 그대로인 특성도 유지한다", async ({ page }) => {
