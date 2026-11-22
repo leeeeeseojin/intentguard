@@ -19,6 +19,16 @@ export interface MiniCloudOptions {
   now?: () => Date;
 }
 
+/** 저장했다가 되살릴 수 있는 MiniCloud 전체 상태 */
+export interface MiniCloudState {
+  state: CloudState;
+  audit: AuditEntry[];
+  seq: number;
+  idCounter: number;
+  /** 생성이 끝나면 공인 IP를 받을 서버 id */
+  awaitingIp: string[];
+}
+
 const NAME_PATTERN = /^[a-z][a-z0-9-]{2,30}$/;
 
 export class MiniCloud {
@@ -26,6 +36,7 @@ export class MiniCloud {
   private audit: AuditEntry[] = [];
   private seq = 0;
   private idCounter = 100;
+  private awaitingIp = new Set<string>();
   private timers = new Set<ReturnType<typeof setTimeout>>();
   private readonly delay: number;
   private readonly now: () => Date;
@@ -42,6 +53,27 @@ export class MiniCloud {
     this.audit = [];
     this.seq = 0;
     this.idCounter = 100;
+    this.awaitingIp.clear();
+  }
+
+  // ---------- 저장·복원 ----------
+
+  exportState(): MiniCloudState {
+    return structuredClone({ state: this.state, audit: this.audit, seq: this.seq, idCounter: this.idCounter, awaitingIp: [...this.awaitingIp] });
+  }
+
+  /** 타이머는 저장되지 않으므로 전이 중이던 서버는 전이를 다시 예약한다. */
+  importState(saved: MiniCloudState) {
+    this.reset();
+    const { state, audit, seq, idCounter, awaitingIp } = structuredClone(saved);
+    this.state = state;
+    this.audit = audit;
+    this.seq = seq;
+    this.idCounter = idCounter;
+    this.awaitingIp = new Set(awaitingIp);
+    for (const instance of [...state.instances]) {
+      if (instance.status !== "running" && instance.status !== "stopped") this.later(() => this.settle(instance));
+    }
   }
 
   // ---------- 조회 ----------
@@ -121,10 +153,8 @@ export class MiniCloud {
         monthlyCost: SPEC_MONTHLY_COST[input.spec],
       };
       this.state.instances.push(instance);
-      this.later(() => {
-        instance.status = "running";
-        if (input.assignPublicIp) instance.publicIp = `211.188.99.${this.idCounter % 250}`;
-      });
+      if (input.assignPublicIp) this.awaitingIp.add(instance.id);
+      this.later(() => this.settle(instance));
       return { ...instance };
     });
   }
@@ -136,7 +166,7 @@ export class MiniCloud {
         throw new CloudError("INVALID_STATE", `'${instance.name}'은(는) 실행 중이 아닙니다 (현재: ${instance.status}).`, "실행 중인 서버만 정지할 수 있습니다.");
       }
       instance.status = "stopping";
-      this.later(() => (instance.status = "stopped"));
+      this.later(() => this.settle(instance));
       return { ...instance };
     });
   }
@@ -148,7 +178,7 @@ export class MiniCloud {
         throw new CloudError("INVALID_STATE", `'${instance.name}'은(는) 정지 상태가 아닙니다 (현재: ${instance.status}).`, "정지된 서버만 시작할 수 있습니다.");
       }
       instance.status = "starting";
-      this.later(() => (instance.status = "running"));
+      this.later(() => this.settle(instance));
       return { ...instance };
     });
   }
@@ -165,9 +195,7 @@ export class MiniCloud {
         );
       }
       instance.status = "deleting";
-      this.later(() => {
-        this.state.instances = this.state.instances.filter((i) => i.id !== id);
-      });
+      this.later(() => this.settle(instance));
       return { ...instance };
     });
   }
@@ -259,6 +287,25 @@ export class MiniCloud {
     const found = this.state.buckets.find((b) => b.id === id);
     if (!found) throw new CloudError("NOT_FOUND", `버킷을 찾을 수 없습니다: ${id}`);
     return found;
+  }
+
+  /** 전이 상태를 최종 상태로 넘긴다. */
+  private settle(instance: Instance) {
+    switch (instance.status) {
+      case "creating":
+        instance.status = "running";
+        if (this.awaitingIp.delete(instance.id)) instance.publicIp = `211.188.99.${Number(instance.id.slice(4)) % 250}`;
+        break;
+      case "starting":
+        instance.status = "running";
+        break;
+      case "stopping":
+        instance.status = "stopped";
+        break;
+      case "deleting":
+        this.state.instances = this.state.instances.filter((i) => i.id !== instance.id);
+        break;
+    }
   }
 
   private later(fn: () => void) {

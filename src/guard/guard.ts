@@ -26,6 +26,13 @@ export interface PendingResponse {
   message: string;
 }
 
+/** 저장했다가 되살릴 수 있는 IntentGuard 상태 */
+export interface IntentGuardState {
+  approvals: Approval[];
+  counter: number;
+  paused: boolean;
+}
+
 export interface IntentGuardOptions {
   /** false면 승인 정책을 끈다 (일시정지는 계속 동작) */
   enabled?: boolean;
@@ -58,6 +65,17 @@ export class IntentGuard {
     this.approvals = [];
     this.counter = 0;
     this.paused = false;
+  }
+
+  exportState(): IntentGuardState {
+    return structuredClone({ approvals: this.approvals, counter: this.counter, paused: this.paused });
+  }
+
+  importState(saved: IntentGuardState) {
+    const { approvals, counter, paused } = structuredClone(saved);
+    this.approvals = approvals;
+    this.counter = counter;
+    this.paused = paused;
   }
 
   get isPaused() {
