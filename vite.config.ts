@@ -1,5 +1,28 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
+import { summarize } from "./src/bench/summary";
+
+const root = fileURLToPath(new URL(".", import.meta.url));
+
+/** 소개 화면의 수치를 실행 기록에서 빌드 시점에 계산한다. */
+function benchSummary(): Plugin {
+  const id = "virtual:bench-summary";
+  return {
+    name: "bench-summary",
+    resolveId: (source) => (source === id ? `\0${id}` : null),
+    load: (resolved) => (resolved === `\0${id}` ? `export default ${JSON.stringify(summarize(root))}` : null),
+  };
+}
+
+/** 로컬 미리보기에도 배포와 같은 보안 헤더를 건다. */
+function deployHeaders(): Record<string, string> {
+  const config = JSON.parse(readFileSync(new URL("./vercel.json", import.meta.url), "utf8")) as {
+    headers: { headers: { key: string; value: string }[] }[];
+  };
+  return Object.fromEntries(config.headers.flatMap((h) => h.headers.map(({ key, value }) => [key, value])));
+}
 
 /**
  * 브라우저 주소창으로 /api/* 를 직접 여는 요청(top-level navigation)을 막는다.
@@ -23,13 +46,15 @@ function blockApiNavigation(): Plugin {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   root: "web",
-  plugins: [react(), blockApiNavigation()],
+  plugins: [react(), blockApiNavigation(), benchSummary()],
   server: {
     port: Number(process.env.WEB_PORT ?? 5173),
     strictPort: true,
-    proxy: { "/api": `http://localhost:${process.env.API_PORT ?? 8787}` },
+    // 데모는 서버 없이 돌아야 하므로 프록시를 두지 않는다.
+    proxy: mode === "demo" ? undefined : { "/api": `http://localhost:${process.env.API_PORT ?? 8787}` },
   },
+  preview: mode === "demo" ? { headers: deployHeaders() } : undefined,
   build: { outDir: "../dist", emptyOutDir: true },
-});
+}));
