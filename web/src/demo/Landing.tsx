@@ -1,6 +1,7 @@
 import { useState } from "react";
 import summary from "virtual:bench-summary";
 import type { PathKey, PathSummary } from "../../../src/bench/summary";
+import { StopCompare } from "./StopCompare";
 import "./landing.css";
 
 const REPO = "https://github.com/leeeeeseojin/intentguard";
@@ -91,88 +92,109 @@ function AgentTrial() {
 export function Landing() {
   return (
     <div className="landing">
-      <header className="hero">
-        <div className="wrap">
-          <p className="product">IntentGuard · Agent UX Lab</p>
-          <h1>에이전트가 쓰는 클라우드 콘솔은 어디서 실패할까?</h1>
-          <p className="lead">
-            같은 과제를 {summary.totalRuns}번 시키고 실패를 화면 개선으로 바꿨습니다. 결과까지 확인한 성공은{" "}
-            <strong>
-              {pct(summary.paths.v1.verified, summary.paths.v1.runs)}에서 {pct(summary.paths.v2.verified, summary.paths.v2.runs)}로
-            </strong>{" "}
-            늘었습니다.
-          </p>
-          <nav className="actions" aria-label="체험">
-            <a className="cta" href="/?ui=v2">개선된 v2 체험</a>
-            <a className="cta secondary" href="/?ui=v1">기존 v1 체험</a>
-            <a className="cta secondary" href={REPO}>GitHub</a>
-          </nav>
-          <p className="disclaimer">
-            MiniCloud는 NAVER Cloud Platform 공식 가이드를 참고한 비공식 모의 콘솔입니다. 실제 NCP와 연결되지 않으며, 바꾼 내용은 이 탭에만 저장됩니다.
-          </p>
+      <div className="landing-top">
+        <p className="product">IntentGuard</p>
+        <nav className="site-nav" aria-label="이 페이지">
+          <a href="#result">결과</a>
+          <a href="#findings">발견</a>
+          <a href="#try-human">체험</a>
+        </nav>
+        <a className="cta compact" href="/?ui=v2">콘솔 열기</a>
+      </div>
+
+      <header>
+        <div className="hero">
+          <div>
+            <h1>
+              에이전트가 쓰는 콘솔은
+              <em>어디서 실패할까요?</em>
+            </h1>
+            <p className="lead">
+              클라우드 콘솔에서 과제를 {summary.totalRuns}번 시키고 실패를 화면 개선으로 바꿨습니다. 결과까지 확인한 성공은{" "}
+              <strong>
+                {pct(summary.paths.v1.verified, summary.paths.v1.runs)}에서 {pct(summary.paths.v2.verified, summary.paths.v2.runs)}로
+              </strong>{" "}
+              늘었습니다.
+            </p>
+            <nav className="actions" aria-label="체험">
+              <a className="cta" href="/?ui=v2">개선된 v2 체험</a>
+              <a className="cta secondary" href="/?ui=v1">기존 v1 체험</a>
+            </nav>
+          </div>
+          <StopCompare />
         </div>
+        <p className="disclaimer">
+          MiniCloud는 NAVER Cloud Platform 공식 가이드를 참고한 비공식 모의 콘솔입니다. 실제 NCP와 연결되지 않으며, 바꾼 내용은 이 탭에만 저장됩니다.
+        </p>
       </header>
 
-      <main className="wrap">
-        <section aria-labelledby="result">
-          <h2 id="result">결과</h2>
-          <p>{summary.model}에게 과제 {summary.scenarios.length}개를 경로별로 3번씩 시켰습니다.</p>
-          <div className="scroll" role="region" aria-label="경로별 결과 표" tabIndex={0}>
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">지표</th>
-                  {PATHS.map((p) => <th scope="col" key={p.key}>{p.label}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {METRICS.map((m) => (
-                  <tr key={m.label}>
-                    <th scope="row">{m.label}</th>
-                    {PATHS.map((p) => (
-                      <td key={p.key}>
-                        {m.value(summary.paths[p.key])}
-                        {m.note && <small> ({m.note(summary.paths[p.key])})</small>}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <main>
+        <section className="chapter wide" aria-labelledby="result">
+          <div className="chapter-head">
+            <h2 id="result">성공보다 중요한 건 확인된 성공</h2>
+            <p>{summary.model}에게 과제 {summary.scenarios.length}개를 경로별로 3번씩 시켰습니다.</p>
+            <p className="fine">
+              성공은 서버 상태와 감사 로그로 채점했습니다. 확인된 성공은 그중 에이전트가 최종 상태까지 확인했다고 보고한 실행입니다.
+            </p>
           </div>
-          <p className="fine">
-            성공은 서버 상태와 감사 로그로 채점했습니다. 확인된 성공은 그중 에이전트가 최종 상태까지 확인했다고 보고한 실행입니다.
-          </p>
-
-          <details>
-            <summary>과제별 결과 보기</summary>
-            <div className="scroll" role="region" aria-label="과제별 결과 표" tabIndex={0}>
+          <div>
+            <div className="scroll" role="region" aria-label="경로별 결과 표" tabIndex={0}>
               <table>
-                <caption>확인된 성공 / 실행 수 · 평균 턴</caption>
                 <thead>
                   <tr>
-                    <th scope="col">과제</th>
+                    <th scope="col">지표</th>
                     {PATHS.map((p) => <th scope="col" key={p.key}>{p.label}</th>)}
                   </tr>
                 </thead>
                 <tbody>
-                  {summary.scenarios.map((s) => (
-                    <tr key={s.id}>
-                      <th scope="row">{s.title}</th>
+                  {METRICS.map((m) => (
+                    <tr key={m.label}>
+                      <th scope="row">{m.label}</th>
                       {PATHS.map((p) => (
-                        <td key={p.key}>{s.paths[p.key].verified}/{s.paths[p.key].runs} · {s.paths[p.key].turns.toFixed(0)}턴</td>
+                        <td key={p.key}>
+                          {m.value(summary.paths[p.key])}
+                          {m.note && <small> ({m.note(summary.paths[p.key])})</small>}
+                        </td>
                       ))}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </details>
+
+            <details>
+              <summary>과제별 결과 보기</summary>
+              <div className="scroll" role="region" aria-label="과제별 결과 표" tabIndex={0}>
+                <table>
+                  <caption>확인된 성공 / 실행 수 · 평균 턴</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">과제</th>
+                      {PATHS.map((p) => <th scope="col" key={p.key}>{p.label}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summary.scenarios.map((s) => (
+                      <tr key={s.id}>
+                        <th scope="row">{s.title}</th>
+                        {PATHS.map((p) => (
+                          <td key={p.key}>{s.paths[p.key].verified}/{s.paths[p.key].runs} · {s.paths[p.key].turns.toFixed(0)}턴</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
         </section>
 
-        <section aria-labelledby="findings">
-          <h2 id="findings">실행 기록에서 찾은 것</h2>
-          <ol className="findings">
+        <section className="chapter wide" aria-labelledby="findings">
+          <div className="chapter-head">
+            <h2 id="findings">실행 기록에서 찾은 것</h2>
+            <p>에이전트의 행동과 마지막 보고를 실제 상태와 하나씩 대조했습니다.</p>
+          </div>
+          <ul className="findings">
             {FINDINGS.map((f) => (
               <li key={f.title}>
                 <h3>{f.title}</h3>
@@ -180,40 +202,60 @@ export function Landing() {
                 <p className="change">고친 것: {f.change}</p>
               </li>
             ))}
-          </ol>
+          </ul>
         </section>
 
-        <section aria-labelledby="try-human">
-          <h2 id="try-human">사람으로 체험하기</h2>
-          <ol className="steps">
+        <section className="chapter" aria-labelledby="try-human">
+          <div className="chapter-head">
+            <h2 id="try-human">사람으로 체험하기</h2>
+            <p>설치도 로그인도 필요 없습니다. 휴대폰에서도 됩니다.</p>
+          </div>
+          <ol className="guide">
             <li><a href="/?ui=v1">v1</a>에서 서버를 정지해 보세요. 목록은 새로고침 버튼을 누르기 전까지 그대로입니다.</li>
             <li><a href="/?ui=v2">v2</a>에서 같은 작업을 해 보세요. 상태가 스스로 바뀝니다.</li>
             <li>v2 위쪽의 "에이전트 요청 보내기"로 위험한 요청을 만들고, 감독 패널에서 승인하거나 거절해 보세요.</li>
           </ol>
         </section>
 
-        <section aria-labelledby="try-agent">
-          <h2 id="try-agent">내 에이전트로 시험하기</h2>
-          <p>Playwright MCP처럼 브라우저를 조작할 수 있는 에이전트에게 아래 문장을 보내세요.</p>
+        <section className="chapter" aria-labelledby="try-agent">
+          <div className="chapter-head">
+            <h2 id="try-agent">내 에이전트로 시험하기</h2>
+            <p>Playwright MCP처럼 브라우저를 조작할 수 있는 에이전트에게 이 문장을 보내세요.</p>
+          </div>
           <AgentTrial />
         </section>
 
-        <section aria-labelledby="limits">
-          <h2 id="limits">이 숫자의 한계</h2>
-          <ul className="steps">
+        <section className="chapter" aria-labelledby="limits">
+          <div className="chapter-head">
+            <h2 id="limits">이 숫자의 한계</h2>
+            <p className="more">
+              <a href={doc("docs/analysis-v1.md")}>실패 분석</a>
+              <a href={doc("docs/analysis-v2.md")}>개선 검증</a>
+              <a href={doc("docs/results/final-comparison.md")}>전체 리포트</a>
+            </p>
+          </div>
+          <ul className="guide">
             <li>표는 측정 당시 화면의 결과입니다. 이후 고친 화면과 이 공개 데모로는 아직 재측정하지 않았습니다.</li>
             <li>확인 여부는 AI가 단독으로 검수했습니다. <a href={doc("docs/results/verification-labels.json")}>실행별 근거</a>를 공개합니다.</li>
             <li>모델 1종, 과제당 3회입니다. 시나리오와 채점기를 같은 사람이 만들었고 블라인드 검증이 아닙니다.</li>
             <li>v1에는 NCP보다 불리하게 만든 패턴이 2개 있어 개선 폭이 과대평가됐을 수 있습니다.</li>
             <li>승인 패널은 협업 UX 프로토타입입니다. 인증이 없으므로 실제 권한 경계가 아닙니다.</li>
           </ul>
-          <p className="more">
-            <a href={doc("docs/analysis-v1.md")}>실패 분석</a>
-            <a href={doc("docs/analysis-v2.md")}>개선 검증</a>
-            <a href={doc("docs/results/final-comparison.md")}>전체 리포트</a>
-          </p>
         </section>
       </main>
+
+      <section className="closing" aria-labelledby="closing">
+        <h2 id="closing">사람과 에이전트가 함께 쓰는 콘솔</h2>
+        <div className="actions">
+          <a className="cta" href="/?ui=v2">v2 콘솔 열기</a>
+          <a className="cta secondary" href={REPO}>GitHub에서 보기</a>
+        </div>
+      </section>
+
+      <footer className="site-foot">
+        <p>IntentGuard · Agent UX Lab</p>
+        <p>NAVER Cloud Platform과 관계없는 개인 프로젝트</p>
+      </footer>
     </div>
   );
 }
