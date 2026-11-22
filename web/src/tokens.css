@@ -1,0 +1,43 @@
+/* IntentGuard 디자인 토큰 — DealLens의 칸 없는 선택지를 파란색으로 옮기고, 가독성을 위해 글자는 7:1 이상 대비로 잡았다. */
+:root {
+  color-scheme: light;
+
+  --b-950: #0b2150;
+  --b-900: #12357d;
+  --b-800: #123a8c;
+  --b-700: #123f9f;
+  --b-600: #1747b5;
+  --b-500: #1f5ed8;
+
+  /* 흰 글자를 올려도 4.5:1을 넘는 단계를 primary로 쓴다. */
+  --brand: var(--b-600);
+  --brand-dark: var(--b-700);
+
+  --text: #0c121d;
+  --text-2: #212a39;
+  --muted: #333d4e;
+
+  --danger: #930f19;
+  --warn: #633c00;
+  --ok: #07502f;
+
+  /* 바탕은 흰색. 그라데이션은 로고·큰 제목·주요 버튼에만 쓴다. */
+  --bg: #fff;
+  --wash: #f5f8fd;
+  --brand-gradient: linear-gradient(100deg, #0b2150 0%, var(--b-600) 45%, #2877ee 100%);
+  --brand-fill: linear-gradient(120deg, var(--b-900) 0%, var(--b-600) 100%);
+  --shadow-action: 0 12px 24px -14px rgb(23 71 181 / 0.85);
+  --popover: #fff;
+  /* 선 대신 면의 농도로 나눈다. */
+  --field: #e1ebfb;
+  --shadow-pop: 0 12px 28px -14px rgb(40 70 130 / 0.35);
+  --shadow-float: 0 2px 4px rgb(40 70 130 / 0.06), 0 24px 48px -18px rgb(40 70 130 / 0.38);
+
+  /* 채운 면은 주요 버튼과 떠 있는 층(목록·모달)에만. 나머지는 여백과 면의 농도로 나눈다. */
+  --r-action: 10px; /* 주요 행동 버튼 */
+  --r-scene: 18px; /* 첫 화면의 체험 영역만 */
+  --r-control: 6px;
+  --r-surface: 8px;
+
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
