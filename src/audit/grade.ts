@@ -7,10 +7,17 @@ import type { GradeResult } from "../bench/types.js";
 
 const checkSchema = z.object({
   /** CSS 또는 Playwright 선택자 */
-  selector: z.string().min(1),
+  selector: z.string().min(1).optional(),
+  /** 화면에서 사라질 수 있는 설정은 localStorage의 JSON 값으로 채점한다. */
+  storage: z.object({ key: z.string(), equals: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])) }).optional(),
   /** 보이는 글자에 포함돼야 하는 문자열 */
   text: z.string().optional(),
-});
+  /** 리포트에 보여줄 사람 말 */
+  label: z.string().optional(),
+}).refine((check) => !!check.selector !== !!check.storage, "selector와 storage 중 하나만 적어야 합니다.");
+
+export const describeCheck = ({ selector, storage, text, label }: z.infer<typeof checkSchema>) =>
+  label ?? (storage ? `${storage.key} = ${JSON.stringify(storage.equals)}` : text ? `${selector} 안에 "${text}"가 보임` : `${selector} 보임`);
 
 export const specSchema = z.object({
   url: z.url(),
@@ -23,13 +30,28 @@ export const specSchema = z.object({
 
 export type Check = z.infer<typeof checkSchema>;
 
+export function storedMatches(raw: string | null, expected: Record<string, unknown>): boolean {
+  try {
+    const value = JSON.parse(raw ?? "null") as Record<string, unknown> | null;
+    return !!value && Object.entries(expected).every(([key, want]) => value[key] === want);
+  } catch {
+    return false;
+  }
+}
+
 async function failedChecks(page: Page, checks: Check[]): Promise<string[]> {
   const failed: string[] = [];
-  for (const { selector, text } of checks) {
-    let found = page.locator(selector);
+  for (const check of checks) {
+    const { selector, storage, text } = check;
+    if (storage) {
+      const raw = await page.evaluate((key) => localStorage.getItem(key), storage.key);
+      if (!storedMatches(raw, storage.equals)) failed.push(`충족 안 됨: ${describeCheck(check)}`);
+      continue;
+    }
+    let found = page.locator(selector!);
     if (text) found = found.filter({ hasText: text });
     const visible = await found.filter({ visible: true }).count();
-    if (!visible) failed.push(`보이지 않음: ${selector}${text ? ` "${text}"` : ""}`);
+    if (!visible) failed.push(`충족 안 됨: ${describeCheck(check)}`);
   }
   return failed;
 }
