@@ -2,7 +2,12 @@ import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import { AppV2 } from "./v2/AppV2";
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+import "./tokens.css";
+import "./base.css";
 import "./styles.css";
+import "./controls.css";
+import "./console-theme.css";
 import "./v2/styles-v2.css";
 
 // ?ui=v2 로 개선된 콘솔을 연다. 기본값은 v1 (실험 기준선).

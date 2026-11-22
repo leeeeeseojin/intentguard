@@ -1,0 +1,73 @@
+/*
+ * 선택 컨트롤(드롭다운).
+ * 네이티브 <select>를 유지해 키보드·폰·에이전트의 select_option이 그대로 동작하고, 겉모습만 작업 메뉴와 맞춘다.
+ * base-select를 지원하는 브라우저는 펼친 목록까지, 나머지는 닫힌 모양만 바뀐다(목록은 OS 기본).
+ */
+:is(.input, .trial select, .demo-bar select):where(select) {
+  appearance: none;
+  padding-right: 30px;
+  background-image: url("/chevron.svg");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px 8px;
+  cursor: pointer;
+}
+
+@supports (appearance: base-select) {
+  :is(.input, .trial select, .demo-bar select):where(select),
+  :is(.input, .trial select, .demo-bar select):where(select)::picker(select) {
+    appearance: base-select;
+  }
+
+  :is(.input, .trial select, .demo-bar select):where(select) {
+    align-items: center;
+    min-width: 120px;
+    border: 0;
+    color: var(--text);
+  }
+
+  .demo-bar select:where(select) {
+    color: var(--brand-dark);
+  }
+
+  /* 화살표는 위의 배경 그림 하나만 쓴다. */
+  select::picker-icon {
+    display: none;
+  }
+
+  select::picker(select) {
+    margin-top: 4px;
+    padding: 4px 0;
+    border: 0;
+    border-radius: var(--r-control);
+    background: var(--popover);
+    box-shadow: var(--shadow-pop);
+  }
+
+  select option {
+    align-items: center;
+    min-height: 42px;
+    padding: 9px 14px;
+    background: none;
+    color: var(--text-2);
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    outline: 0;
+    color: var(--brand-dark);
+    background: var(--field);
+  }
+
+  select option:checked {
+    color: var(--brand-dark);
+    font-weight: 750;
+  }
+
+  select option::checkmark {
+    display: none;
+  }
+}
