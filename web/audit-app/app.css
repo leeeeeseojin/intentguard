@@ -1,0 +1,482 @@
+/* 검사 앱. 소개 사이트와 같은 흰 바탕·파란 포인트. 선과 상자 대신 여백과 면의 농도로 나눈다. */
+.app {
+  --gutter: max(28px, calc((100% - 1160px) / 2));
+  padding: 0 var(--gutter) calc(72px + env(safe-area-inset-bottom, 0px));
+  font-size: 18px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.app :is(h1, h2, h3, p, dl, dd, figure) {
+  margin: 0;
+}
+
+.app :is(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 16px;
+  padding: calc(20px + env(safe-area-inset-top, 0px)) 0 20px;
+}
+
+.product {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 21px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.top p,
+.hint,
+.app small,
+.app figcaption,
+.compare caption {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.app small {
+  display: block;
+  font-weight: 500;
+}
+
+[data-tone="good"] {
+  color: var(--ok);
+}
+
+[data-tone="warn"] {
+  color: var(--warn);
+}
+
+[data-tone="bad"] {
+  color: var(--danger);
+}
+
+[data-tone="none"] {
+  color: var(--text-2);
+}
+
+.app .notice {
+  margin: 16px 0;
+  color: var(--warn);
+  font-weight: 650;
+}
+
+/* ---------- 새 검사 ---------- */
+.new {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 36px 72px;
+  padding: 56px 0;
+}
+
+.new h1 {
+  color: var(--b-950);
+  font-size: clamp(30px, 4vw, 50px);
+  font-weight: 750;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+}
+
+.new h1 em {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: normal;
+}
+
+.new-head p {
+  margin-top: 22px;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.form {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field > span,
+.form legend {
+  padding: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: var(--r-control);
+  background: var(--field);
+  font-size: 17px;
+  resize: vertical;
+}
+
+.form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 9px 0;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.choice input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--brand);
+}
+
+.models {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 20px;
+}
+
+.primary,
+.quiet {
+  min-height: 50px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--r-action);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.primary {
+  justify-self: start;
+  background: var(--brand-fill);
+  box-shadow: var(--shadow-action);
+  color: #fff;
+}
+
+.quiet {
+  padding: 0 10px;
+  background: none;
+  color: var(--brand-dark);
+}
+
+.primary:disabled,
+.quiet:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* ---------- 지난 검사 ---------- */
+.history {
+  padding: 40px 0 0;
+}
+
+.history h2 {
+  margin-bottom: 12px;
+  color: var(--b-950);
+  font-size: 24px;
+}
+
+.history a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 4px 20px;
+  margin: 0 -12px;
+  padding: 13px 12px;
+  border-radius: var(--r-control);
+  color: var(--text);
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.history a:hover {
+  background: var(--wash);
+}
+
+.history-site {
+  font-weight: 700;
+}
+
+.history-state {
+  color: var(--brand-dark);
+  font-weight: 650;
+  text-align: right;
+}
+
+/* ---------- 진행·결과 ---------- */
+.audit {
+  padding-top: 44px;
+}
+
+.audit-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 32px;
+}
+
+.audit-head > div:first-child {
+  flex: 1 1 420px;
+  min-width: 0;
+}
+
+.audit h1 {
+  color: var(--b-950);
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.35;
+}
+
+.eyebrow {
+  color: var(--brand-dark);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.brief,
+.versus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 52px;
+  margin-top: 24px !important;
+}
+
+.brief div,
+.versus div {
+  min-width: 0;
+}
+
+.brief dt,
+.versus dt {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.brief dd {
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.versus dd {
+  font-size: 22px;
+  font-weight: 750;
+}
+
+.compare {
+  width: 100%;
+  margin-top: 40px;
+  border-collapse: collapse;
+  font-size: 17px;
+  text-align: left;
+}
+
+.compare caption {
+  padding-bottom: 8px;
+  text-align: left;
+}
+
+.compare th,
+.compare td {
+  padding: 10px 14px 10px 0;
+  vertical-align: top;
+}
+
+.runs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 40px;
+}
+
+.run {
+  display: grid;
+  flex: 1 1 200px;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: var(--r-control);
+  background: none;
+  font-size: 16px;
+  text-align: left;
+}
+
+.run[aria-pressed="true"] {
+  background: var(--field);
+}
+
+.result {
+  padding-top: 48px;
+}
+
+.verdict {
+  font-size: clamp(34px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.app .meaning {
+  margin-top: 8px;
+  color: var(--text-2);
+}
+
+.evidence {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: start;
+  gap: 28px 48px;
+  margin-top: 40px;
+}
+
+.evidence:not(:has(figure)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.evidence img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-surface);
+  box-shadow: var(--shadow-pop);
+}
+
+.evidence figcaption {
+  margin-top: 10px;
+}
+
+.findings {
+  min-width: 0;
+}
+
+.findings h3 {
+  margin: 30px 0 10px;
+  color: var(--b-900);
+  font-size: 20px;
+}
+
+.findings h3:first-child {
+  margin-top: 0;
+}
+
+.checks li {
+  display: flex;
+  gap: 14px;
+  padding: 5px 0;
+  font-size: 17px;
+}
+
+.checks li > strong {
+  flex: none;
+  min-width: 52px;
+}
+
+.advice li + li {
+  margin-top: 18px;
+}
+
+.advice p,
+.answer {
+  color: var(--text-2);
+  font-size: 17px;
+}
+
+.answer {
+  white-space: pre-line;
+}
+
+.advice code {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.findings details {
+  margin-top: 24px;
+}
+
+.findings summary {
+  width: fit-content;
+  min-height: 44px;
+  padding: 8px 0;
+  color: var(--brand-dark);
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.app .steps {
+  margin-top: 16px;
+  padding-left: 30px;
+  list-style: decimal;
+  color: var(--text-2);
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  .new,
+  .evidence {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .new {
+    padding-top: 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .app {
+    --gutter: 20px;
+    font-size: 17px;
+  }
+
+  .models,
+  .history a {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .history-state {
+    text-align: left;
+  }
+
+  .form > .primary {
+    justify-self: stretch;
+  }
+
+  .compare {
+    font-size: 15px;
+  }
+}
