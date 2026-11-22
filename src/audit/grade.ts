@@ -1,4 +1,4 @@
-import type { BrowserContext, Page } from "@playwright/test";
+import type { BrowserContext, Dialog, Page } from "@playwright/test";
 import { z } from "zod";
 import type { MiniCloudState } from "../domain/store.js";
 import type { IntentGuardState } from "../guard/guard.js";
@@ -141,8 +141,15 @@ export async function gradeScreen(context: BrowserContext, origin: string, check
     const screen = page;
     const url = screen.url();
     // reload()는 폼 전송을 다시 보낼 수 있고, 해시만 같은 goto는 화면을 다시 읽지 않는다.
-    await screen.goto("about:blank");
-    await screen.goto(url);
+    // '나가시겠습니까?' 경고는 수락해야 다시 읽을 수 있다.
+    const leave = (dialog: Dialog) => void dialog.accept().catch(() => {});
+    screen.on("dialog", leave);
+    try {
+      await screen.goto("about:blank");
+      await screen.goto(url);
+    } finally {
+      screen.off("dialog", leave);
+    }
     ({ results, page } = await waitForChecks(() => [screen], checks, waitMs));
     reloaded = true;
   }

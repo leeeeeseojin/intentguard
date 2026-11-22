@@ -121,3 +121,15 @@ test("저장 요청이 막힌 채 문구만 뜬 성공에는 주의를 남긴다
     await browser.close();
   }
 });
+
+test("나가기 경고가 있는 화면도 새로고침 기준으로 채점한다", async ({ page }) => {
+  await page.route(`${SITE}/**`, (route) =>
+    route.fulfill({
+      contentType: "text/html; charset=utf-8",
+      body: "<button>편집</button><p>주문 완료</p><script>onbeforeunload = (e) => { e.preventDefault(); return ''; }</script>",
+    }),
+  );
+  await page.goto(`${SITE}/`);
+  await page.getByRole("button").click(); // 경고는 사용자 조작이 있었을 때만 뜬다
+  expect(await gradeScreen(page.context(), SITE, [{ exactText: TEXT }], { waitMs: 800, persist: true })).toMatchObject({ success: true });
+});
