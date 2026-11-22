@@ -37,6 +37,13 @@ const RULES: { kind: string; match: RegExp; fix: string }[] = [
   { kind: "permission-denied", match: /permission check failed/, fix: "막아둔 수단으로 우회를 시도. 화면만으로 부족한 정보가 있는지 확인" },
 ];
 
+/** 긴 호출 로그에서 원인이 적힌 줄을 근거로 남긴다. */
+function evidenceOf(output: string, match?: RegExp): string {
+  const plain = output.replace(/\u001b\[[0-9;]*m/g, "");
+  const line = match && plain.split("\n").find((l) => match.test(l));
+  return (line || plain).replace(/\s+/g, " ").trim().slice(0, 220);
+}
+
 /** 실패한 도구 호출을 원인별로 묶는다. 원인 추정의 출발점이지 확정이 아니다. */
 export function findIssues(calls: ToolCall[]): Issue[] {
   const issues = new Map<string, Issue>();
@@ -46,7 +53,7 @@ export function findIssues(calls: ToolCall[]): Issue[] {
     const kind = rule?.kind ?? "other-tool-error";
     const seen = issues.get(kind);
     if (seen) seen.count++;
-    else issues.set(kind, { kind, count: 1, fix: rule?.fix ?? "원본 로그 확인", evidence: call.resultPreview.replace(/\s+/g, " ").slice(0, 220) });
+    else issues.set(kind, { kind, count: 1, fix: rule?.fix ?? "원본 로그 확인", evidence: evidenceOf(call.resultPreview, rule?.match) });
   }
   return [...issues.values()];
 }
@@ -54,6 +61,11 @@ export function findIssues(calls: ToolCall[]): Issue[] {
 export interface AuditRecord {
   id: string;
   target: string;
+  /** 에이전트에게 시킨 문장 그대로 */
+  task: string;
+  /** 사람이 읽는 성공 조건 */
+  criteria: string[];
+  startedAt: string;
   model: string;
   attempt: number;
   outcome: Outcome;
@@ -72,16 +84,16 @@ export function toMarkdown(records: AuditRecord[]): string {
   const lines = [
     "# 배포 URL 에이전트 검사",
     "",
-    `- 에이전트: Antigravity CLI · ${records[0]?.model ?? "-"}`,
+    `- 에이전트: Antigravity CLI · ${[...new Set(records.map((r) => r.model))].join(", ") || "-"}`,
     `- 유효 실행 ${valid.length}/${records.length} · 성공 ${ok} · 확인된 성공 ${confirmed}`,
     "- 채점: 같은 브라우저의 최종 상태. 확인 여부: 에이전트가 남긴 RESULT 표식",
     "- 단계 수는 모델 응답 횟수라서 Claude Code 실험의 턴 수와 비교할 수 없다",
     "",
-    "| 과제 | 대상 | 회차 | 판정 | 단계 | 시간 | 막힌 곳 | 채점 근거 |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| 모델 | 과제 | 대상 | 회차 | 판정 | 단계 | 시간 | 막힌 곳 | 채점 근거 |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...records.map(
       (r) =>
-        `| ${r.id} | ${cell(r.target)} | ${r.attempt} | ${r.outcome} | ${r.agent.steps} | ${Math.round(r.agent.durationMs / 1000)}초 | ${r.issues.map((i) => `${i.kind}×${i.count}`).join(", ") || "-"} | ${cell(r.grade.notes.join(" / "))} |`,
+        `| ${r.model} | ${r.id} | ${cell(r.target)} | ${r.attempt} | ${r.outcome} | ${r.agent.steps} | ${Math.round(r.agent.durationMs / 1000)}초 | ${r.issues.map((i) => `${i.kind}×${i.count}`).join(", ") || "-"} | ${cell(r.grade.notes.join(" / "))} |`,
     ),
   ];
   const issues = records.flatMap((r) => r.issues.map((i) => ({ r, i })));

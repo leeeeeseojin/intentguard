@@ -6,7 +6,7 @@ import { SCENARIOS } from "../bench/scenarios.js";
 import type { GradeResult } from "../bench/types.js";
 import { runAntigravity } from "./antigravity.js";
 import { openSharedBrowser, type SharedBrowser } from "./browser.js";
-import { gradeMiniCloud, gradeScreen, specSchema } from "./grade.js";
+import { describeCheck, gradeMiniCloud, gradeScreen, specSchema } from "./grade.js";
 import { findIssues, judge, toMarkdown, type AuditRecord } from "./report.js";
 
 /**
@@ -14,12 +14,17 @@ import { findIssues, judge, toMarkdown, type AuditRecord } from "./report.js";
  *   pnpm exec tsx src/audit/cli.ts                                  # 배포된 MiniCloud v2, 과제 10개
  *   pnpm exec tsx src/audit/cli.ts --ui v1,v2 --only create-server
  *   pnpm exec tsx src/audit/cli.ts --spec audits/deallens.json      # 다른 서비스
+ *   pnpm exec tsx src/audit/cli.ts --url https://내.사이트 --task "요금 안내를 열어줘" --expect "월 9,900원"
+ *   --model a,b,c 로 여러 모델을 같은 과제로 돌린다
  */
 const { values } = parseArgs({
   options: {
     spec: { type: "string" },
     url: { type: "string" },
     ui: { type: "string", default: "v2" },
+    task: { type: "string" },
+    expect: { type: "string", multiple: true },
+    "allow-writes": { type: "boolean", default: false },
     only: { type: "string" },
     repeat: { type: "string", default: "1" },
     model: { type: "string", default: "gemini-3.8-flash-low" },
@@ -30,6 +35,7 @@ const { values } = parseArgs({
 
 interface Job {
   id: string;
+  criteria: string[];
   url: string;
   task: string;
   allowWrites: boolean;
@@ -39,14 +45,27 @@ interface Job {
 }
 
 function loadJobs(): Job[] {
-  if (values.spec) {
-    const spec = specSchema.parse(JSON.parse(readFileSync(values.spec, "utf8")));
+  if (values.task && !values.spec && !(values.url && values.expect?.length)) {
+    throw new Error("--task에는 --url과 --expect(끝났을 때 화면에 보여야 할 글자)가 함께 필요합니다.");
+  }
+  if (values.spec || values.task) {
+    const spec = specSchema.parse(
+      values.spec
+        ? JSON.parse(readFileSync(values.spec, "utf8"))
+        : {
+            url: values.url,
+            allowWrites: values["allow-writes"],
+            // --expect는 화면에 보이는 글자. 선택자를 몰라도 쓸 수 있다.
+            scenarios: [{ id: "custom-task", task: values.task, checks: values.expect!.map((t) => ({ selector: `text=${JSON.stringify(t).slice(1, -1)}`, label: `화면에 "${t}"가 보임` })) }],
+          },
+    );
     const url = values.url ?? spec.url;
     const { origin } = new URL(url);
     return spec.scenarios.map(({ id, task, checks }) => ({
       id,
       url,
       task,
+      criteria: checks.map(describeCheck),
       allowWrites: spec.allowWrites,
       alreadyDone: async (b) => (await gradeScreen(b.context, origin, checks, 1000)).success,
       grade: (b) => gradeScreen(b.context, origin, checks),
@@ -55,8 +74,9 @@ function loadJobs(): Job[] {
   const { origin } = new URL(values.url ?? "https://intentguard-plum.vercel.app");
   return values.ui!.split(",").flatMap((ui) => {
     if (ui !== "v1" && ui !== "v2") throw new Error(`--ui는 v1 또는 v2입니다: ${ui}`);
-    return SCENARIOS.map(({ id, prompt }) => ({
+    return SCENARIOS.map(({ id, title, prompt }) => ({
       id,
+      criteria: [`${title}: 저장된 최종 상태와 감사 로그로 채점`],
       url: `${origin}/?ui=${ui}&actor=agent`,
       task: prompt,
       allowWrites: false,
@@ -84,6 +104,7 @@ async function main() {
   if (!Number.isInteger(repeat) || repeat < 1 || !(timeoutMs > 0)) throw new Error("--repeat와 --timeout은 양수여야 합니다.");
 
   const only = values.only?.split(",");
+  const models = values.model!.split(",");
   const jobs = loadJobs().filter((job) => !only || only.includes(job.id));
   if (!jobs.length) throw new Error("실행할 과제가 없습니다. --only 값을 확인하세요.");
 
@@ -92,12 +113,13 @@ async function main() {
   const dir = path.resolve(values.out!, new Date().toISOString().replace(/[:.]/g, "-"));
   mkdirSync(dir);
 
-  console.log(`[audit] Antigravity(${values.model}) · ${jobs.length * repeat}회 · ${dir}`);
+  console.log(`[audit] Antigravity(${models.join(", ")}) · ${jobs.length * models.length * repeat}회 · ${dir}`);
   const records: AuditRecord[] = [];
   let n = 0;
   for (const job of jobs) {
-    for (let attempt = 1; attempt <= repeat; attempt++) {
-      const name = `${String(++n).padStart(2, "0")}-${job.id}`;
+    for (const { model, attempt } of models.flatMap((m) => Array.from({ length: repeat }, (_, i) => ({ model: m, attempt: i + 1 })))) {
+      const name = `${String(++n).padStart(2, "0")}-${job.id}-${model.replace(/[^a-z0-9.-]/gi, "")}`;
+      const startedAt = new Date().toISOString();
       const browser = await openSharedBrowser(job.url, job.allowWrites);
       const workDir = mkdtempSync(path.join(os.tmpdir(), "intentguard-agy-")); // 저장소의 코드·문서가 보이지 않게
       try {
@@ -106,7 +128,7 @@ async function main() {
           workDir,
           cdpEndpoint: browser.cdpEndpoint,
           prompt: buildPrompt(job.url, job.task),
-          model: values.model!,
+          model,
           timeoutMs,
           logPath: path.join(dir, `${name}.jsonl`),
         });
@@ -116,7 +138,10 @@ async function main() {
         const record: AuditRecord = {
           id: job.id,
           target: job.url,
-          model: values.model!,
+          task: job.task,
+          criteria: job.criteria,
+          startedAt,
+          model: agent.model || model,
           attempt,
           outcome: judge(grade, agent),
           grade,
@@ -127,7 +152,7 @@ async function main() {
         records.push(record);
         writeFileSync(path.join(dir, `${name}.json`), JSON.stringify(record, null, 2));
         writeFileSync(path.join(dir, "report.md"), toMarkdown(records));
-        console.log(`[audit] ${name} (${job.url}) → ${record.outcome} · ${agent.steps}단계 · ${Math.round(agent.durationMs / 1000)}초 · ${grade.notes.join(" / ")}`);
+        console.log(`[audit] ${name} [${record.model}] (${job.url}) → ${record.outcome} · ${agent.steps}단계 · ${Math.round(agent.durationMs / 1000)}초 · ${grade.notes.join(" / ")}`);
         if (agent.exit !== "completed") console.log(`[audit]   ${agent.exit}: ${agent.error}`);
         if (agent.outsideTools.length) console.log(`[audit]   화면 밖 도구 사용: ${agent.outsideTools.join(", ")}`);
       } finally {

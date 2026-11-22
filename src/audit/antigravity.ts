@@ -26,6 +26,8 @@ const DENIED = [
 export interface AgentResult {
   exit: "completed" | "timeout" | "error";
   answer: string;
+  /** CLI가 실행을 시작하며 스스로 보고한 모델 */
+  model: string;
   /** 모델 응답 횟수. Claude Code의 num_turns와 세는 방식이 달라 서로 비교하면 안 된다. */
   steps: number;
   durationMs: number;
@@ -46,6 +48,7 @@ export function parseStream(lines: string[]): Omit<AgentResult, "durationMs"> {
   const tokens = { input: 0, cacheRead: 0, output: 0 };
   let steps = 0;
   let answer = "";
+  let model = "";
   let status = "";
   let error = "";
 
@@ -56,6 +59,7 @@ export function parseStream(lines: string[]): Omit<AgentResult, "durationMs"> {
     } catch {
       continue;
     }
+    if (message.init?.model) model = String(message.init.model);
     const step = message.step_update;
     if (step?.step_type === "agent_response" && step.state === "DONE") steps++;
     if (step?.step_type === "tool" && (step.state === "DONE" || step.state === "ERROR")) {
@@ -80,7 +84,7 @@ export function parseStream(lines: string[]): Omit<AgentResult, "durationMs"> {
       tokens.output = message.result.usage?.output_tokens ?? 0;
     }
   }
-  return { exit: status === "SUCCESS" && answer ? "completed" : "error", answer, steps, tokens, calls, outsideTools: [...new Set(outside)], error };
+  return { exit: status === "SUCCESS" && answer ? "completed" : "error", answer, model, steps, tokens, calls, outsideTools: [...new Set(outside)], error };
 }
 
 export function resolveAgy(): string {
