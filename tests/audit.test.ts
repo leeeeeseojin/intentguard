@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { MCP_SERVER, parseStream } from "../src/audit/antigravity.js";
+import { specSchema, storedMatches } from "../src/audit/grade.js";
 import { findIssues, judge, selfReport } from "../src/audit/report.js";
 
 const tool = (tool_name: string, state: string, parameters: object, output = "ok") =>
@@ -21,6 +22,10 @@ describe("Antigravity 출력 해석", () => {
       calls: [{ name: "browser_click", isError: false }],
       outsideTools: [],
     });
+  });
+
+  it("CLI가 보고한 모델명을 남긴다", () => {
+    expect(parseStream([JSON.stringify({ init: { model: "gemini-x" } })]).model).toBe("gemini-x");
   });
 
   it("정상 응답에 담긴 Playwright 오류도 실패한 호출로 센다", () => {
@@ -58,6 +63,10 @@ describe("판정", () => {
     expect(judge(fail, parseStream([browser(), result("")]))).toBe("invalid");
   });
 
+  it.each(["**RESULT:** confirmed", "**RESULT: confirmed**", "RESULT: `confirmed`"])("마크다운으로 꾸민 %s도 읽는다", (answer) => {
+    expect(selfReport(answer)).toBe("confirmed");
+  });
+
   it("본문에서 언급한 표식보다 마지막 표식을 따른다", () => {
     expect(selfReport("RESULT: confirmed 라고 하려 했으나\nRESULT: failed")).toBe("failed");
   });
@@ -65,5 +74,20 @@ describe("판정", () => {
   it("가림은 UX 문제로, 잘못된 target은 도구 사용 오류로 구분한다", () => {
     const { calls } = parseStream([browser("### Error\n<aside> intercepts pointer events"), browser('### Error\n"x" is not a valid target')]);
     expect(findIssues(calls).map((i) => i.kind)).toEqual(["click-blocked", "agent-misuse"]);
+  });
+});
+
+describe("성공 조건", () => {
+  it("저장값은 적어둔 항목이 모두 같을 때만 통과", () => {
+    expect(storedMatches('{"offense":"coach","defense":"me"}', { offense: "coach", defense: "me" })).toBe(true);
+    expect(storedMatches('{"offense":"coach","defense":"coach"}', { offense: "coach", defense: "me" })).toBe(false);
+    expect(storedMatches(null, { offense: "coach" })).toBe(false);
+    expect(storedMatches("{broken", { offense: "coach" })).toBe(false);
+  });
+
+  it("조건에는 selector와 storage 중 하나가 있어야 한다", () => {
+    const spec = (check: object) => ({ url: "https://a.example/", scenarios: [{ id: "x", task: "t", checks: [check] }] });
+    expect(specSchema.safeParse(spec({ label: "빈 조건" })).success).toBe(false);
+    expect(specSchema.safeParse(spec({ selector: "h1" })).success).toBe(true);
   });
 });
