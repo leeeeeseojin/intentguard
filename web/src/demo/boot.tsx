@@ -1,3 +1,4 @@
+import "./zodConfig";
 import type { ReactNode } from "react";
 import { currentActor } from "../api";
 import { startDemoBackend } from "./backend";
