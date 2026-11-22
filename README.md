@@ -109,6 +109,7 @@ src/domain/   MiniCloud 도메인 모델 · 인메모리 저장소 · 감사 로
 src/guard/    IntentGuard — 위험도 판단 · 사람 승인 대기열 · 에이전트 일시정지
 src/server/   Hono REST API  (/api/*)
 src/mcp/      MCP 서버 (stdio) — REST API를 호출하므로 콘솔과 상태를 공유
+src/app/      로컬 검사 앱 서버 · 화면은 web/audit-app/
 src/audit/    배포 URL 검사기 — Antigravity CLI · 브라우저 최종 상태로 채점
 audits/       다른 서비스용 검사 시나리오
 src/bench/    에이전트 벤치마크 — 시나리오 · 드라이버(MCP/Web) · 채점 · 실패 분류 · 리포트
@@ -242,12 +243,27 @@ pnpm exec vite --mode demo
 - 배포 주소는 https://intentguard-plum.vercel.app 이다. `main`에 푸시하면 [vercel.json](vercel.json) 설정대로 Vercel이 demo 모드로 다시 빌드한다.
 - 데모에는 HTTP API가 없으므로 MCP 경로와 자동 채점 벤치마크는 로컬 서버(`pnpm dev`)에서만 돌아간다.
 
-### 배포된 URL 검사 (로컬 서버 없음)
+### 검사 앱 (내 PC)
 
-JSON 없이 주소, 시킬 일, 끝났을 때 보여야 할 글자만으로 검사할 수 있다.
+주소, 시킬 일, 성공 기준을 넣으면 진행, 판정, 마지막 화면, 볼 곳, 재검사 전후 비교까지 한 화면에서 나온다.
 
 ```bash
-pnpm exec tsx src/audit/cli.ts --url 'https://demo.playwright.dev/todomvc/' --task '할 일에 서버 점검을 추가해줘' --expect '서버 점검'
+pnpm exec playwright install chromium   # 처음 한 번
+pnpm exec tsx src/app/main.ts           # http://127.0.0.1:4717
+```
+
+- 에이전트는 조작만 하고 채점은 코드가 한다. AI에게 채점을 맡기지 않는다.
+- 문구 기준은 **문구 전체가 그대로** 보여야 한다. 숨은 글자, 버튼·링크·메뉴·입력칸의 글자, 다른 문장의 일부는 인정하지 않는다.
+- 저장되는 일은 "새로고침 뒤에도 남아야 함"을 고른다. "화면에 보이면 됨"은 낙관적 업데이트를 구분하지 못한다. 같은 출처의 저장 요청이 실패했을 때는 주의를 표시한다.
+- 새로고침 기준도 서버 저장의 증명은 아니다. localStorage에만 남아도 통과한다.
+- 앱은 127.0.0.1에만 열리고 다른 웹페이지의 요청을 거부한다. 기록은 `.intentguard/app/`에 남는다.
+
+### 배포된 URL 검사 (CLI)
+
+JSON 없이 주소, 시킬 일, 끝났을 때 보여야 할 문구만으로 검사할 수 있다. 문구 규칙은 검사 앱과 같고, 새로고침 뒤에도 남아야 하면 `--persist`를 붙인다.
+
+```bash
+pnpm exec tsx src/audit/cli.ts --url 'https://demo.playwright.dev/todomvc/' --task '할 일에 서버 점검을 추가해줘' --expect '서버 점검' --persist
 ```
 
 여러 모델은 `--model a,b,c`로 돌린다. 서버 데이터를 바꾸는 과제는 본인 테스트 환경에서만 `--allow-writes`를 붙인다. MCP는 검사기가 실행마다 자동으로 연결하므로 따로 설정하지 않는다. 사이트에 공개할 기록은 `pnpm exec tsx src/audit/publish.ts <기록 폴더>`로 만든다.
