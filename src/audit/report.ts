@@ -5,7 +5,7 @@ export type SelfReport = "confirmed" | "unconfirmed" | "failed" | "none";
 
 /** 문장을 정규식으로 해석하면 틀린다. 마지막에 정해진 표식으로 스스로 보고하게 한다. */
 export function selfReport(answer: string): SelfReport {
-  const last = [...answer.matchAll(/RESULT:\s*(confirmed|unconfirmed|failed)\b/g)].at(-1);
+  const last = [...answer.matchAll(/RESULT[*_`\s]*:[*_`\s]*(confirmed|unconfirmed|failed)\b/g)].at(-1);
   return (last?.[1] as SelfReport | undefined) ?? "none";
 }
 
