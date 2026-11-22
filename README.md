@@ -9,7 +9,7 @@
 | 성공 조건 | 막힌 곳: 가려진 버튼, 찾지 못한 요소와 확인할 점 |
 | 모델 (여러 개 가능) | 모델별 비교 |
 
-**써보기 → https://intentguard-plum.vercel.app** · [내 사이트 검사](https://intentguard-plum.vercel.app/#audit) · [실제 기록](https://intentguard-plum.vercel.app/#live) · [실행 방법](#배포된-url-검사-로컬-서버-없음)
+**써보기 → https://intentguard-plum.vercel.app** · [내 사이트 검사](https://intentguard-plum.vercel.app/#audit) · [실제 기록](https://intentguard-plum.vercel.app/#live) · [실행 방법](#검사-앱-내-pc)
 
 검사로 찾은 문제를 고치면 정말 좋아지는지는 **MiniCloud 사례**([기존 v1](https://intentguard-plum.vercel.app/?ui=v1) · [개선 v2](https://intentguard-plum.vercel.app/?ui=v2))로 실험했다. 실패 기록에서 **에이전트 친화 인터페이스 원칙**을 뽑고, **사람·에이전트 협업 UX**(IntentGuard 승인 패널)를 설계했다.
 
@@ -98,7 +98,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
 | 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | ✅ [배포](https://intentguard-plum.vercel.app) |
-| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | CLI ✅ · 실제 기록 공개 ✅ · Skill ⬜ |
+| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · 앱 · Skill | CLI ✅ · 앱 ✅ · 실제 기록 공개 ✅ · Skill ⬜ |
 | 8 | 수정한 화면을 4개 모델로 교차 검증 | [진행·결과](#핵심-결과) |
 | 9 | 블라인드 시나리오 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
