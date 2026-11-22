@@ -41,6 +41,7 @@
   color: transparent;
   font-size: 21px;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .site-nav {
@@ -545,6 +546,21 @@
   .closing {
     padding-top: 56px;
     padding-bottom: 56px;
+  }
+}
+
+@media (max-width: 340px) {
+  /* 로고와 메뉴가 한 줄에 안 들어가면 메뉴를 아랫줄로 내린다. */
+  .landing-top {
+    flex-wrap: wrap;
+    row-gap: 0;
+    padding-left: var(--gutter);
+  }
+
+  .site-nav {
+    flex: 1 0 100%;
+    justify-content: flex-start;
+    margin-left: -5px;
   }
 }
 
