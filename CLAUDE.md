@@ -10,7 +10,7 @@
 - `web/` — React 콘솔. `?ui=v1` / `?ui=v2`로 버전 전환
 - `web/src/demo/` — 서버 없는 공개 데모 (`vite --mode demo`). 기본 모드(실험 기준선)의 화면과 동작에 영향을 주지 말 것
 - `src/audit/` — 배포 URL 검사기 (Antigravity CLI). 사용자 전역 agy 설정을 바꾸거나 `--dangerously-skip-permissions`를 쓰지 말 것
-- `src/app/`, `web/audit-app/` — 로컬 검사 앱. 127.0.0.1 전용이며 Host·Origin·전용 헤더 검사를 약하게 만들지 말 것
+- `src/app/`, `web/audit-app/` — 로컬 검사 앱(`vite --mode app`). 홈은 배포본과 같은 `Landing`을 쓰므로 설명을 따로 복제하거나 빼지 말 것. 127.0.0.1 전용이며 Host·Origin·전용 헤더 검사를 약하게 만들지 말 것
 - `tests/` — Vitest 단위 테스트
 - `e2e/` — Playwright 스크립트 E2E
 

@@ -2,6 +2,8 @@ import type { AppRun, Audit } from "../../src/app/audits";
 import { MODEL_NAMES } from "../../src/app/models";
 import type { Outcome, SelfReport } from "../../src/audit/report";
 
+export const auditHref = (id: string) => `#check-${id}`;
+export const auditIdFrom = (hash: string) => /^#check-([0-9a-f]+)$/.exec(hash)?.[1] ?? "";
 export const modelName = (model: string) => (MODEL_NAMES as Record<string, string>)[model] ?? model;
 
 export const OUTCOME: Record<Outcome, { title: string; tone: "good" | "warn" | "bad" | "none"; meaning: string }> = {

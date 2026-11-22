@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import type { AuditInput, AuditSummary } from "../../src/app/audits";
+import { Landing } from "../src/demo/Landing";
 import { api, messageOf } from "./api";
 import { AuditView } from "./AuditView";
 import { History } from "./History";
 import { NewAudit } from "./NewAudit";
+import { auditHref, auditIdFrom } from "./text";
 
-// 주소의 해시가 화면이다: #<검사 id> 는 결과, 없으면 새 검사.
-const currentId = () => location.hash.slice(1);
+// #check-<id>는 결과 화면, 나머지 해시는 홈 안의 구간이다.
+const currentId = () => auditIdFrom(location.hash);
 
 export function App() {
   const [id, setId] = useState(currentId);
@@ -23,7 +25,6 @@ export function App() {
     const onHash = () => {
       setId(currentId());
       setError("");
-      window.scrollTo(0, 0);
     };
     window.addEventListener("hashchange", onHash);
     api.status().then((status) => setReady(status.ready), (err: unknown) => setError(messageOf(err)));
@@ -32,37 +33,51 @@ export function App() {
 
   useEffect(refresh, [id, refresh]);
 
-  const open = (next: string) => {
-    location.hash = next;
-  };
+  // 홈을 그린 뒤에야 #audit 같은 구간으로 갈 수 있다.
+  useEffect(() => {
+    if (id) window.scrollTo(0, 0);
+    else if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  }, [id]);
+
+  const alerts = (
+    <>
+      {!ready && <p className="app-notice" role="alert">Antigravity CLI(agy)를 찾을 수 없습니다. 설치하고 로그인한 뒤 앱을 다시 켜 주세요.</p>}
+      {error && <p className="app-notice" role="alert">{error}</p>}
+    </>
+  );
+
+  if (!id) {
+    return (
+      <Landing
+        audit={
+          <div className="app embedded">
+            {alerts}
+            <NewAudit key={JSON.stringify(draft ?? null)} initial={draft} ready={ready} onStarted={(audit) => (location.hash = auditHref(audit.id))} />
+            <History audits={history} />
+          </div>
+        }
+      />
+    );
+  }
 
   return (
     <div className="app">
-      <header className="top">
-        <a className="product" href="#" onClick={() => setDraft(undefined)}>IntentGuard</a>
-        <p>내 PC에서 실행되는 검사 앱</p>
+      <header className="app-top">
+        <a className="app-product" href="#">IntentGuard</a>
+        <a className="app-back" href="#audit">새 검사·지난 검사</a>
       </header>
-
       <main>
-        {!ready && <p className="notice" role="alert">Antigravity CLI(agy)를 찾을 수 없습니다. 설치하고 로그인한 뒤 앱을 다시 켜 주세요.</p>}
-        {error && <p className="notice" role="alert">{error}</p>}
-        {id ? (
-          <AuditView
-            key={id}
-            id={id}
-            onFinished={refresh}
-            onOpen={open}
-            onEdit={(input) => {
-              setDraft(input);
-              open("");
-            }}
-          />
-        ) : (
-          <>
-            <NewAudit key={JSON.stringify(draft ?? null)} initial={draft} ready={ready} onStarted={(audit) => open(audit.id)} />
-            <History audits={history} />
-          </>
-        )}
+        {alerts}
+        <AuditView
+          key={id}
+          id={id}
+          onFinished={refresh}
+          onOpen={(next) => (location.hash = auditHref(next))}
+          onEdit={(input) => {
+            setDraft(input);
+            location.hash = "audit";
+          }}
+        />
       </main>
     </div>
   );

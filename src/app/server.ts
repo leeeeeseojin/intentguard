@@ -8,8 +8,9 @@ const TYPES: Record<string, string> = {
   ".css": "text/css; charset=utf-8",
   ".woff2": "font/woff2",
   ".svg": "image/svg+xml",
+  ".png": "image/png",
 };
-const CSP = "default-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'";
+const CSP = "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'";
 
 interface AppOptions {
   audits: Audits;
@@ -92,12 +93,14 @@ export function createApp({ audits, port, ui, agent }: AppOptions): Hono {
   });
 
   app.get("/", async (c) => c.html(await readFile(path.join(ui, "index.html"), "utf8")));
-  app.get("/assets/:file{[A-Za-z0-9_.-]+}", async (c) => {
-    const name = c.req.param("file");
+  const file = async (c: Context, dir: string, name: string) => {
     const type = TYPES[path.extname(name)];
-    const body = type && (await readFile(path.join(ui, "assets", name)).catch(() => null));
+    const body = type && (await readFile(path.join(ui, dir, name)).catch(() => null));
     return body ? c.body(new Uint8Array(body), 200, { "content-type": type! }) : c.notFound();
-  });
+  };
+  app.get("/assets/:file{[A-Za-z0-9_.-]+}", (c) => file(c, "assets", c.req.param("file")));
+  app.get("/evidence/:file{[0-9]+\\.png}", (c) => file(c, "evidence", c.req.param("file")));
+  app.get("/chevron.svg", (c) => file(c, "", "chevron.svg"));
 
   return app;
 }

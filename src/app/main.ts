@@ -3,7 +3,6 @@ import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getRequestListener } from "@hono/node-server";
-import react from "@vitejs/plugin-react";
 import { build } from "vite";
 import { resolveAgy } from "../audit/antigravity.js";
 import { Audits } from "./audits.js";
@@ -15,16 +14,16 @@ import { createApp } from "./server.js";
  */
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const port = Number(process.env.AUDIT_APP_PORT ?? 4717);
-const ui = path.join(root, "node_modules/.cache/intentguard-app");
+// 포트마다 따로 빌드해야 켜져 있는 앱의 화면을 E2E가 지우지 않는다.
+const ui = path.join(root, `node_modules/.cache/intentguard-app-${port}`);
 
 console.log("[app] 화면을 준비하는 중…");
 await build({
-  configFile: false,
-  root: path.join(root, "web/audit-app"),
-  plugins: [react()],
+  configFile: path.join(root, "vite.config.ts"),
+  root: path.join(root, "web"),
+  mode: "app",
   logLevel: "warn",
-  // 글꼴 조각이 data: URI로 바뀌면 CSP에 막힌다.
-  build: { outDir: ui, emptyOutDir: true, assetsInlineLimit: 0 },
+  build: { outDir: ui, emptyOutDir: true },
 });
 
 const ready = !spawnSync(resolveAgy(), ["--version"], { stdio: "ignore", timeout: 15_000 }).error;

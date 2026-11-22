@@ -1,5 +1,5 @@
 import type { AuditSummary } from "../../src/app/audits";
-import { AUDIT_STATE, OUTCOME } from "./text";
+import { AUDIT_STATE, auditHref, OUTCOME } from "./text";
 
 function summary({ state, outcomes }: AuditSummary): string {
   if (state !== "finished") return AUDIT_STATE[state];
@@ -11,17 +11,17 @@ function summary({ state, outcomes }: AuditSummary): string {
 export function History({ audits }: { audits: AuditSummary[] }) {
   if (!audits.length) return null;
   return (
-    <section className="history" aria-labelledby="history">
-      <h2 id="history">지난 검사</h2>
+    <section className="app-history" aria-labelledby="history">
+      <h3 id="history">지난 검사</h3>
       <ul>
         {audits.map((audit) => (
           <li key={audit.id}>
-            <a href={`#${audit.id}`}>
-              <span className="history-site">
+            <a href={auditHref(audit.id)}>
+              <span className="app-history-site">
                 {audit.number}. {new URL(audit.url).host}
               </span>
-              <span className="history-task">{audit.task}</span>
-              <span className="history-state">{summary(audit)}</span>
+              <span className="app-history-task">{audit.task}</span>
+              <span className="app-history-state">{summary(audit)}</span>
             </a>
           </li>
         ))}

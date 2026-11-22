@@ -1,5 +1,5 @@
 import type { AppRun, Audit } from "../../src/app/audits";
-import { modelName, runLabel, runTone } from "./text";
+import { auditHref, modelName, runLabel, runTone } from "./text";
 
 function Result({ run }: { run?: AppRun }) {
   if (!run) return <td>기록 없음</td>;
@@ -14,12 +14,12 @@ function Result({ run }: { run?: AppRun }) {
 
 export function Compare({ before, after }: { before: Audit; after: Audit }) {
   return (
-    <table className="compare">
+    <table className="app-compare">
       <caption>재검사 전후. 한 번씩 돌린 결과라 우연한 차이일 수 있습니다.</caption>
       <thead>
         <tr>
           <th scope="col">모델</th>
-          <th scope="col"><a href={`#${before.id}`}>이전 (검사 {before.number})</a></th>
+          <th scope="col"><a href={auditHref(before.id)}>이전 (검사 {before.number})</a></th>
           <th scope="col">이번 (검사 {after.number})</th>
         </tr>
       </thead>

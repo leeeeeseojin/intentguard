@@ -70,19 +70,19 @@ export function AuditView({ id, onFinished, onOpen, onEdit }: Props) {
   }
 
   return (
-    <article className="audit">
-      <div className="audit-head">
+    <article className="app-audit">
+      <div className="app-audit-head">
         <div>
-          <p className="eyebrow" role="status">검사 {audit.number} · {AUDIT_STATE[state]}</p>
+          <p className="app-eyebrow" role="status">검사 {audit.number} · {AUDIT_STATE[state]}</p>
           <h1>{input.task}</h1>
         </div>
-        <div className="actions">
+        <div className="app-actions">
           {running ? (
-            <button type="button" className="quiet" disabled={busy} onClick={() => void act(() => api.cancel(id))}>검사 중단</button>
+            <button type="button" className="app-quiet" disabled={busy} onClick={() => void act(() => api.cancel(id))}>검사 중단</button>
           ) : (
             <>
-              <button type="button" className="quiet" onClick={() => onEdit(input)}>조건 바꿔 검사</button>
-              <button type="button" className="primary" disabled={busy} onClick={() => void act(async () => onOpen((await api.rerun(id)).id))}>
+              <button type="button" className="app-quiet" onClick={() => onEdit(input)}>조건 바꿔 검사</button>
+              <button type="button" className="app-primary" disabled={busy} onClick={() => void act(async () => onOpen((await api.rerun(id)).id))}>
                 같은 조건으로 재검사
               </button>
             </>
@@ -90,9 +90,9 @@ export function AuditView({ id, onFinished, onOpen, onEdit }: Props) {
         </div>
       </div>
 
-      {error && <p className="notice" role="alert">{error}</p>}
+      {error && <p className="app-notice" role="alert">{error}</p>}
 
-      <dl className="brief">
+      <dl className="app-brief">
         <div>
           <dt>주소</dt>
           <dd>{input.url}</dd>
@@ -110,9 +110,9 @@ export function AuditView({ id, onFinished, onOpen, onEdit }: Props) {
       {before && <Compare before={before} after={audit} />}
 
       {runs.length > 1 && (
-        <div className="runs" role="group" aria-label="모델별 결과">
+        <div className="app-runs" role="group" aria-label="모델별 결과">
           {runs.map((run, index) => (
-            <button type="button" key={run.model} className="run" aria-pressed={index === shown} onClick={() => setPicked(index)}>
+            <button type="button" key={run.model} className="app-run" aria-pressed={index === shown} onClick={() => setPicked(index)}>
               <span>{modelName(run.model)}</span>
               <strong data-tone={runTone(run)}>{runLabel(run)}</strong>
             </button>

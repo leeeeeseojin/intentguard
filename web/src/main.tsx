@@ -19,4 +19,6 @@ const render = (node: ReactNode) => createRoot(document.getElementById("root")!)
 
 // demo 모드로 빌드할 때만 브라우저 안 API와 소개 화면이 번들에 들어간다.
 if (import.meta.env.MODE === "demo") void import("./demo/boot").then(({ bootDemo }) => render(bootDemo(ui, renderConsole)));
+// app 모드는 로컬 검사 앱. 같은 홈에 실제로 돌아가는 검사 화면을 끼운다.
+else if (import.meta.env.MODE === "app") void import("../audit-app/boot").then(({ bootApp }) => render(bootApp(ui, renderConsole)));
 else render(renderConsole());
