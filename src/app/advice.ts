@@ -28,8 +28,9 @@ export function advise(outcome: Outcome, checks: CheckResult[], issues: Issue[])
   if (outcome === "false-success") {
     advice.push({ title: "안 됐는데 됐다고 믿음", action: "실패·진행 중이 성공처럼 보이지 않는지, 최종 결과와 실패 이유가 글자로 보이는지 확인" });
   }
-  for (const check of checks.filter((c) => !c.met)) {
-    advice.push({ title: `기준을 못 채움: ${check.label}`, action: "마지막 화면과 조작 기록에서 어느 단계까지 갔는지 확인", evidence: check.reason });
+  if (checks.some((check) => !check.met)) {
+    // 사람이 적은 기준이 틀려도 같은 판정이 나온다. 사이트나 모델을 탓하기 전에 기준부터 본다.
+    advice.push({ title: "성공 기준이 맞는지 먼저 확인", action: "마지막 화면에 일이 제대로 끝나 있다면 기준 문구가 잘못된 것입니다. 화면의 문구 그대로 고쳐 다시 검사하세요." });
   }
   return advice;
 }

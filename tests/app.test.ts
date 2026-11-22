@@ -169,6 +169,10 @@ describe("고치기 전에 볼 곳", () => {
     expect(advise("confirmed-success", [], [issue("agent-misuse"), issue("click-blocked")])).toMatchObject([{ title: "누르려던 요소가 다른 것에 가려짐 2번" }]);
   });
 
+  it("기준을 못 채우면 사람이 적은 기준부터 의심하게 한다", () => {
+    expect(advise("failure", [{ label: "x", met: false }], []).map((a) => a.title)).toContain("성공 기준이 맞는지 먼저 확인");
+  });
+
   it("무효 실행으로는 사이트를 탓하지 않는다", () => {
     expect(advise("invalid", [{ label: "x", met: false }], [])).toEqual([]);
   });

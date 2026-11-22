@@ -78,7 +78,7 @@ export function RunDetail({ auditId, index, run }: { auditId: string; index: num
                   </li>
                 ))}
               </ul>
-              <p className="hint">{result.notes.join(" / ")}</p>
+              {(result.success || result.notes.some((note) => note.includes("새로고침"))) && <p className="hint">{result.notes.join(" / ")}</p>}
 
               <h3>고치기 전에 볼 곳</h3>
               {result.advice.length === 0 ? (

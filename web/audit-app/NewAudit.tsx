@@ -38,7 +38,7 @@ export function NewAudit({ initial, ready, onStarted }: Props) {
     <section className="new" aria-labelledby="new">
       <div className="new-head">
         <h1 id="new">
-          AI 에이전트가
+          AI 에이전트가{" "}
           <em>이 일을 해낼까요?</em>
         </h1>
         <p>에이전트가 화면을 직접 조작하고, 채점은 검사기 코드가 합니다. 에이전트가 “됐다”고 해도 기준을 못 채우면 실패입니다.</p>
