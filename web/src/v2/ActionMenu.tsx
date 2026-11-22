@@ -31,10 +31,10 @@ export function ActionMenu({ target, actions }: { target: string; actions: Actio
 
   return (
     <div className="row-menu" ref={ref}>
-      <button className="btn btn-small" aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((v) => !v)}>
-        {target} 작업
+      <button className="btn btn-small" aria-label={`${target} 작업`} aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((v) => !v)}>
+        <span aria-hidden="true">작업</span>
         {/* 장식 기호는 접근성 이름에서 뺀다. 이름에 섞이면 에이전트가 이름으로 버튼을 찾지 못했다 (v2 측정에서 7회). */}
-        <span aria-hidden="true"> ▾</span>
+        <span className="chevron" aria-hidden="true" />
       </button>
       {open && (
         <div className="row-menu-list" role="menu" id={menuId} aria-label={`${target} 작업`}>

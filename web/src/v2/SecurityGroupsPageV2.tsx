@@ -97,12 +97,13 @@ export function SecurityGroupsPageV2() {
                         <td>
                           <button
                             className="btn btn-small"
+                            aria-label={`규칙 삭제: ${r.protocol.toUpperCase()} ${r.port} ← ${r.source}`}
                             onClick={async () => {
                               await run(() => api.removeRule(selected.id, r.id), `${r.protocol.toUpperCase()} ${r.port} ← ${r.source} 규칙을 삭제했습니다.`);
                               await load();
                             }}
                           >
-                            규칙 삭제: {r.protocol.toUpperCase()} {r.port} ← {r.source}
+                            <span aria-hidden="true">규칙 삭제</span>
                           </button>
                         </td>
                       </tr>
