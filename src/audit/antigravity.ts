@@ -104,6 +104,9 @@ export interface AgentOptions {
   model: string;
   timeoutMs: number;
   logPath: string;
+  signal?: AbortSignal;
+  /** 끝난 도구 호출을 실행 중에 바로 알린다. */
+  onCall?: (call: ToolCall) => void;
 }
 
 /**
@@ -140,23 +143,29 @@ export function runAntigravity(o: AgentOptions): Promise<AgentResult> {
     const log = createWriteStream(o.logPath);
     let stdout = "";
     let stderr = "";
+    let pending = "";
     let timedOut = false;
     let settled = false;
 
-    const timer = setTimeout(() => {
-      timedOut = true;
+    const kill = () => {
       try {
         if (process.platform === "win32") execFileSync("taskkill", ["/pid", String(child.pid), "/T", "/F"], { stdio: "ignore" });
         else process.kill(-child.pid!, "SIGKILL");
       } catch {
         // 이미 종료됨
       }
+    };
+    const timer = setTimeout(() => {
+      timedOut = true;
+      kill();
     }, o.timeoutMs + 10_000);
+    o.signal?.addEventListener("abort", kill, { once: true });
 
     const finish = (spawnError = "") => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      o.signal?.removeEventListener("abort", kill);
       log.end();
       const parsed = parseStream(stdout.split("\n"));
       resolve({
@@ -172,10 +181,15 @@ export function runAntigravity(o: AgentOptions): Promise<AgentResult> {
     child.stdout.on("data", (chunk: string) => {
       stdout += chunk;
       log.write(chunk);
+      if (!o.onCall) return;
+      const lines = (pending + chunk).split("\n");
+      pending = lines.pop() ?? "";
+      parseStream(lines).calls.forEach(o.onCall);
     });
     child.stderr.setEncoding("utf8");
     child.stderr.on("data", (chunk: string) => (stderr += chunk));
     child.on("error", (err) => finish(`Antigravity CLI를 실행할 수 없습니다 (${err.message}). AGY_BIN으로 경로를 지정하세요.`));
     child.on("close", () => finish());
+    if (o.signal?.aborted) kill();
   });
 }

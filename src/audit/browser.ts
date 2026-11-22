@@ -1,4 +1,4 @@
-import { chromium, type BrowserContext, type Page } from "@playwright/test";
+import { chromium, type BrowserContext, type Page, type Request } from "@playwright/test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { createServer } from "node:net";
 import os from "node:os";
@@ -18,6 +18,8 @@ export interface SharedBrowser {
   context: BrowserContext;
   cdpEndpoint: string;
   blocked: string[];
+  /** 실패했거나 막힌 같은 출처의 쓰기 요청 */
+  failedWrites: string[];
   close(): Promise<void>;
 }
 
@@ -41,6 +43,11 @@ export async function openSharedBrowser(url: string, allowWrites = false): Promi
   });
 
   const blocked: string[] = [];
+  const failedWrites: string[] = [];
+  const noteFailedWrite = (request: Request) => {
+    const to = new URL(request.url());
+    if (to.origin === target.origin && !["GET", "HEAD", "OPTIONS"].includes(request.method())) failedWrites.push(`${request.method()} ${to.pathname}`);
+  };
   await context.route("**/*", (route) => {
     const request = route.request();
     const to = new URL(request.url());
@@ -49,6 +56,10 @@ export async function openSharedBrowser(url: string, allowWrites = false): Promi
     if (!write && !leaving) return route.continue();
     blocked.push(`${request.method()} ${to.origin}${to.pathname}`);
     return route.abort("blockedbyclient");
+  });
+  context.on("requestfailed", noteFailedWrite);
+  context.on("response", (response) => {
+    if (response.status() >= 400) noteFailedWrite(response.request());
   });
   if (!allowWrites) await context.routeWebSocket(/.*/, (socket) => void socket.close());
 
@@ -73,5 +84,5 @@ export async function openSharedBrowser(url: string, allowWrites = false): Promi
     await close();
     throw err;
   }
-  return { context, cdpEndpoint: `http://127.0.0.1:${port}`, blocked, close };
+  return { context, cdpEndpoint: `http://127.0.0.1:${port}`, blocked, failedWrites, close };
 }

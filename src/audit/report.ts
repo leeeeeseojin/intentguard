@@ -1,5 +1,6 @@
 import type { GradeResult, ToolCall } from "../bench/types.js";
 import type { AgentResult } from "./antigravity.js";
+import type { CheckResult } from "./grade.js";
 
 export type SelfReport = "confirmed" | "unconfirmed" | "failed" | "none";
 
@@ -11,10 +12,16 @@ export function selfReport(answer: string): SelfReport {
 
 export type Outcome = "confirmed-success" | "unconfirmed-success" | "false-failure" | "false-success" | "failure" | "invalid";
 
-export function judge(grade: GradeResult, agent: Pick<AgentResult, "exit" | "answer" | "calls" | "outsideTools">): Outcome {
+/** 조건별 결과는 화면 채점에만 있다. error는 채점기가 화면을 읽지 못한 경우. */
+export type AuditGrade = GradeResult & { checks?: CheckResult[]; error?: boolean };
+
+export function judge(grade: AuditGrade, agent: Pick<AgentResult, "exit" | "answer" | "calls" | "outsideTools">): Outcome {
   // 비정상 종료(한도·연결·권한 설정 오류)와 화면 밖 도구를 쓴 실행은 성공·실패 어느 쪽으로도 세지 않는다.
   if (agent.outsideTools.length) return "invalid";
   if (agent.exit === "error") return "invalid";
+  // 브라우저에 연결되지 못한 실행은 화면을 시험한 것이 아니다.
+  if (!agent.calls.some((c) => c.name.startsWith("browser_") && !c.isError)) return "invalid";
+  if (grade.error) return "invalid";
   const said = selfReport(agent.answer);
   if (!grade.success) return said === "confirmed" ? "false-success" : "failure";
   if (said === "confirmed") return "confirmed-success";
@@ -69,9 +76,11 @@ export interface AuditRecord {
   model: string;
   attempt: number;
   outcome: Outcome;
-  grade: GradeResult;
+  grade: AuditGrade;
   issues: Issue[];
   blocked: string[];
+  /** 판정은 그대로 두고 사람이 더 확인할 점 */
+  cautions?: string[];
   agent: AgentResult;
 }
 
@@ -101,5 +110,7 @@ export function toMarkdown(records: AuditRecord[]): string {
     lines.push("", "## 막힌 곳과 확인할 것", "");
     for (const { r, i } of issues) lines.push(`- **${r.id} · ${i.kind}**: ${i.fix}`, `  - 근거: ${cell(i.evidence)}`);
   }
+  const cautions = records.flatMap((r) => (r.cautions ?? []).map((text) => `- **${r.id} · ${r.model}**: ${cell(text)}`));
+  if (cautions.length) lines.push("", "## 판정을 믿기 전에", "", ...cautions);
   return `${lines.join("\n")}\n`;
 }

@@ -59,6 +59,16 @@ describe("판정", () => {
     expect(judge(pass, parseStream([tool("run_command", "DONE", {}), result("RESULT: confirmed")]))).toBe("invalid");
   });
 
+  it("성공한 브라우저 조작이 한 번도 없으면 화면을 시험한 것이 아니므로 무효", () => {
+    expect(judge(fail, parseStream([result("RESULT: failed")]))).toBe("invalid");
+    expect(judge(fail, parseStream([browser("### Error\nconnect ECONNREFUSED"), result("RESULT: failed")]))).toBe("invalid");
+    expect(judge(pass, { ...parseStream([]), exit: "timeout" })).toBe("invalid");
+  });
+
+  it("채점기가 화면을 읽지 못한 실행을 거짓 성공으로 몰지 않는다", () => {
+    expect(judge({ ...fail, error: true }, parseStream([browser(), result("RESULT: confirmed")]))).toBe("invalid");
+  });
+
   it("도구를 쓰다가 CLI가 비정상 종료돼도 UX 실패로 세지 않는다", () => {
     expect(judge(fail, parseStream([browser(), result("")]))).toBe("invalid");
   });
@@ -85,9 +95,11 @@ describe("성공 조건", () => {
     expect(storedMatches("{broken", { offense: "coach" })).toBe(false);
   });
 
-  it("조건에는 selector와 storage 중 하나가 있어야 한다", () => {
+  it("조건에는 selector, storage, exactText 중 하나만 있어야 한다", () => {
     const spec = (check: object) => ({ url: "https://a.example/", scenarios: [{ id: "x", task: "t", checks: [check] }] });
     expect(specSchema.safeParse(spec({ label: "빈 조건" })).success).toBe(false);
     expect(specSchema.safeParse(spec({ selector: "h1" })).success).toBe(true);
+    expect(specSchema.safeParse(spec({ exactText: "완료" })).success).toBe(true);
+    expect(specSchema.safeParse(spec({ selector: "h1", exactText: "완료" })).success).toBe(false);
   });
 });
