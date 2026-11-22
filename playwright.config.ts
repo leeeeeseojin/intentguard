@@ -4,6 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 const API_PORT = 8788;
 const WEB_PORT = 5174;
 const DEMO_PORT = 4174;
+const APP_PORT = 4718;
 const DEMO_DIR = "../node_modules/.cache/intentguard-demo";
 
 export default defineConfig({
@@ -19,8 +20,9 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    { name: "chromium", testIgnore: ["demo.spec.ts", "audit.spec.ts"], use: { ...devices["Desktop Chrome"] } },
+    { name: "chromium", testIgnore: ["demo.spec.ts", "audit.spec.ts", "app.spec.ts"], use: { ...devices["Desktop Chrome"] } },
     { name: "demo", testMatch: ["demo.spec.ts", "audit.spec.ts"], use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${DEMO_PORT}` } },
+    { name: "app", testMatch: ["app.spec.ts"], use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${APP_PORT}` } },
   ],
   webServer: [
     {
@@ -39,6 +41,13 @@ export default defineConfig({
       // Vercel과 같은 demo 모드 빌드를 API 서버·프록시 없이 서빙한다.
       command: `pnpm exec vite build --mode demo --outDir ${DEMO_DIR} && pnpm exec vite preview --mode demo --outDir ${DEMO_DIR} --port ${DEMO_PORT} --strictPort`,
       url: `http://localhost:${DEMO_PORT}`,
+      reuseExistingServer: false,
+    },
+    {
+      command: "pnpm exec tsx src/app/main.ts",
+      url: `http://localhost:${APP_PORT}`,
+      env: { AUDIT_APP_PORT: String(APP_PORT), AUDIT_APP_DATA: "node_modules/.cache/intentguard-app-e2e" },
+      timeout: 120_000,
       reuseExistingServer: false,
     },
   ],
