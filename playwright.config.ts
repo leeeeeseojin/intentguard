@@ -19,8 +19,8 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    { name: "chromium", testIgnore: "demo.spec.ts", use: { ...devices["Desktop Chrome"] } },
-    { name: "demo", testMatch: "demo.spec.ts", use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${DEMO_PORT}` } },
+    { name: "chromium", testIgnore: ["demo.spec.ts", "audit.spec.ts"], use: { ...devices["Desktop Chrome"] } },
+    { name: "demo", testMatch: ["demo.spec.ts", "audit.spec.ts"], use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${DEMO_PORT}` } },
   ],
   webServer: [
     {
