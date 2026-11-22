@@ -56,5 +56,6 @@ export default defineConfig(({ mode }) => ({
     proxy: mode === "demo" ? undefined : { "/api": `http://localhost:${process.env.API_PORT ?? 8787}` },
   },
   preview: mode === "demo" ? { headers: deployHeaders() } : undefined,
-  build: { outDir: "../dist", emptyOutDir: true },
+  // 작은 글꼴 조각이 data: URI로 바뀌면 배포 CSP(default-src 'self')에 막힌다.
+  build: { outDir: "../dist", emptyOutDir: true, assetsInlineLimit: 0 },
 }));
