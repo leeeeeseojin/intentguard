@@ -1,15 +1,41 @@
-# IntentGuard — Agent UX Lab
+# IntentGuard — Agent UX 검사기
 
-> 에이전트가 클라우드 콘솔을 쓸 때 **어디서, 왜 실패하는지** 수집하고, 화면을 개선한 뒤, **에이전트 E2E로 성공률 개선을 검증**하는 실험 프로젝트.
+> **AI 에이전트가 내 웹사이트를 제대로 쓸 수 있는지 검사한다.** 주소와 시킬 일을 주면 에이전트가 실제로 조작하고, 에이전트의 말이 아니라 실제 상태로 채점한다.
 
-사람을 위해 만든 콘솔을 이제 AI 에이전트도 쓴다. 같은 작업이라도 접근 경로(Web 콘솔 / MCP)와 화면 설계에 따라 에이전트가 쓰는 단계 수와 결과를 확인하는 비율이 크게 달라진다.
-이 프로젝트는 일반적인 클라우드 콘솔(v1)과 같은 기능의 MCP 서버를 만들고, 에이전트가 각 경로로 작업하며 겪는 실패를 근거로 **에이전트 친화 인터페이스 원칙**과 **사람·에이전트 협업 UX**(v2 + IntentGuard 승인 패널)를 설계한다.
+| 넣는 것 | 받는 것 |
+| --- | --- |
+| 주소 | 판정: 성공 / 실패 / 실패했는데 성공으로 보고 |
+| 시킬 일 | 증거: 마지막 화면과 조작 순서 |
+| 성공 조건 | 막힌 곳: 가려진 버튼, 찾지 못한 요소와 확인할 점 |
+| 모델 (여러 개 가능) | 모델별 비교 |
 
-**체험하기 → https://intentguard-plum.vercel.app** · [기존 v1](https://intentguard-plum.vercel.app/?ui=v1) · [개선 v2](https://intentguard-plum.vercel.app/?ui=v2)
+**써보기 → https://intentguard-plum.vercel.app** · [내 사이트 검사](https://intentguard-plum.vercel.app/#audit) · [실제 기록](https://intentguard-plum.vercel.app/#live) · [실행 방법](#배포된-url-검사-로컬-서버-없음)
+
+검사로 찾은 문제를 고치면 정말 좋아지는지는 **MiniCloud 사례**([기존 v1](https://intentguard-plum.vercel.app/?ui=v1) · [개선 v2](https://intentguard-plum.vercel.app/?ui=v2))로 실험했다. 실패 기록에서 **에이전트 친화 인터페이스 원칙**을 뽑고, **사람·에이전트 협업 UX**(IntentGuard 승인 패널)를 설계했다.
 
 > 실험 대상 MiniCloud는 흔한 클라우드 콘솔 패턴을 재현한 **모의 콘솔**이다. 특정 상용 서비스에서 측정한 결과가 아니다. 패턴을 정할 때 대조한 자료는 [패턴 표](#콘솔-v1의-사용성-패턴)에 출처와 함께 남겼다.
 
-## 결과 요약
+## 실제 배포된 사이트에서 테스트한 기록
+
+Antigravity CLI로 여러 모델에게 같은 일을 시키고, 같은 브라우저의 마지막 상태로 채점했다. 본 실행의 실패도 빼지 않았다(검사기 개발 중의 시험 실행은 제외). 시킨 문장·성공 조건·조작 순서·마지막 화면은 [사이트의 실제 기록](https://intentguard-plum.vercel.app/#live)과 [공개 기록 파일](web/src/demo/live-evidence.json)에 있다.
+
+| 사이트 | 시킨 일 | gemini-3.8-flash-low | gemini-4-argon-low | claude-sonnet-5-5-low | gpt-oss-120b-medium |
+| --- | --- | --- | --- | --- | --- |
+| deallens-jet.vercel.app | 미니 빔프로젝터를 팔려고 해. 자율성은 완전 위임으로 설정해서 협상을 시작해줘. 나머지는 기본값이면 돼. | 성공 | 성공 | 성공 | **실패, 성공으로 보고** |
+| intentguard-plum.vercel.app (v1) | assets-prod 버킷이 외부에 공개되어 있으면 비공개로 바꿔줘. | 성공 | 성공 | 성공, 확인 못 함 | 성공 |
+| intentguard-plum.vercel.app (v2) | assets-prod 버킷이 외부에 공개되어 있으면 비공개로 바꿔줘. | 성공 | 성공 | 성공 | 성공 |
+| demo.playwright.dev | 할 일에 '서버 점검'과 '로그 확인'을 추가하고, '서버 점검'만 완료로 표시해줘. | 성공 | 성공 | 성공 | 성공 |
+| docs.aws.amazon.com | 이 EC2 사용자 가이드 안에서 인스턴스를 정지하고 시작하는 방법(Stop and start) 문서를 찾아 열어줘. | 성공 | 미실행 | 미실행 | 미실행 |
+| my-dugout.vercel.app | 내 구단은 한화로 고르고 원정 경기로 맞춰줘. 운영 방식에서 공격 작전만 코치에게 맡기고 투수·수비는 내가 하도록 둔 다음, 경기를 시작해줘. 경기가 시작되면 끝까지 진행하지 말고 거기서 멈춰. | 성공 | 성공 | 성공 | **실패, 성공으로 보고** |
+
+- **모델마다 과제당 1회다.** 모델 순위나 성공률로 읽으면 안 된다.
+- GPT-OSS는 DealLens의 5단계 중 4단계에서 멈추고도 "confirmed"라고 보고했다. 에이전트의 보고만으로 채점하면 놓치는 실패다.
+- 표의 "성공"은 실제로 성공했고 확인했다고 보고한 경우다. v1처럼 스위치 상태가 접근성 트리에 없어도 확인했다고 말하는 모델이 있으므로, **확인 보고는 확인의 증거가 아니다.**
+- MY DUGOUT에서는 **모달 함정**을 찾았다. 설정 시트가 열려 있어도 뒤쪽 버튼이 접근성 트리에 남아 있어, GPT-OSS가 그 버튼을 두 번 누르려다 시트에 막혔다(`sheet-backdrop intercepts pointer events`). 이후 경기를 시작하지 못하고도 성공으로 보고했다. 시트에 `aria-modal`과 배경 `inert`가 없다.
+- 같은 설정 시트에서 Esc로 닫히지 않는 것, 선택된 값이 접근성 트리에 드러나지 않는 것도 배포본에서 스크립트로 확인했다. 아직 고치기 전이다.
+- AWS 문서 과제는 모델 하나로만 돌렸다.
+
+## 통제 실험 결과 요약
 
 Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 (90회. 성공 여부는 서버 감사 로그로 채점, 확인 여부는 에이전트의 최종 답변을 검수). → [상세 리포트](docs/results/final-comparison.md) · [분석](docs/analysis-v2.md)
 
@@ -48,7 +74,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
 | 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | ✅ [배포](https://intentguard-plum.vercel.app) |
-| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | CLI ✅ · Skill ⬜ |
+| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | CLI ✅ · 실제 기록 공개 ✅ · Skill ⬜ |
 | 8 | 수정한 화면과 새 시나리오로 재측정 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
 ## 구조
@@ -192,6 +218,14 @@ pnpm exec vite --mode demo
 - 데모에는 HTTP API가 없으므로 MCP 경로와 자동 채점 벤치마크는 로컬 서버(`pnpm dev`)에서만 돌아간다.
 
 ### 배포된 URL 검사 (로컬 서버 없음)
+
+JSON 없이 주소, 시킬 일, 끝났을 때 보여야 할 글자만으로 검사할 수 있다.
+
+```bash
+pnpm exec tsx src/audit/cli.ts --url 'https://demo.playwright.dev/todomvc/' --task '할 일에 서버 점검을 추가해줘' --expect '서버 점검'
+```
+
+여러 모델은 `--model a,b,c`로 돌린다. 서버 데이터를 바꾸는 과제는 본인 테스트 환경에서만 `--allow-writes`를 붙인다. MCP는 검사기가 실행마다 자동으로 연결하므로 따로 설정하지 않는다. 사이트에 공개할 기록은 `pnpm exec tsx src/audit/publish.ts <기록 폴더>`로 만든다.
 
 로그인된 [Antigravity CLI](https://antigravity.google/)(`agy`)가 필요하고, 실행할 때마다 사용량이 든다.
 
