@@ -1,0 +1,44 @@
+{
+  "criteria": "작업은 실제로 성공했지만 에이전트가 최종 상태를 확인하지 못했거나, 진행 중 또는 실패로 보고하면 unverified. 값은 최종 답변에서 그대로 옮긴 근거다.",
+  "reviewer": "Claude (AI) 단독 검수. 사람의 교차 검수 전",
+  "labels": {
+    "v1-baseline": {
+      "reviewed": 16,
+      "unverified": {
+        "create-invalid-name__web-v1__1": "생성이 완료됐다고 말할 수 없습니다",
+        "create-server__web-v1__1": "실제로 생성됐는지는 확인하지 못했습니다",
+        "make-bucket-private__web-v1__1": "현재 공개 여부는 확인되지 않았습니다",
+        "stop-newest-running__mcp__1": "전이 완료는 확인하지 못했습니다"
+      }
+    },
+    "final-mcp-v1": {
+      "reviewed": 60,
+      "unverified": {
+        "cleanup-stopped-dev__mcp__1": "`deleting` 상태로 확인했습니다",
+        "cleanup-stopped-dev__mcp__2": "`deleting` 상태로 곧 완전히 제거될 예정",
+        "cleanup-stopped-dev__mcp__3": "현재 모두 `deleting` 상태입니다",
+        "restart-stopped-server__mcp__1": "아직 `running`으로 바뀌지 않아서",
+        "restart-stopped-server__mcp__2": "완료 여부는 확인되지 않았습니다",
+        "stop-newest-running__mcp__1": "아직 `stopped`가 되지 않았습니다",
+        "stop-newest-running__mcp__2": "완료 여부는 확인되지 않았습니다",
+        "stop-newest-running__mcp__3": "아직 `stopped`로 바뀌지 않았습니다",
+        "create-invalid-name__web-v1__1": "목록에서 새 서버를 확인하지 못했습니다",
+        "create-invalid-name__web-v1__2": "작업은 완료하지 못했습니다",
+        "create-invalid-name__web-v1__3": "The server was not created",
+        "create-server__web-v1__1": "`report-api-dev`를 확인하지 못했습니다",
+        "create-server__web-v1__2": "서버는 만들어지지 않았습니다",
+        "delete-nonempty-bucket__web-v1__1": "the deletion did not stick",
+        "delete-nonempty-bucket__web-v1__2": "버킷은 아직 삭제되지 않았습니다",
+        "delete-nonempty-bucket__web-v1__3": "버킷은 삭제되지 않았습니다",
+        "make-bucket-private__web-v1__1": "I could not visually confirm",
+        "restart-stopped-server__web-v1__2": "다시 켜지 못했습니다",
+        "restart-stopped-server__web-v1__3": "아직 다시 켜지지 않았습니다",
+        "stop-newest-running__web-v1__2": "실제로 정지됐는지는 확인하지 못했습니다"
+      }
+    },
+    "final-v2": {
+      "reviewed": 30,
+      "unverified": {}
+    }
+  }
+}
