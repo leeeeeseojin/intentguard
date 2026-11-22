@@ -1,6 +1,10 @@
 import { useState } from "react";
 import summary from "virtual:bench-summary";
 import type { PathKey, PathSummary } from "../../../src/bench/summary";
+import { AuditBuilder } from "./AuditBuilder";
+import { FoundProblem } from "./FoundProblem";
+import { LiveEvidence } from "./LiveEvidence";
+import liveTasks from "./live-evidence.json";
 import { StopCompare } from "./StopCompare";
 import "./landing.css";
 
@@ -12,6 +16,9 @@ const PATHS: { key: PathKey; label: string }[] = [
   { key: "v2", label: "Web v2 (개선)" },
   { key: "mcp", label: "MCP" },
 ];
+
+const LIVE_RUNS = liveTasks.reduce((sum, task) => sum + task.runs.length, 0);
+const LIVE_SITES = new Set(liveTasks.map((task) => new URL(task.url).hostname)).size;
 
 const pct = (k: number, n: number) => `${Math.round((k / n) * 100)}%`;
 
@@ -95,43 +102,92 @@ export function Landing() {
       <div className="landing-top">
         <p className="product">IntentGuard</p>
         <nav className="site-nav" aria-label="이 페이지">
-          <a href="#result">결과</a>
-          <a href="#findings">발견</a>
-          <a href="#try-human">체험</a>
+          <a href="#how">방법</a>
+          <a href="#live">실제 기록</a>
+          <a href="#case">사례</a>
         </nav>
-        <a className="cta compact" href="/?ui=v2">콘솔 열기</a>
+        <a className="cta compact" href="#audit">검사하기</a>
       </div>
 
       <header>
         <div className="hero">
           <div>
             <h1>
-              에이전트가 쓰는 콘솔은
-              <em>어디서 실패할까요?</em>
+              AI 에이전트가
+              <em>내 사이트를 쓸 수 있을까요?</em>
             </h1>
             <p className="lead">
-              클라우드 콘솔에서 과제를 {summary.totalRuns}번 시키고 실패를 화면 개선으로 바꿨습니다. 결과까지 확인한 성공은{" "}
+              주소와 시킬 일을 넣으면 AI 에이전트가 실제로 해봅니다. <strong>AI의 말이 아니라 실제 상태로</strong> 성공을 판정하고, 막힌 곳을 알려줍니다.
+            </p>
+            <nav className="actions" aria-label="시작">
+              <a className="cta" href="#audit">내 사이트 검사하기</a>
+              <a className="cta secondary" href="#live">실제 기록 보기</a>
+            </nav>
+          </div>
+          <FoundProblem />
+        </div>
+      </header>
+
+      <main>
+        <section className="chapter wide" aria-labelledby="how">
+          <div className="chapter-head">
+            <h2 id="how">이렇게 검사합니다</h2>
+          </div>
+          <ol className="how">
+            <li>
+              <h3>주소와 시킬 일을 넣는다</h3>
+              <p>끝났을 때 화면에 보여야 할 글자가 성공 조건이 됩니다.</p>
+            </li>
+            <li>
+              <h3>AI 에이전트가 직접 조작한다</h3>
+              <p>사람처럼 화면을 읽고 누르고 입력합니다. 여러 모델을 같은 조건으로 돌릴 수 있습니다.</p>
+            </li>
+            <li>
+              <h3>실제 상태로 채점한다</h3>
+              <p>판정, 마지막 화면, 누른 순서, 막힌 곳을 돌려줍니다.</p>
+            </li>
+          </ol>
+        </section>
+
+        <section className="chapter wide" aria-labelledby="live">
+          <div className="chapter-head">
+            <h2 id="live">실제 사이트에서 테스트한 기록</h2>
+            <p>배포된 사이트 {LIVE_SITES}곳에서 {LIVE_RUNS}번 검사했습니다. 이 본 실행에서 나온 실패도 빼지 않았습니다.</p>
+            <p className="fine">모델마다 과제당 1회라서 모델의 순위가 아니라 동작 기록으로 봐 주세요. 확인했다는 보고도 확인의 증거는 아닙니다.</p>
+          </div>
+          <LiveEvidence />
+        </section>
+
+        <section className="chapter" aria-labelledby="audit">
+          <div className="chapter-head">
+            <h2 id="audit">내 사이트 검사하기</h2>
+            <p>Vercel, AWS, localhost 어디든 브라우저로 열리는 주소면 됩니다. 세 칸을 채우면 내 PC에서 돌릴 명령이 만들어집니다.</p>
+          </div>
+          <AuditBuilder />
+        </section>
+
+        <section className="chapter" aria-labelledby="case">
+          <div className="chapter-head">
+            <h2 id="case">사례: 고치면 정말 좋아질까?</h2>
+            <p>
+              문제를 일부러 넣은 모의 클라우드 콘솔(v1)과 고친 콘솔(v2)로 실험했습니다. 결과까지 확인한 성공이{" "}
               <strong>
                 {pct(summary.paths.v1.verified, summary.paths.v1.runs)}에서 {pct(summary.paths.v2.verified, summary.paths.v2.runs)}로
               </strong>{" "}
               늘었습니다.
             </p>
-            <nav className="actions" aria-label="체험">
-              <a className="cta" href="/?ui=v2">개선된 v2 체험</a>
+            <nav className="actions" aria-label="사례 체험">
               <a className="cta secondary" href="/?ui=v1">기존 v1 체험</a>
+              <a className="cta secondary" href="/?ui=v2">개선된 v2 체험</a>
             </nav>
+            <p className="fine">MiniCloud는 실험용 모의 콘솔입니다. 실제 서버는 만들어지거나 바뀌지 않으며, 바꾼 내용은 이 탭에만 저장됩니다.</p>
           </div>
           <StopCompare />
-        </div>
-        <p className="disclaimer">
-          MiniCloud는 실험용으로 만든 모의 클라우드 콘솔입니다. 실제 서버는 만들어지거나 바뀌지 않으며, 바꾼 내용은 이 탭에만 저장됩니다.
-        </p>
-      </header>
+        </section>
 
-      <main>
-        <section className="chapter wide" aria-labelledby="result">
+        <section className="chapter wide case-part" aria-labelledby="result">
           <div className="chapter-head">
-            <h2 id="result">성공보다 중요한 건 확인된 성공</h2>
+            <h3 id="result">실험 결과</h3>
             <p>{summary.model}에게 과제 {summary.scenarios.length}개를 경로별로 3번씩 시켰습니다.</p>
             <p className="fine">
               성공은 서버 상태와 감사 로그로 채점했습니다. 확인된 성공은 그중 에이전트가 최종 상태까지 확인했다고 보고한 실행입니다.
@@ -189,10 +245,9 @@ export function Landing() {
           </div>
         </section>
 
-        <section className="chapter wide" aria-labelledby="findings">
+        <section className="chapter wide case-part" aria-labelledby="findings">
           <div className="chapter-head">
-            <h2 id="findings">실행 기록에서 찾은 것</h2>
-            <p>에이전트의 행동과 마지막 보고를 실제 상태와 하나씩 대조했습니다.</p>
+            <h3 id="findings">무엇을 고쳤나</h3>
           </div>
           <ul className="findings">
             {FINDINGS.map((f) => (
@@ -203,57 +258,69 @@ export function Landing() {
               </li>
             ))}
           </ul>
-        </section>
 
-        <section className="chapter" aria-labelledby="try-human">
-          <div className="chapter-head">
-            <h2 id="try-human">사람으로 체험하기</h2>
-            <p>설치도 로그인도 필요 없습니다. 휴대폰에서도 됩니다.</p>
-          </div>
-          <ol className="guide">
-            <li><a href="/?ui=v1">v1</a>에서 서버를 정지해 보세요. 목록은 새로고침 버튼을 누르기 전까지 그대로입니다.</li>
-            <li><a href="/?ui=v2">v2</a>에서 같은 작업을 해 보세요. 상태가 스스로 바뀝니다.</li>
-            <li>v2 위쪽의 "에이전트 요청 보내기"로 위험한 요청을 만들고, 감독 패널에서 승인하거나 거절해 보세요.</li>
-          </ol>
-        </section>
-
-        <section className="chapter" aria-labelledby="try-agent">
-          <div className="chapter-head">
-            <h2 id="try-agent">내 에이전트로 시험하기</h2>
-            <p>Playwright MCP처럼 브라우저를 조작할 수 있는 에이전트에게 이 문장을 보내세요.</p>
-          </div>
-          <AgentTrial />
+          <details className="case-try">
+            <summary>이 사례를 직접 따라 해보기</summary>
+            <div className="case-try-body">
+              <div>
+                <h3>사람으로</h3>
+                <ol className="guide">
+                  <li><a href="/?ui=v1">v1</a>에서 서버를 정지해 보세요. 목록은 새로고침 버튼을 누르기 전까지 그대로입니다.</li>
+                  <li><a href="/?ui=v2">v2</a>에서 같은 작업을 해 보세요. 상태가 스스로 바뀝니다.</li>
+                  <li>v2 위쪽의 "에이전트 요청 보내기"로 위험한 요청을 만들고, 감독 패널에서 승인하거나 거절해 보세요.</li>
+                </ol>
+              </div>
+              <div>
+                <h3>내 에이전트로</h3>
+                <p>브라우저를 조작할 수 있는 에이전트에게 이 문장을 보내세요.</p>
+                <AgentTrial />
+              </div>
+            </div>
+          </details>
         </section>
 
         <section className="chapter" aria-labelledby="limits">
           <div className="chapter-head">
-            <h2 id="limits">이 숫자의 한계</h2>
+            <h2 id="limits">한계</h2>
             <p className="more">
               <a href={doc("docs/analysis-v1.md")}>실패 분석</a>
               <a href={doc("docs/analysis-v2.md")}>개선 검증</a>
               <a href={doc("docs/results/final-comparison.md")}>전체 리포트</a>
             </p>
           </div>
-          <ul className="guide">
-            <li>표는 측정 당시 화면의 결과입니다. 이후 고친 화면과 이 공개 데모로는 아직 재측정하지 않았습니다.</li>
-            <li>확인 여부는 AI가 단독으로 검수했습니다. <a href={doc("docs/results/verification-labels.json")}>실행별 근거</a>를 공개합니다.</li>
-            <li>모델 1종, 과제당 3회입니다. 시나리오와 채점기를 같은 사람이 만들었고 블라인드 검증이 아닙니다.</li>
-            <li>v1은 문제 패턴을 일부러 넣은 기준선이고 그중 일부는 실제 콘솔보다 불리해, 개선 폭이 과대평가됐을 수 있습니다.</li>
-            <li>승인 패널은 협업 UX 프로토타입입니다. 인증이 없으므로 실제 권한 경계가 아닙니다.</li>
-          </ul>
+          <div className="limits">
+            <div>
+              <h3>검사기</h3>
+              <ul className="guide">
+                <li>로그인이 필요한 화면, CAPTCHA, 자동 브라우저를 막는 사이트는 검사할 수 없습니다.</li>
+                <li>막힌 곳은 확인할 지점이지 실패 원인의 확정이 아닙니다.</li>
+                <li>공개 기록은 과제당 1회이며, 검사기를 만들며 돌린 시험 실행은 포함하지 않았습니다.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>v1·v2 사례</h3>
+              <ul className="guide">
+                <li>표는 측정 당시 화면의 결과입니다. 이후 고친 화면으로는 같은 조건의 재측정을 하지 않았습니다.</li>
+                <li>확인 여부는 AI가 단독으로 검수했습니다. <a href={doc("docs/results/verification-labels.json")}>실행별 근거</a>를 공개합니다.</li>
+                <li>모델 1종, 과제당 3회입니다. 시나리오와 채점기를 같은 사람이 만들었고 블라인드 검증이 아닙니다.</li>
+                <li>v1은 문제 패턴을 일부러 넣은 기준선이고 그중 일부는 실제 콘솔보다 불리해, 개선 폭이 과대평가됐을 수 있습니다.</li>
+                <li>승인 패널은 협업 UX 프로토타입입니다. 인증이 없으므로 실제 권한 경계가 아닙니다.</li>
+              </ul>
+            </div>
+          </div>
         </section>
       </main>
 
       <section className="closing" aria-labelledby="closing">
-        <h2 id="closing">사람과 에이전트가 함께 쓰는 콘솔</h2>
+        <h2 id="closing">AI 에이전트도 쓸 수 있는 사이트로</h2>
         <div className="actions">
-          <a className="cta" href="/?ui=v2">v2 콘솔 열기</a>
+          <a className="cta" href="#audit">검사 시작하기</a>
           <a className="cta secondary" href={REPO}>GitHub에서 보기</a>
         </div>
       </section>
 
       <footer className="site-foot">
-        <p>IntentGuard · Agent UX Lab</p>
+        <p>IntentGuard · Agent UX 검사기</p>
         <p>실험용 개인 프로젝트</p>
       </footer>
     </div>

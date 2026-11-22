@@ -106,7 +106,7 @@
 /* ---------- 첫 화면 ---------- */
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   align-items: center;
   gap: 36px 56px;
   padding: 84px var(--gutter) 36px;
@@ -114,7 +114,7 @@
 
 .hero h1 {
   color: var(--b-950);
-  font-size: clamp(32px, 4.7vw, 60px);
+  font-size: clamp(30px, 4.3vw, 55px);
   font-weight: 750;
   line-height: 1.22;
   letter-spacing: -0.015em;
@@ -546,4 +546,158 @@
     padding-top: 56px;
     padding-bottom: 56px;
   }
+}
+
+/* ---------- 첫 화면: 실제 검사 한 건 ---------- */
+.found-site {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+  margin: 0 0 20px;
+}
+
+.found-site span {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.found-site strong {
+  color: var(--brand-dark);
+  font-size: 17px;
+}
+
+.found-facts {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.found-facts > div {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.found-facts dt {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.found-facts dd {
+  margin: 0;
+  font-weight: 650;
+}
+
+.found-truth dd {
+  color: var(--danger);
+}
+
+.found figcaption a {
+  font-weight: 650;
+}
+
+/* ---------- 검사 방법 ---------- */
+.how {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px 48px;
+  margin: 0;
+  padding-left: 24px;
+}
+
+.how li::marker {
+  color: var(--brand);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.how h3,
+.case-part h3,
+.limits h3 {
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.how p {
+  margin: 8px 0 0;
+  color: var(--text-2);
+}
+
+/* ---------- 사례: 제품 설명보다 한 단계 아래 ---------- */
+.chapter.case-part {
+  padding-top: 24px;
+  padding-bottom: 40px;
+}
+
+.case-part .chapter-head h3 {
+  font-size: 26px;
+  scroll-margin-top: 100px;
+}
+
+.chapter-head .actions {
+  margin: 18px 0 0;
+}
+
+.chapter-head .fine {
+  margin-top: 14px;
+}
+
+.chapter-head .actions .cta:first-child {
+  padding-left: 0;
+}
+
+.case-try-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 56px;
+  padding-top: 20px;
+}
+
+.case-try-body > div,
+.limits > div {
+  min-width: 0;
+}
+
+.case-try-body h3,
+.limits h3 {
+  margin-bottom: 12px;
+}
+
+.limits {
+  display: grid;
+  gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .how,
+  .case-try-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .found-facts > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .chapter-head .actions .cta {
+    flex: 0 1 auto;
+  }
+}
+
+.found figcaption a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.trial .input::placeholder {
+  color: #4a5568;
+  font-weight: 400;
 }
