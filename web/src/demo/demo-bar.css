@@ -1,0 +1,29 @@
+.demo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 7px 16px;
+  background: #eefaf3;
+  border-bottom: 1px solid #b7dec7;
+  color: #16202b;
+}
+
+.demo-bar a {
+  color: #0b6b3a;
+  font-weight: 700;
+}
+
+.demo-bar button,
+.demo-bar select {
+  max-width: 100%;
+  padding: 4px 10px;
+  border: 1px solid #8fb8a0;
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+}
+
+.demo-message:empty {
+  display: none;
+}

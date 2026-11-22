@@ -1,0 +1,233 @@
+.landing {
+  --ink: #16202b;
+  --accent: #a8f0c6;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.landing .wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.hero {
+  padding: 56px 0 40px;
+  background: var(--ink);
+  color: #fff;
+}
+
+.hero h1 {
+  max-width: 720px;
+  margin: 8px 0 16px;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.25;
+}
+
+.product {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.lead {
+  max-width: 640px;
+  margin: 0;
+  font-size: 19px;
+}
+
+.lead strong {
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 20px;
+}
+
+.cta {
+  padding: 10px 18px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cta.secondary {
+  border-color: #64707c;
+  background: transparent;
+  color: #fff;
+}
+
+.disclaimer {
+  margin: 0;
+  color: #b9c3cd;
+  font-size: 13px;
+}
+
+.landing main section {
+  padding: 36px 0;
+  border-bottom: 1px solid #e1e6ea;
+}
+
+.landing h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.landing h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.landing a:focus-visible,
+.landing summary:focus-visible {
+  outline: 3px solid #2684ff;
+  outline-offset: 3px;
+}
+
+.landing main a {
+  color: #0b6b3a;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.landing table {
+  width: 100%;
+  min-width: 540px;
+  border-collapse: collapse;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: normal;
+}
+
+.landing th,
+.landing td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e1e6ea;
+  text-align: right;
+}
+
+.landing th:first-child {
+  text-align: left;
+}
+
+.landing th:nth-child(3),
+.landing td:nth-child(3) {
+  background: #eefaf3;
+}
+
+.landing td small,
+.fine,
+.landing caption {
+  color: #5a6672;
+  font-size: 13px;
+}
+
+.landing caption {
+  padding: 8px 0;
+  text-align: left;
+}
+
+.landing details summary {
+  padding: 8px 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.findings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  gap: 24px 40px;
+  margin: 20px 0 0;
+  padding-left: 22px;
+}
+
+.findings p {
+  margin: 6px 0 0;
+}
+
+.findings .change {
+  color: #0b6b3a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.steps {
+  margin: 8px 0 0;
+  padding-left: 22px;
+}
+
+.trial {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
+}
+
+.trial label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.trial select,
+.trial textarea {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #b9c3cd;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 400;
+}
+
+.trial-prompt,
+.trial [role="status"] {
+  grid-column: 1 / -1;
+}
+
+.trial .cta {
+  justify-self: start;
+}
+
+.trial [role="status"] {
+  margin: 0;
+}
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+/* 핵심 비교(v1 → v2)가 휴대폰에서 가로 스크롤 뒤에 숨지 않게 한다. */
+@media (max-width: 560px) {
+  .landing table {
+    min-width: 0;
+    font-size: 13px;
+  }
+
+  .landing th,
+  .landing td {
+    padding: 8px 4px;
+  }
+
+  .landing td small {
+    display: block;
+    font-size: 11px;
+  }
+}
