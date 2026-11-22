@@ -8,6 +8,7 @@
 - `src/server/` — Hono REST API (`/api/*`), 포트 8787
 - `src/mcp/` — MCP 서버 (stdio). REST API를 호출하므로 콘솔과 상태를 공유한다
 - `web/` — React 콘솔. `?ui=v1` / `?ui=v2`로 버전 전환
+- `web/src/demo/` — 서버 없는 공개 데모 (`vite --mode demo`). 기본 모드(실험 기준선)의 화면과 동작에 영향을 주지 말 것
 - `tests/` — Vitest 단위 테스트
 - `e2e/` — Playwright 스크립트 E2E
 

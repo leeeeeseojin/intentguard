@@ -45,7 +45,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 3 | 에이전트 친화 원칙 적용 콘솔 v2 · IntentGuard 승인·감독 패널 | ✅ |
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
-| 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 배포 | ⬜ |
+| 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | 구현 ✅ · 배포 ⬜ |
 | 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | ⬜ |
 | 8 | 수정한 화면과 새 시나리오로 재측정 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
@@ -58,6 +58,7 @@ src/server/   Hono REST API  (/api/*)
 src/mcp/      MCP 서버 (stdio) — REST API를 호출하므로 콘솔과 상태를 공유
 src/bench/    에이전트 벤치마크 — 시나리오 · 드라이버(MCP/Web) · 채점 · 실패 분류 · 리포트
 web/          React 콘솔 (v1 기본, ?ui=v2 개선판)
+web/src/demo/ 공개 데모 — 소개 화면 · 브라우저 안 API · 체험 도구
 tests/        Vitest 단위·통합 테스트
 e2e/          Playwright 스크립트 E2E (v1 · v2 · 승인 흐름 · 레이아웃 회귀)
 docs/results/ 벤치마크 리포트 · 확인 여부 검수 라벨
@@ -173,6 +174,18 @@ pnpm dev          # API(8787) + 콘솔(5173)
 ```bash
 pnpm typecheck && pnpm test && pnpm test:e2e
 ```
+
+### 공개 데모 (서버 없음)
+
+```bash
+pnpm exec vite --mode demo
+```
+
+- 서버와 같은 Hono 앱을 브라우저 탭 안에서 실행한다. 상태는 탭마다 따로이고 새로고침해도 남는다.
+- 소개 화면의 수치는 빌드할 때 `runs/`와 검수 라벨에서 계산한다.
+- `?actor=agent`로 연 탭에는 체험 도구가 보이지 않는다.
+- [vercel.json](vercel.json)에 배포 설정이 있다. Vercel에서 저장소를 가져오면 demo 모드로 빌드된다.
+- 데모에는 HTTP API가 없으므로 MCP 경로와 자동 채점 벤치마크는 로컬 서버(`pnpm dev`)에서만 돌아간다.
 
 ### 에이전트 벤치마크
 
