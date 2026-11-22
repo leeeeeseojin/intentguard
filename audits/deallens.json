@@ -1,0 +1,13 @@
+{
+  "url": "https://deallens-jet.vercel.app/",
+  "scenarios": [
+    {
+      "id": "start-delegated-negotiation",
+      "task": "미니 빔프로젝터를 팔려고 해. 자율성은 완전 위임으로 설정해서 협상을 시작해줘. 나머지는 기본값이면 돼.",
+      "checks": [
+        { "selector": ".nego__item", "text": "미니 빔프로젝터" },
+        { "selector": ".nego .opt--on", "text": "완전 위임" }
+      ]
+    }
+  ]
+}

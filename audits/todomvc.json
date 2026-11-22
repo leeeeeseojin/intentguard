@@ -1,0 +1,13 @@
+{
+  "url": "https://demo.playwright.dev/todomvc/",
+  "scenarios": [
+    {
+      "id": "add-and-complete-todo",
+      "task": "할 일에 '서버 점검'과 '로그 확인'을 추가하고, '서버 점검'만 완료로 표시해줘.",
+      "checks": [
+        { "selector": ".todo-list li.completed", "text": "서버 점검" },
+        { "selector": ".todo-list li:not(.completed)", "text": "로그 확인" }
+      ]
+    }
+  ]
+}
