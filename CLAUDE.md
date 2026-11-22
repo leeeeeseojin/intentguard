@@ -7,7 +7,7 @@
 - `src/domain/` — MiniCloud 도메인 모델과 인메모리 저장소 (단일 진실 공급원)
 - `src/server/` — Hono REST API (`/api/*`), 포트 8787
 - `src/mcp/` — MCP 서버 (stdio). REST API를 호출하므로 콘솔과 상태를 공유한다
-- `web/` — React 콘솔. `?ui=v1` / `?ui=v2`로 버전 전환 (v2는 아직 없음)
+- `web/` — React 콘솔. `?ui=v1` / `?ui=v2`로 버전 전환
 - `tests/` — Vitest 단위 테스트
 - `e2e/` — Playwright 스크립트 E2E
 
@@ -22,7 +22,7 @@ v1 패턴을 "버그"로 보고 고치지 말 것. 개선은 v2에서 한다.
 - `pnpm dev` — API(8787) + 웹(5173) 동시 실행
 - `pnpm mcp` — MCP 서버 실행 (`MINICLOUD_URL` 기본값 http://localhost:8787)
 - `pnpm typecheck` / `pnpm test` / `pnpm test:e2e`
-- 테스트 데이터 초기화: `POST /api/_reset`
+- 테스트 데이터 초기화: `POST /api/_reset` (`x-actor: human` 헤더 필요)
 
 ## 완료 기준
 

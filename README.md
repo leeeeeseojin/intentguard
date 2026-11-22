@@ -165,7 +165,7 @@ curl -s localhost:8787/api/_audit
 ```
 
 ```bash
-curl -s -X POST localhost:8787/api/_reset
+curl -s -X POST -H "x-actor: human" localhost:8787/api/_reset
 ```
 
 ## 향후 계획
