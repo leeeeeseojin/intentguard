@@ -2,6 +2,7 @@ import { useState } from "react";
 import summary from "virtual:bench-summary";
 import type { PathKey, PathSummary } from "../../../src/bench/summary";
 import { AuditBuilder } from "./AuditBuilder";
+import { CrossCheck } from "./CrossCheck";
 import { FoundProblem } from "./FoundProblem";
 import { LiveEvidence } from "./LiveEvidence";
 import liveTasks from "./live-evidence.json";
@@ -185,12 +186,14 @@ export function Landing() {
           <StopCompare />
         </section>
 
+        <CrossCheck />
+
         <section className="chapter wide case-part" aria-labelledby="result">
           <div className="chapter-head">
-            <h3 id="result">실험 결과</h3>
+            <h3 id="result">첫 실험: 90회</h3>
             <p>{summary.model}에게 과제 {summary.scenarios.length}개를 경로별로 3번씩 시켰습니다.</p>
             <p>
-              <strong>위의 실제 사이트 기록과는 조건이 달라 비교할 수 없습니다.</strong> 이 표는 Claude Code와 모델 1종, 실제 기록은 Antigravity CLI와 여러 모델로 측정했고 반복 수와 확인 판정 방식도 다릅니다.
+              <strong>실제 사이트 기록·교차 검증과는 조건이 달라 비교할 수 없습니다.</strong> 이 표는 Claude Code와 모델 1종, 실제 기록은 Antigravity CLI와 여러 모델로 측정했고 반복 수와 확인 판정 방식도 다릅니다.
             </p>
             <p className="fine">
               성공은 서버 상태와 감사 로그로 채점했습니다. 확인된 성공은 그중 에이전트가 최종 상태까지 확인했다고 보고한 실행입니다.
@@ -303,7 +306,8 @@ export function Landing() {
             <div>
               <h3>v1·v2 사례</h3>
               <ul className="guide">
-                <li>표는 측정 당시 화면의 결과입니다. 이후 고친 화면으로는 같은 조건의 재측정을 하지 않았습니다.</li>
+                <li>첫 실험 표는 측정 당시 화면의 결과입니다. 고친 화면은 4개 모델 교차 검증으로 따로 쟀고, 도구와 반복 수가 달라 두 표의 숫자끼리는 비교할 수 없습니다.</li>
+                <li>교차 검증에서 운영 서버 정지는 승인 대기가 정답이라, 제대로 처리한 에이전트도 확인 못 함으로 보고합니다.</li>
                 <li>확인 여부는 AI가 단독으로 검수했습니다. <a href={doc("docs/results/verification-labels.json")}>실행별 근거</a>를 공개합니다.</li>
                 <li>모델 1종, 과제당 3회입니다. 시나리오와 채점기를 같은 사람이 만들었고 블라인드 검증이 아닙니다.</li>
                 <li>v1은 문제 패턴을 일부러 넣은 기준선이고 그중 일부는 실제 콘솔보다 불리해, 개선 폭이 과대평가됐을 수 있습니다.</li>
