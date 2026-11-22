@@ -23,10 +23,10 @@ export function AppGuide() {
 
   return (
     <div className="trial">
-      <label className="trial-prompt">
-        처음 한 번 준비
-        <textarea readOnly rows={SETUP.length} value={SETUP.join("\n")} />
-      </label>
+      <div className="trial-prompt">
+        <p>처음 한 번 준비</p>
+        <pre className="setup"><code>{SETUP.join("\n")}</code></pre>
+      </div>
       <label className="trial-prompt">
         검사 앱 켜기
         <textarea readOnly rows={1} value={START} />
