@@ -41,6 +41,7 @@ export function assessRisk(cloud: MiniCloud, op: Operation): RiskAssessment {
     case "instance.start": {
       const i = instanceName(op.id);
       summary = `서버 ${i?.name ?? op.id} ${op.kind === "instance.stop" ? "정지" : "시작"}`;
+      if (op.kind === "instance.stop" && i?.env === "prod") reasons.push("운영(prod) 서버 정지는 서비스 중단으로 이어질 수 있음");
       break;
     }
     case "instance.delete": {

@@ -110,6 +110,10 @@ describe("REST API · IntentGuard", () => {
     expect(res.status).toBe(202);
   });
 
+  it("에이전트의 운영 서버 정지는 승인 대기", async () => {
+    expect((await req("POST", "/api/instances/srv-0001/stop", "agent")).status).toBe(202);
+  });
+
   it("reset하면 승인 대기열과 일시정지도 초기화된다", async () => {
     await req("POST", "/api/buckets/bkt-1/public", "agent", { public: true });
     await req("POST", "/api/agent-control", "human", { paused: true });

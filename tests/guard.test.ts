@@ -16,7 +16,8 @@ describe("위험도 판단", () => {
     [{ kind: "securityGroup.addRule", sgId: "sg-ssh", input: { protocol: "tcp", port: 22, source: "0.0.0.0/0" } } as const, "high"],
     [{ kind: "securityGroup.addRule", sgId: "sg-ssh", input: { protocol: "tcp", port: 8080, source: "10.0.0.0/16" } } as const, "low"],
     [{ kind: "instance.create", input: { name: "big-dev", env: "dev", spec: "large" } } as const, "high"],
-    [{ kind: "instance.stop", id: "srv-0013" } as const, "low"],
+    [{ kind: "instance.stop", id: "srv-0013" } as const, "high"],
+    [{ kind: "instance.stop", id: "srv-0008" } as const, "low"],
   ])("%o → %s", (op, level) => {
     expect(assessRisk(cloud, op).level).toBe(level);
   });
