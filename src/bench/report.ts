@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SCENARIOS } from "./scenarios.js";
 import { classify } from "./classify.js";
+import { applyReview, loadVerificationLabels } from "./verification.js";
 import type { RunRecord } from "./types.js";
 
 /**
@@ -21,13 +22,17 @@ if (labels.length === 0) {
   process.exit(1);
 }
 
+const reviews = loadVerificationLabels(path.join(repoRoot, "docs/results/verification-labels.json"));
 const records: RunRecord[] = labels.flatMap((label) => {
   const dir = path.join(repoRoot, "runs", label);
   return readdirSync(dir)
     .filter((f) => f.endsWith(".json"))
     .map((f) => JSON.parse(readFileSync(path.join(dir, f), "utf8")) as RunRecord)
     // 분류 규칙이 바뀌어도 예전 기록에 같은 기준을 적용하도록 태그를 다시 계산한다.
-    .map((r) => ({ ...r, failureTags: classify(r, r.permissionDenials ?? 0) }));
+    .map((r) => {
+      const tags = classify(r, r.permissionDenials ?? 0);
+      return { ...r, failureTags: r.grade.success ? applyReview(tags, r.runId, reviews.labels[label]) : tags };
+    });
 });
 
 const pathOf = (r: RunRecord) => (r.driver === "mcp" ? "MCP" : `Web ${r.ui}`);
@@ -49,6 +54,9 @@ out();
 out(`- 실행 기록 ${records.length}개${excluded ? ` (실험 환경 오류 ${excluded}개 제외)` : ""}`);
 out(`- 모델: ${[...new Set(valid.map((r) => r.model))].join(", ")}`);
 out(`- 채점: 에이전트의 보고가 아니라 서버 감사 로그와 최종 상태 기준`);
+for (const label of labels) {
+  out(reviews.labels[label] ? `- 확인 여부(${label}): 최종 답변 검수 (${reviews.reviewer})` : `- 확인 여부(${label}): **정규식 자동 추정, 검수 전**`);
+}
 out();
 
 // 1. 경로별 요약
@@ -67,7 +75,7 @@ for (const p of paths) {
 }
 out();
 out("- **확인된 성공률**: 실제로 성공했고, 에이전트도 화면·도구에서 결과를 확인했다고 보고한 비율");
-out("- **보고 불일치**: 에이전트의 보고와 실제 상태가 어긋난 실행 수 (실패했는데 완료했다고 보고 + 성공했는데 확인 못 했다고 보고)");
+out("- **보고 불일치**: 에이전트의 보고와 실제 상태가 어긋난 실행 수 (실패했는데 완료했다고 보고 + 성공했는데 미확인·진행 중·실패로 보고)");
 out();
 
 // 2. 시나리오 × 경로
@@ -85,7 +93,7 @@ for (const s of SCENARIOS) {
     const mark = ok === pr.length ? "✅" : ok === 0 ? "❌" : "⚠️";
     return `${mark} ${ok}/${pr.length} · ${avg(pr.map((r) => r.numTurns)).toFixed(0)}턴`;
   });
-  out(`| ${s.title}${s.heldOut ? " *(held-out)*" : ""} | ${cells.join(" | ")} |`);
+  out(`| ${s.title}${s.heldOut ? " *(추가 시나리오)*" : ""} | ${cells.join(" | ")} |`);
 }
 out();
 
