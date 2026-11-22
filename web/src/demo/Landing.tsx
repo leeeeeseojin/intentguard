@@ -1,7 +1,7 @@
 import { useState } from "react";
 import summary from "virtual:bench-summary";
 import type { PathKey, PathSummary } from "../../../src/bench/summary";
-import { AuditBuilder } from "./AuditBuilder";
+import { AppGuide } from "./AppGuide";
 import { CrossCheck } from "./CrossCheck";
 import { FoundProblem } from "./FoundProblem";
 import { LiveEvidence } from "./LiveEvidence";
@@ -118,7 +118,7 @@ export function Landing() {
               <em>내 사이트를 쓸 수 있을까요?</em>
             </h1>
             <p className="lead">
-              주소와 시킬 일을 넣으면 AI 에이전트가 실제로 해봅니다. <strong>AI의 말이 아니라 실제 상태로</strong> 성공을 판정하고, 막힌 곳을 알려줍니다.
+              내 PC의 검사 앱에 주소와 시킬 일을 넣으면 AI 에이전트가 실제로 해봅니다. <strong>AI의 말이 아니라 실제 상태로</strong> 성공을 판정하고, 막힌 곳을 알려줍니다.
             </p>
             <nav className="actions" aria-label="시작">
               <a className="cta" href="#audit">내 사이트 검사하기</a>
@@ -137,7 +137,7 @@ export function Landing() {
           <ol className="how">
             <li>
               <h3>주소와 시킬 일을 넣는다</h3>
-              <p>끝났을 때 화면에 보여야 할 글자가 성공 조건이 됩니다.</p>
+              <p>끝났을 때 보여야 할 문구와, 새로고침 뒤에도 남아야 하는지가 성공 조건이 됩니다.</p>
             </li>
             <li>
               <h3>AI 에이전트가 직접 조작한다</h3>
@@ -162,9 +162,9 @@ export function Landing() {
         <section className="chapter" aria-labelledby="audit">
           <div className="chapter-head">
             <h2 id="audit">내 사이트 검사하기</h2>
-            <p>Vercel, AWS, localhost 어디든 브라우저로 열리는 주소면 됩니다. 세 칸을 채우면 내 PC에서 돌릴 명령이 만들어집니다.</p>
+            <p>Vercel, AWS, localhost 어디든 브라우저로 열리는 주소면 됩니다. 이 사이트는 소개와 실제 기록을 보여주고, 검사는 내 PC의 검사 앱에서 실행됩니다.</p>
           </div>
-          <AuditBuilder />
+          <AppGuide />
         </section>
 
         <section className="chapter" aria-labelledby="case">

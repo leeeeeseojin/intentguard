@@ -41,7 +41,7 @@ test("소개 화면은 정정된 수치를 보여주고 콘솔로 이어진다",
   await expect(page.getByRole("rowheader", { name: "log-collector-prod" })).toBeVisible();
 });
 
-test("실제 검사 기록은 시킨 일·판정·화면을 보여주고 내 URL 명령을 만든다", async ({ page }) => {
+test("실제 검사 기록은 시킨 일·판정·화면을 보여주고 검사 앱 실행법을 알려준다", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("group", { name: "모델별 결과" }).getByRole("button")).not.toHaveCount(0);
   await page.getByLabel("테스트한 사이트").selectOption({ label: "deallens-jet.vercel.app" });
@@ -50,10 +50,7 @@ test("실제 검사 기록은 시킨 일·판정·화면을 보여주고 내 URL
   await shot.scrollIntoViewIfNeeded();
   await expect.poll(() => shot.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1280);
 
-  await page.getByLabel("검사할 주소").fill("https://example.com/");
-  await page.getByLabel("시킬 일").fill("요금 안내를 열어줘");
-  await page.getByLabel("끝났을 때 보여야 할 글자").fill("요금");
-  await expect(page.getByLabel("실행 명령")).toHaveValue("pnpm exec tsx src/audit/cli.ts --url 'https://example.com/' --task '요금 안내를 열어줘' --expect '요금'");
+  await expect(page.getByLabel("검사 앱 켜기")).toHaveValue("pnpm exec tsx src/app/main.ts");
 });
 
 test("v1은 서버 없이 동작하고 새로고침 전까지 목록이 그대로인 특성도 유지한다", async ({ page }) => {
