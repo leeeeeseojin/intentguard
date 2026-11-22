@@ -37,6 +37,7 @@ export interface IntentGuardOptions {
  * - 위험한 작업은 바로 실행하지 않고 사람 승인 대기열에 넣는다.
  * - 사람은 언제든 에이전트의 모든 변경 작업을 일시정지할 수 있다.
  * - Web·MCP·API 어느 경로로 와도 같은 정책이 적용된다.
+ * - 사람이라고 밝히지 않은 요청(unknown)은 에이전트와 똑같이 제한한다.
  */
 export class IntentGuard {
   private approvals: Approval[] = [];
@@ -64,13 +65,13 @@ export class IntentGuard {
   }
 
   setPaused(paused: boolean, actor: Actor) {
-    if (actor === "agent") throw new CloudError("FORBIDDEN", "에이전트는 일시정지 상태를 바꿀 수 없습니다.");
+    if (actor !== "human") throw new CloudError("FORBIDDEN", "에이전트는 일시정지 상태를 바꿀 수 없습니다.");
     this.paused = paused;
   }
 
   /** 상태를 바꾸는 요청의 단일 입구 */
   run(op: Operation, actor: Actor, agentReason?: string): unknown {
-    if (actor !== "agent") return execute(this.cloud, op, actor);
+    if (actor === "human") return execute(this.cloud, op, actor);
 
     if (this.paused) {
       throw new CloudError(
@@ -133,7 +134,7 @@ export class IntentGuard {
   }
 
   private assertHuman(actor: Actor) {
-    if (actor === "agent") throw new CloudError("FORBIDDEN", "에이전트는 스스로 승인하거나 거절할 수 없습니다.", "사용자의 결정을 기다리세요.");
+    if (actor !== "human") throw new CloudError("FORBIDDEN", "에이전트는 스스로 승인하거나 거절할 수 없습니다.", "사용자의 결정을 기다리세요.");
   }
 
   private find(id: string): Approval {

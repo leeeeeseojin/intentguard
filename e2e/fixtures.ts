@@ -4,7 +4,7 @@ import { test as base, expect, type Locator, type Page } from "@playwright/test"
 export const test = base.extend<{ resetCloud: void }>({
   resetCloud: [
     async ({ request }, use) => {
-      const res = await request.post("/api/_reset");
+      const res = await request.post("/api/_reset", { headers: { "x-actor": "human" } });
       expect(res.ok()).toBe(true);
       await use();
     },

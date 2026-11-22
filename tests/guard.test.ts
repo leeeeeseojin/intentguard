@@ -88,6 +88,14 @@ describe("IntentGuard", () => {
     expect(cloud.getInstance("srv-0008").status).toBe("stopped");
   });
 
+  it("출처를 밝히지 않은 요청도 에이전트처럼 제한한다", () => {
+    const res = guard.run({ kind: "bucket.setPublic", id: "bkt-1", public: true }, "unknown") as PendingResponse;
+    expect(res.status).toBe("pending_approval");
+    expect(() => guard.approve(res.approval.id, "unknown")).toThrowError(expect.objectContaining({ code: "FORBIDDEN" }));
+    expect(() => guard.reject(res.approval.id, "unknown")).toThrowError(expect.objectContaining({ code: "FORBIDDEN" }));
+    expect(() => guard.setPaused(false, "unknown")).toThrowError(expect.objectContaining({ code: "FORBIDDEN" }));
+  });
+
   it("이미 처리된 요청은 다시 결정할 수 없다", () => {
     const { approval } = guard.run({ kind: "bucket.setPublic", id: "bkt-1", public: true }, "agent") as PendingResponse;
     guard.reject(approval.id, "human");

@@ -29,6 +29,7 @@ const bucketPublicSchema = z.object({ public: z.boolean() });
 const rejectSchema = z.object({ reason: z.string().optional() });
 const agentControlSchema = z.object({ paused: z.boolean() });
 
+// 주의: 자기 신고 값이다. 실제 권한 경계로 쓰려면 인증이 필요하다(README "신뢰 경계").
 function actorOf(c: Context): Actor {
   const value = c.req.header("x-actor");
   return value === "human" || value === "agent" ? value : "unknown";
@@ -117,6 +118,8 @@ export function createApp(cloud: MiniCloud, guard: IntentGuard = new IntentGuard
   // 실험용
   app.get("/_audit", (c) => c.json({ items: cloud.getAudit() }));
   app.post("/_reset", (c) => {
+    // 초기화는 승인 대기열과 일시정지를 지우므로 사람만 할 수 있다.
+    if (actorOf(c) !== "human") throw new CloudError("FORBIDDEN", "사람만 실험 상태를 초기화할 수 있습니다.");
     cloud.reset();
     guard.reset();
     return c.json({ ok: true });

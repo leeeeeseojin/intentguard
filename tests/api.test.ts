@@ -36,7 +36,7 @@ describe("REST API", () => {
   });
 
   it("도메인 오류는 코드와 hint를 그대로 전달한다", async () => {
-    const res = await app.request("/api/instances/srv-0001", { method: "DELETE" });
+    const res = await app.request("/api/instances/srv-0001", { method: "DELETE", headers: { "x-actor": "human" } });
     const json = await res.json();
     expect(res.status).toBe(409);
     expect(json.error).toMatchObject({ code: "INVALID_STATE", hint: expect.any(String) });
@@ -47,7 +47,7 @@ describe("REST API", () => {
     let audit = await (await app.request("/api/_audit")).json();
     expect(audit.items[0]).toMatchObject({ actor: "agent", action: "instance.stop" });
 
-    await post("/api/_reset");
+    await post("/api/_reset", undefined, "human");
     audit = await (await app.request("/api/_audit")).json();
     expect(audit.items).toHaveLength(0);
   });
@@ -93,6 +93,21 @@ describe("REST API · IntentGuard", () => {
     expect(blocked.status).toBe(423);
     expect((await blocked.json()).error.code).toBe("AGENT_PAUSED");
     expect((await req("POST", "/api/instances/srv-0008/stop", "human")).status).toBe(200);
+  });
+
+  it.each(["", "Human", "admin"])("x-actor가 '%s'이면 승인 정책을 우회할 수 없다", async (actor) => {
+    expect((await req("POST", "/api/buckets/bkt-1/public", actor, { public: true })).status).toBe(202);
+    expect((await req("POST", "/api/approvals/apv-1/approve", actor)).status).toBe(403);
+    expect((await req("POST", "/api/_reset", actor)).status).toBe(403);
+  });
+
+  it("x-actor 헤더가 아예 없어도 승인 대기로 보낸다", async () => {
+    const res = await app.request("/api/buckets/bkt-1/public", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ public: true }),
+    });
+    expect(res.status).toBe(202);
   });
 
   it("reset하면 승인 대기열과 일시정지도 초기화된다", async () => {
