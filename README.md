@@ -2,12 +2,14 @@
 
 > 에이전트가 클라우드 콘솔을 쓸 때 **어디서, 왜 실패하는지** 수집하고, 화면을 개선한 뒤, **에이전트 E2E로 성공률 개선을 검증**하는 실험 프로젝트.
 
-사람을 위해 만든 콘솔을 이제 AI 에이전트도 쓴다. 같은 작업이라도 접근 경로(Web 콘솔 / MCP / API)에 따라 에이전트의 성공률은 크게 달라진다.
+사람을 위해 만든 콘솔을 이제 AI 에이전트도 쓴다. 같은 작업이라도 접근 경로(Web 콘솔 / MCP)와 화면 설계에 따라 에이전트가 쓰는 단계 수와 결과를 확인하는 비율이 크게 달라진다.
 이 프로젝트는 일반적인 클라우드 콘솔(v1)과 같은 기능의 MCP 서버를 만들고, 에이전트가 각 경로로 작업하며 겪는 실패를 근거로 **에이전트 친화 인터페이스 원칙**과 **사람·에이전트 협업 UX**(v2 + IntentGuard 승인 패널)를 설계한다.
+
+> 실험 대상 MiniCloud는 NAVER Cloud Platform의 공식 가이드를 참고해 만든 **모의 콘솔**이다. 실제 NCP에서 측정한 결과가 아니다.
 
 ## 결과 요약
 
-Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 (90회, 서버 감사 로그로 채점). → [상세 리포트](docs/results/final-comparison.md) · [분석](docs/analysis-v2.md)
+Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 (90회. 성공 여부는 서버 감사 로그로 채점, 확인 여부는 에이전트의 최종 답변을 검수). → [상세 리포트](docs/results/final-comparison.md) · [분석](docs/analysis-v2.md)
 
 | 지표 | MCP | Web v1 | **Web v2** |
 | --- | --- | --- | --- |
@@ -22,6 +24,18 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 - **성공률이 숨긴 회귀:** v2는 보안 그룹 과제 3/3을 성공했지만, 세 번 모두 감독 패널이 제출 버튼을 가려 에이전트가 우회했다. 위 수치는 수정 전 화면의 결과이며 재측정 전이다.
 - v2도 MCP보다 약 3배 많은 턴을 쓴다. 에이전트에게는 구조화된 경로(MCP)를, 웹 화면은 사람이 에이전트를 감독하고 함께 쓰는 자리로 설계하는 근거가 됐다.
 
+## 측정 이후 고친 것
+
+실행 기록과 답변을 다시 검토해 찾은 문제다. **위 표는 수정 전 화면의 측정값이고, 수정 후 에이전트 재측정은 아직이다.**
+
+| 발견한 문제 | 수정 | 회귀 방지 |
+| --- | --- | --- |
+| 감독 패널이 "규칙 추가" 버튼을 가림 | 본문·폼이 열 너비 안에서 줄어들도록 레이아웃 수정 | [폭 5종 E2E](e2e/layout-v2.spec.ts) |
+| `x-actor` 없는 요청이 승인 없이 실행됨 | 사람으로 밝히지 않은 요청은 에이전트와 같게 제한 | [API 테스트](tests/api.test.ts) |
+| 주소에서 `actor=agent`를 지우면 자가 승인 가능 | 같은 탭에서는 에이전트로 유지 | [자가 승인 E2E](e2e/actor.spec.ts) |
+| 운영 서버 정지가 승인 없이 실행됨 | 승인 대상에 추가 | [정책 테스트](tests/guard.test.ts) |
+| "실패했다"는 보고를 확인된 성공으로 집계 | 분류 규칙 보강, 검수 라벨 우선 적용 | [분류·근거 테스트](tests/classify.test.ts) |
+
 ## 진행 상황
 
 | 단계 | 내용 | 상태 |
@@ -30,7 +44,10 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 2 | 에이전트 실행기(Web/MCP) · 시나리오 · 실패 자동 분류 리포트 → [기준선 결과](docs/results/v1-baseline.md) · [실패 분석](docs/analysis-v1.md) | ✅ |
 | 3 | 에이전트 친화 원칙 적용 콘솔 v2 · IntentGuard 승인·감독 패널 | ✅ |
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
-| 5 | 위험 요청이 섞인 시나리오로 IntentGuard 개입 비율·차단율 측정 · v2 남은 문제 개선 | ⏳ |
+| 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
+| 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 배포 | ⬜ |
+| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | ⬜ |
+| 8 | 수정한 화면과 새 시나리오로 재측정 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
 ## 구조
 
@@ -42,7 +59,9 @@ src/mcp/      MCP 서버 (stdio) — REST API를 호출하므로 콘솔과 상�
 src/bench/    에이전트 벤치마크 — 시나리오 · 드라이버(MCP/Web) · 채점 · 실패 분류 · 리포트
 web/          React 콘솔 (v1 기본, ?ui=v2 개선판)
 tests/        Vitest 단위·통합 테스트
-e2e/          Playwright 스크립트 E2E (v1 · v2 · 승인 흐름)
+e2e/          Playwright 스크립트 E2E (v1 · v2 · 승인 흐름 · 레이아웃 회귀)
+docs/results/ 벤치마크 리포트 · 확인 여부 검수 라벨
+runs/         에이전트 실행 원본 기록
 ```
 
 ```
@@ -60,13 +79,13 @@ e2e/          Playwright 스크립트 E2E (v1 · v2 · 승인 흐름)
 
 | 장치 | 동작 | 협업 방식 |
 | --- | --- | --- |
-| 위험도 판단 | 운영 리소스 삭제, 외부 공개(버킷 공개·민감 포트 0.0.0.0/0), 고비용 사양을 **높은 위험**으로 분류 | — |
+| 위험도 판단 | 운영 리소스 삭제, 운영 서버 정지, 운영 서버 생성, 외부 공개(버킷 공개·민감 포트 0.0.0.0/0), 고비용 사양을 **높은 위험**으로 분류 | — |
 | 승인 대기열 | 에이전트의 높은 위험 작업은 실행하지 않고 `202 pending_approval`로 보류. 사람이 승인하면 IntentGuard가 대신 실행 | Human-in-the-loop |
 | 이유 전달 | 에이전트는 작업 이유(`reason`)를 함께 보내고, 승인 카드에 위험 요인과 나란히 표시. 거절 사유는 에이전트에게 돌아감 | 설명 가능성 |
 | 감독 패널 | v2 콘솔 오른쪽에서 에이전트의 최근 활동과 결정 기록을 실시간으로 보여줌 | Human-on-the-loop |
 | 일시정지 | 사람이 스위치 하나로 에이전트의 모든 변경을 즉시 거부(`423`). 사람은 계속 작업 가능 | 개입·복구 |
 
-에이전트는 스스로 승인하거나 일시정지를 풀 수 없다(`403`). 이 실험에서 행위자는 `x-actor` 헤더로 구분하므로, 실제 서비스라면 인증된 신원과 권한으로 대체해야 한다.
+에이전트는 스스로 승인하거나 일시정지를 풀 수 없다(`403`). 다만 행위자는 인증 없이 `x-actor` 헤더로 구분하므로 [신뢰 경계](#신뢰-경계)의 한계가 있다.
 
 ## 콘솔 v2: 에이전트 친화 원칙 적용
 
@@ -155,10 +174,28 @@ pnpm dev          # API(8787) + 콘솔(5173)
 pnpm typecheck && pnpm test && pnpm test:e2e
 ```
 
+### 에이전트 벤치마크
+
+로그인된 Claude Code CLI가 필요하고, 실행할 때마다 사용량이 든다. 화면만 비교하려면 승인 정책을 끄고 서버를 띄운다.
+
+```bash
+APPROVAL_POLICY=off pnpm dev
+```
+
+PowerShell에서는 `$env:APPROVAL_POLICY="off"; pnpm dev`로 띄운다. 다른 터미널에서 실행한다.
+
+```bash
+pnpm bench --driver mcp,web --ui v1 --include-held-out --repeat 3 --label remeasure-mcp-v1
+pnpm bench --driver web --ui v2 --include-held-out --repeat 3 --label remeasure-v2
+pnpm bench:report remeasure-mcp-v1 remeasure-v2
+```
+
+새 실행의 확인 여부는 정규식 추정이라 리포트에 "검수 전"으로 표시된다. 최종 답변을 읽고 [검수 라벨](docs/results/verification-labels.json)을 추가한 뒤 수치를 인용한다.
+
 ### Claude Code에서 MCP로 연결하기
 
 `pnpm dev`를 켠 상태에서 이 폴더에서 Claude Code를 실행하면 `.mcp.json`의 `minicloud` 서버가 연결된다.
-MCP로 한 작업은 감사 로그에 `actor: agent`로 기록되고, 콘솔에도 바로 반영된다(새로고침 필요 — `stale-list`).
+MCP로 한 작업은 감사 로그에 `actor: agent`로 기록되고, 콘솔과 상태를 공유한다. v2는 자동으로 갱신되고, v1은 새로고침해야 보인다(`stale-list`).
 
 ```bash
 curl -s localhost:8787/api/_audit
@@ -172,7 +209,9 @@ curl -s -X POST -H "x-actor: human" localhost:8787/api/_reset
 
 - CLI · Skill 경로 추가해 5개 접근 경로 비교
 - 실제 NAVER Cloud Platform 서비스 하나를 읽기 전용 API/CLI로 연동
-- 토큰 사용량을 지표로 추가 (화면 구조가 컨텍스트 비용에 주는 영향)
+- 실패 로그 → 수정 제안 → E2E 검증으로 이어지는 UX 자동 개선 루프
+- 사람 사용성 테스트로 v2가 사람에게도 나은지 검증
+- 확인 여부 라벨의 사람 교차 검수
 
 ## 기술 스택
 
