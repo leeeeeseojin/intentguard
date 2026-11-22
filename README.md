@@ -5,6 +5,8 @@
 사람을 위해 만든 콘솔을 이제 AI 에이전트도 쓴다. 같은 작업이라도 접근 경로(Web 콘솔 / MCP)와 화면 설계에 따라 에이전트가 쓰는 단계 수와 결과를 확인하는 비율이 크게 달라진다.
 이 프로젝트는 일반적인 클라우드 콘솔(v1)과 같은 기능의 MCP 서버를 만들고, 에이전트가 각 경로로 작업하며 겪는 실패를 근거로 **에이전트 친화 인터페이스 원칙**과 **사람·에이전트 협업 UX**(v2 + IntentGuard 승인 패널)를 설계한다.
 
+**체험하기 → https://intentguard-plum.vercel.app** · [기존 v1](https://intentguard-plum.vercel.app/?ui=v1) · [개선 v2](https://intentguard-plum.vercel.app/?ui=v2)
+
 > 실험 대상 MiniCloud는 NAVER Cloud Platform의 공식 가이드를 참고해 만든 **모의 콘솔**이다. 실제 NCP에서 측정한 결과가 아니다.
 
 ## 결과 요약
@@ -45,7 +47,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 3 | 에이전트 친화 원칙 적용 콘솔 v2 · IntentGuard 승인·감독 패널 | ✅ |
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
-| 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | 구현 ✅ · 배포 ⬜ |
+| 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | ✅ [배포](https://intentguard-plum.vercel.app) |
 | 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | ⬜ |
 | 8 | 수정한 화면과 새 시나리오로 재측정 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
@@ -184,7 +186,7 @@ pnpm exec vite --mode demo
 - 서버와 같은 Hono 앱을 브라우저 탭 안에서 실행한다. 상태는 탭마다 따로이고 새로고침해도 남는다.
 - 소개 화면의 수치는 빌드할 때 `runs/`와 검수 라벨에서 계산한다.
 - `?actor=agent`로 연 탭에는 체험 도구가 보이지 않는다.
-- [vercel.json](vercel.json)에 배포 설정이 있다. Vercel에서 저장소를 가져오면 demo 모드로 빌드된다.
+- 배포 주소는 https://intentguard-plum.vercel.app 이다. `main`에 푸시하면 [vercel.json](vercel.json) 설정대로 Vercel이 demo 모드로 다시 빌드한다.
 - 데모에는 HTTP API가 없으므로 MCP 경로와 자동 채점 벤치마크는 로컬 서버(`pnpm dev`)에서만 돌아간다.
 
 ### 에이전트 벤치마크
