@@ -391,6 +391,43 @@ button.list-item {
   }
 }
 
+/* 좁은 화면: 메뉴·본문·패널을 세로로 쌓는다. */
+@media (max-width: 700px) {
+  .console-v2 {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 44px auto auto auto;
+  }
+
+  .console-v2 .account {
+    display: none;
+  }
+
+  .console-v2 .sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 4px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .console-v2 .nav-item {
+    padding: 8px 10px;
+  }
+
+  .console-v2 .nav-item.active {
+    border-right: 0;
+  }
+
+  .console-v2 .content {
+    padding: 16px 12px;
+    overflow-x: auto;
+  }
+
+  .console-v2 .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .console-v2 .grid th,
 .console-v2 .grid td {
   white-space: normal;
