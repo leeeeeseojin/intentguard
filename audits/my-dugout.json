@@ -1,0 +1,13 @@
+{
+  "url": "https://my-dugout.vercel.app/",
+  "scenarios": [
+    {
+      "id": "start-away-game-with-coach",
+      "task": "내 구단은 한화로 고르고 원정 경기로 맞춰줘. 운영 방식에서 공격 작전만 코치에게 맡기고 투수·수비는 내가 하도록 둔 다음, 경기를 시작해줘. 경기가 시작되면 끝까지 진행하지 말고 거기서 멈춰.",
+      "checks": [
+        { "selector": ".sb-team:first-child .sb-name:has(small)", "text": "한화", "label": "경기가 시작됐고, 내 구단이 원정팀 한화임" },
+        { "storage": { "key": "my-dugout:settings", "equals": { "offense": "coach", "defense": "me" } }, "label": "공격 작전은 코치에게, 투수·수비는 내가로 저장됨" }
+      ]
+    }
+  ]
+}
