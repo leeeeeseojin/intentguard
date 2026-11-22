@@ -8,6 +8,13 @@ const SAMPLES = [
   { id: "stop-dev", label: "개발 서버 정지 (바로 실행)", path: "/api/instances/srv-0008/stop", body: undefined, reason: "사용하지 않는 개발 서버 정지" },
 ];
 
+/** 좁은 화면에서는 승인 카드가 화면 밖에 생기므로, 패널이 그려지면 그 자리로 옮긴다. */
+function revealApproval(attempt = 0) {
+  const card = [...document.querySelectorAll(".approval-card")].at(-1);
+  if (card) card.scrollIntoView({ block: "nearest" });
+  else if (attempt < 20) setTimeout(() => revealApproval(attempt + 1), 200);
+}
+
 /** 사람 방문자에게만 보인다. 에이전트로 연 탭은 실험과 같은 화면을 봐야 하므로 넣지 않는다. */
 export function DemoBar({ ui, request }: { ui: "v1" | "v2"; request: DemoRequest }) {
   const [sampleId, setSampleId] = useState(SAMPLES[0]!.id);
@@ -21,7 +28,10 @@ export function DemoBar({ ui, request }: { ui: "v1" | "v2"; request: DemoRequest
       headers: { "content-type": "application/json", "x-actor": "agent", "x-agent-reason": encodeURIComponent(sample.reason) },
       body: sample.body && JSON.stringify(sample.body),
     });
-    if (res.status === 202) setMessage("승인 대기: 감독 패널에서 승인하거나 거절하세요.");
+    if (res.status === 202) {
+      setMessage("승인 대기: 감독 패널에서 승인하거나 거절하세요.");
+      revealApproval();
+    }
     else if (res.ok) setMessage("낮은 위험이라 바로 실행됐습니다.");
     else setMessage(((await res.json()) as { error: { message: string } }).error.message);
   }
