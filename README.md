@@ -48,7 +48,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
 | 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | ✅ [배포](https://intentguard-plum.vercel.app) |
-| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | ⬜ |
+| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · Skill | CLI ✅ · Skill ⬜ |
 | 8 | 수정한 화면과 새 시나리오로 재측정 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
 ## 구조
@@ -58,6 +58,8 @@ src/domain/   MiniCloud 도메인 모델 · 인메모리 저장소 · 감사 로
 src/guard/    IntentGuard — 위험도 판단 · 사람 승인 대기열 · 에이전트 일시정지
 src/server/   Hono REST API  (/api/*)
 src/mcp/      MCP 서버 (stdio) — REST API를 호출하므로 콘솔과 상태를 공유
+src/audit/    배포 URL 검사기 — Antigravity CLI · 브라우저 최종 상태로 채점
+audits/       다른 서비스용 검사 시나리오
 src/bench/    에이전트 벤치마크 — 시나리오 · 드라이버(MCP/Web) · 채점 · 실패 분류 · 리포트
 web/          React 콘솔 (v1 기본, ?ui=v2 개선판)
 web/src/demo/ 공개 데모 — 소개 화면 · 브라우저 안 API · 체험 도구
@@ -188,6 +190,34 @@ pnpm exec vite --mode demo
 - `?actor=agent`로 연 탭에는 체험 도구가 보이지 않는다.
 - 배포 주소는 https://intentguard-plum.vercel.app 이다. `main`에 푸시하면 [vercel.json](vercel.json) 설정대로 Vercel이 demo 모드로 다시 빌드한다.
 - 데모에는 HTTP API가 없으므로 MCP 경로와 자동 채점 벤치마크는 로컬 서버(`pnpm dev`)에서만 돌아간다.
+
+### 배포된 URL 검사 (로컬 서버 없음)
+
+로그인된 [Antigravity CLI](https://antigravity.google/)(`agy`)가 필요하고, 실행할 때마다 사용량이 든다.
+
+```bash
+pnpm exec playwright install chromium
+pnpm exec tsx src/audit/cli.ts --ui v1,v2               # 배포된 MiniCloud, 과제 10개씩
+pnpm exec tsx src/audit/cli.ts --spec audits/deallens.json
+pnpm exec tsx src/audit/cli.ts --spec audits/aws-docs.json
+```
+
+기본 모델은 `gemini-3.8-flash-low`(Gemini 3.8 Flash, 추론 강도 Low)다. 실행 기록과 리포트에 모델명이 남는다. `--only <과제 id>`, `--repeat <횟수>`, `--model <agy models의 id>`, `--url <주소>`를 쓸 수 있다. 결과와 스크린샷은 `.intentguard/`에 남고 커밋되지 않는다.
+
+Vercel, AWS, GitHub Pages, localhost 등 **브라우저로 열리는 http(s) 주소면 배포한 곳과 무관하게** 검사한다. 새 서비스는 과제와 성공 조건만 JSON으로 적는다.
+
+```json
+{
+  "url": "https://example.com/",
+  "scenarios": [{ "id": "open-pricing", "task": "요금 안내를 열어줘.", "checks": [{ "selector": "h1", "text": "요금" }] }]
+}
+```
+
+- 에이전트의 말이 아니라 같은 브라우저의 최종 화면(MiniCloud는 저장된 상태와 감사 로그)으로 채점한다. 확인 여부는 정규식 추정 대신 에이전트가 남기는 `RESULT` 표식을 쓴다.
+- 실행마다 빈 폴더와 세션 전용 권한을 쓴다. 전역 설정은 바꾸지 않고 셸·파일·웹 검색 우회는 막거나 무효 처리한다.
+- 다른 출처로 이동하거나 서버에 쓰는 요청(POST 등)은 기본으로 막는다. 본인 소유의 테스트 환경에서만 `"allowWrites": true`로 켠다.
+- **안 되는 대상:** 로그인이 필요한 화면(세션 주입 미지원), CAPTCHA, 자동 브라우저를 차단하는 사이트(예: NCP 공식 가이드는 403). 차단은 우회하지 않는다.
+- 단계 수 세는 방식이 달라서 위 Claude Code 실험의 턴 수와 섞어 비교하지 않는다.
 
 ### 에이전트 벤치마크
 
