@@ -17,11 +17,26 @@ export class ApiError extends Error {
 /** 에이전트 실행기는 ?actor=agent 로 콘솔을 열어 감사 로그에서 사람과 구분한다. */
 const ACTOR_KEY = "intentguard.actor";
 // 에이전트로 연 탭은 주소에서 ?actor=agent를 지워도 에이전트로 남는다.
-if (new URLSearchParams(location.search).get("actor") === "agent") sessionStorage.setItem(ACTOR_KEY, "agent");
-const actor = sessionStorage.getItem(ACTOR_KEY) === "agent" ? "agent" : "human";
+function resolveActor(): "human" | "agent" {
+  const fromUrl = new URLSearchParams(location.search).get("actor") === "agent";
+  try {
+    if (fromUrl) sessionStorage.setItem(ACTOR_KEY, "agent");
+    return sessionStorage.getItem(ACTOR_KEY) === "agent" ? "agent" : "human";
+  } catch {
+    return fromUrl ? "agent" : "human"; // 저장소가 막힌 브라우저
+  }
+}
+const actor = resolveActor();
+
+let transport: (url: string, init: RequestInit) => Promise<Response> = (url, init) => fetch(url, init);
+
+/** 공개 데모는 서버 대신 브라우저 안의 API로 요청을 보낸다. */
+export function setTransport(next: typeof transport) {
+  transport = next;
+}
 
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await transport(`/api${path}`, {
     method,
     headers: { "content-type": "application/json", "x-actor": actor },
     body: body === undefined ? undefined : JSON.stringify(body),
