@@ -189,6 +189,9 @@ export function Landing() {
           <div className="chapter-head">
             <h3 id="result">실험 결과</h3>
             <p>{summary.model}에게 과제 {summary.scenarios.length}개를 경로별로 3번씩 시켰습니다.</p>
+            <p>
+              <strong>위의 실제 사이트 기록과는 조건이 달라 비교할 수 없습니다.</strong> 이 표는 Claude Code와 모델 1종, 실제 기록은 Antigravity CLI와 여러 모델로 측정했고 반복 수와 확인 판정 방식도 다릅니다.
+            </p>
             <p className="fine">
               성공은 서버 상태와 감사 로그로 채점했습니다. 확인된 성공은 그중 에이전트가 최종 상태까지 확인했다고 보고한 실행입니다.
             </p>
