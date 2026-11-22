@@ -124,7 +124,7 @@ export function Landing() {
           <StopCompare />
         </div>
         <p className="disclaimer">
-          MiniCloud는 NAVER Cloud Platform 공식 가이드를 참고한 비공식 모의 콘솔입니다. 실제 NCP와 연결되지 않으며, 바꾼 내용은 이 탭에만 저장됩니다.
+          MiniCloud는 실험용으로 만든 모의 클라우드 콘솔입니다. 실제 서버는 만들어지거나 바뀌지 않으며, 바꾼 내용은 이 탭에만 저장됩니다.
         </p>
       </header>
 
@@ -238,7 +238,7 @@ export function Landing() {
             <li>표는 측정 당시 화면의 결과입니다. 이후 고친 화면과 이 공개 데모로는 아직 재측정하지 않았습니다.</li>
             <li>확인 여부는 AI가 단독으로 검수했습니다. <a href={doc("docs/results/verification-labels.json")}>실행별 근거</a>를 공개합니다.</li>
             <li>모델 1종, 과제당 3회입니다. 시나리오와 채점기를 같은 사람이 만들었고 블라인드 검증이 아닙니다.</li>
-            <li>v1에는 NCP보다 불리하게 만든 패턴이 2개 있어 개선 폭이 과대평가됐을 수 있습니다.</li>
+            <li>v1은 문제 패턴을 일부러 넣은 기준선이고 그중 일부는 실제 콘솔보다 불리해, 개선 폭이 과대평가됐을 수 있습니다.</li>
             <li>승인 패널은 협업 UX 프로토타입입니다. 인증이 없으므로 실제 권한 경계가 아닙니다.</li>
           </ul>
         </section>
@@ -254,7 +254,7 @@ export function Landing() {
 
       <footer className="site-foot">
         <p>IntentGuard · Agent UX Lab</p>
-        <p>NAVER Cloud Platform과 관계없는 개인 프로젝트</p>
+        <p>실험용 개인 프로젝트</p>
       </footer>
     </div>
   );
