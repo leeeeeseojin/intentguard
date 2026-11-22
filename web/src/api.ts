@@ -15,7 +15,10 @@ export class ApiError extends Error {
 }
 
 /** 에이전트 실행기는 ?actor=agent 로 콘솔을 열어 감사 로그에서 사람과 구분한다. */
-const actor = new URLSearchParams(location.search).get("actor") === "agent" ? "agent" : "human";
+const ACTOR_KEY = "intentguard.actor";
+// 에이전트로 연 탭은 주소에서 ?actor=agent를 지워도 에이전트로 남는다.
+if (new URLSearchParams(location.search).get("actor") === "agent") sessionStorage.setItem(ACTOR_KEY, "agent");
+const actor = sessionStorage.getItem(ACTOR_KEY) === "agent" ? "agent" : "human";
 
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
