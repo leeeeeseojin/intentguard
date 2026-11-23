@@ -11,6 +11,7 @@
     "dev:web": "vite",
     "start:api": "tsx src/server/index.ts",
     "mcp": "tsx src/mcp/index.ts",
+    "audit:mcp": "tsx src/audit/mcp-main.ts",
     "bench": "tsx src/bench/run.ts",
     "bench:report": "tsx src/bench/report.ts",
     "bench:install-browser": "node scripts/install-browser.mjs",
