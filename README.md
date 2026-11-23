@@ -13,6 +13,16 @@
 
 검사로 찾은 문제를 고치면 정말 좋아지는지는 **MiniCloud 사례**([기존 v1](https://intentguard-plum.vercel.app/?ui=v1) · [개선 v2](https://intentguard-plum.vercel.app/?ui=v2))로 실험했다. 실패 기록에서 **에이전트 친화 인터페이스 원칙**을 뽑고, **사람·에이전트 협업 UX**(IntentGuard 승인 패널)를 설계했다.
 
+## 화면
+
+| 검사 앱 소개 | 실제 사이트 검사 기록 |
+| :---: | :---: |
+| <img src="docs/images/hero.png" width="420" alt="AI 에이전트가 내 사이트를 쓸 수 있는지 검사한다는 소개와 실제 검사 결과 요약"> | <img src="docs/images/live.png" width="420" alt="모델별 판정, 에이전트가 끝난 순간의 화면, 막힌 곳과 에이전트 보고를 함께 보여주는 실제 검사 기록"> |
+| **사람·에이전트 승인 패널** (MiniCloud v2) | **4개 모델 교차 검증** |
+| <img src="docs/images/v2-approval.png" width="420" alt="에이전트가 요청한 운영 서버 정지를 위험 요인과 이유와 함께 보여주고 사람이 승인하거나 거절하는 감독 패널"> | <img src="docs/images/crosscheck.png" width="420" alt="모델 4종에서 v1과 v2의 확인된 성공률을 비교한 표"> |
+
+<sub>배포된 공개 데모에서 캡처한 화면입니다.</sub>
+
 ## 핵심 결과
 
 | 검증 | 규모 | 결과 |
