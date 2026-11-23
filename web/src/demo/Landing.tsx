@@ -165,7 +165,7 @@ export function Landing({ audit }: { audit?: ReactNode }) {
             <h2 id="audit">내 사이트 검사하기</h2>
             <p>
               Vercel, AWS, localhost 어디든 브라우저로 열리는 주소면 됩니다.{" "}
-              {audit ? "여기서 시작하면 판정, 증거, 재검사까지 이어집니다." : "이 사이트는 소개와 실제 기록을 보여주고, 검사는 내 PC의 검사 앱에서 실행됩니다."}
+              {audit ? "여기서 시작하면 판정, 증거, 재검사까지 이어집니다." : "이 사이트는 정적 배포라 브라우저와 AI 에이전트를 실행할 수 없어서, 검사는 내 PC의 검사 앱이나 AI 에이전트(스킬)로 합니다."}
             </p>
           </div>
           {audit ?? <AppGuide />}
