@@ -15,3 +15,6 @@ runs/raw/
 
 .DS_Store
 *.log
+
+# 프로젝트 안에 설치한 에이전트용 브라우저
+.pw-browsers/
