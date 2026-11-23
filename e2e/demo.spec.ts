@@ -51,6 +51,7 @@ test("실제 검사 기록은 시킨 일·판정·화면을 보여주고 검사 
   await expect.poll(() => shot.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1280);
 
   await expect(page.getByLabel("검사 앱 켜기")).toHaveValue("pnpm exec tsx src/app/main.ts");
+  await expect(page.getByLabel("MCP 서버 연결 (Claude Code)")).toHaveValue(/^claude mcp add intentguard -- node ".+mcp-main\.ts"$/);
 });
 
 test("v1은 서버 없이 동작하고 새로고침 전까지 목록이 그대로인 특성도 유지한다", async ({ page }) => {

@@ -8,6 +8,9 @@ const SETUP = [
 ];
 const START = "pnpm exec tsx src/app/main.ts";
 const SKILL = "claude --plugin-dir ./plugin";
+const MCP_ARGS = 'node "$PWD/node_modules/tsx/dist/cli.mjs" "$PWD/src/audit/mcp-main.ts"';
+const MCP_CLAUDE = `claude mcp add intentguard -- ${MCP_ARGS}`;
+const MCP_AGY = `agy mcp add intentguard ${MCP_ARGS}`;
 
 /** 검사는 각자 PC에서 돈다. 이 사이트(정적 배포)에서는 브라우저도 에이전트도 실행할 수 없다. */
 export function AppGuide() {
@@ -45,6 +48,17 @@ export function AppGuide() {
       <button type="button" className="cta secondary" onClick={() => void copy(SKILL)}>스킬 명령 복사</button>
       <p className="fine trial-prompt">
         이 명령은 스킬과 MCP 도구를 함께 붙입니다. Claude Desktop, Cursor, Antigravity 같은 다른 에이전트에는 MCP 서버(<code>audit_site</code>)만 연결하면 됩니다. 그 뒤 "이 사이트에서 AI가 회원가입을 할 수 있는지 검사해 줘"라고 말하면 에이전트가 검사기를 돌리고 결과를 전합니다. 채점은 그 에이전트가 아니라 검사기가 하고, 검사는 연결한 사람의 PC와 로그인으로 돕니다.
+      </p>
+
+      <label className="trial-prompt">
+        MCP 서버 연결 (Claude Code)
+        <textarea readOnly rows={2} value={MCP_CLAUDE} />
+      </label>
+      <button type="button" className="cta secondary" onClick={() => void copy(MCP_CLAUDE)}>MCP 연결 명령 복사</button>
+      <p className="fine trial-prompt">
+        저장소 폴더에서 한 번 실행하면 어느 폴더에서 Claude Code를 열어도 <code>audit_site</code> 도구를 씁니다. Antigravity는{" "}
+        <code>{MCP_AGY}</code>, Claude Desktop·Cursor는 설정 파일에 같은 <code>node</code> 명령을 넣습니다.{" "}
+        <a href="https://github.com/leeeeeseojin/intentguard#mcp로-연결하기">설정 예시</a>
       </p>
 
       <p role="status" className="trial-prompt">{copied}</p>

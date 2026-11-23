@@ -312,6 +312,8 @@ claude mcp add intentguard -- node <저장소>/node_modules/tsx/dist/cli.mjs <�
 agy mcp add intentguard node <저장소>/node_modules/tsx/dist/cli.mjs <저장소>/src/audit/mcp-main.ts
 ```
 
+저장소 폴더에서 실행한다면 `<저장소>` 대신 `$PWD`를 써도 된다(bash·zsh·PowerShell 모두). 사이트의 [내 사이트 검사하기](https://intentguard-plum.vercel.app/#audit)에도 복사할 수 있는 명령이 있다.
+
 Claude Desktop·Cursor 같은 다른 MCP 클라이언트는 설정 파일에 같은 명령을 넣는다.
 
 ```json
