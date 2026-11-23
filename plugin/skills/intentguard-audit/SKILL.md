@@ -34,6 +34,8 @@ IntentGuard는 다른 AI 에이전트에게 브라우저로 일을 시키고, **
 
 ## 3. 실행
 
+`audit_site` MCP 도구가 연결돼 있으면 그것을 쓴다. 같은 검사기를 부르고, 판정·채점 근거·볼 곳·증거 경로를 정해진 형식으로 돌려준다. 없으면 아래 CLI를 쓴다.
+
 ```bash
 pnpm exec tsx src/audit/cli.ts --url '<주소>' --task '<시킬 일>' --expect '<문구>' [--expect '<문구>'] [--persist] [--model <모델>]
 ```

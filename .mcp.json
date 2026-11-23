@@ -2,8 +2,20 @@
   "mcpServers": {
     "minicloud": {
       "command": "pnpm",
-      "args": ["--silent", "mcp"],
-      "env": { "MINICLOUD_URL": "http://localhost:8787" }
+      "args": [
+        "--silent",
+        "mcp"
+      ],
+      "env": {
+        "MINICLOUD_URL": "http://localhost:8787"
+      }
+    },
+    "intentguard": {
+      "command": "node",
+      "args": [
+        "node_modules/tsx/dist/cli.mjs",
+        "src/audit/mcp-main.ts"
+      ]
     }
   }
 }
