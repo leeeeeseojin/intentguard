@@ -152,6 +152,10 @@
   letter-spacing: 0;
 }
 
+.trial textarea {
+  field-sizing: content; /* 긴 명령이 폰에서 잘리지 않게 내용만큼 늘린다 */
+}
+
 .trial .setup {
   overflow-x: auto;
   padding: 14px;

@@ -52,7 +52,7 @@ export function AppGuide() {
 
       <label className="trial-prompt">
         MCP 서버 연결 (Claude Code)
-        <textarea readOnly rows={2} value={MCP_CLAUDE} />
+        <textarea readOnly rows={3} value={MCP_CLAUDE} />
       </label>
       <button type="button" className="cta secondary" onClick={() => void copy(MCP_CLAUDE)}>MCP 연결 명령 복사</button>
       <p className="fine trial-prompt">
