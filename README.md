@@ -127,7 +127,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
 | 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | ✅ [배포](https://intentguard-plum.vercel.app) |
-| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · 앱 · Skill | CLI ✅ · 앱 ✅ · 실제 기록 공개 ✅ · Skill ⬜ |
+| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · 앱 · Skill | CLI ✅ · 앱 ✅ · 실제 기록 공개 ✅ · [Skill](#에이전트에게-맡기기-skill) ✅ |
 | 8 | 수정한 화면을 4개 모델로 교차 검증 | ✅ [결과](#핵심-결과) |
 | 9 | 블라인드 시나리오 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
@@ -286,6 +286,18 @@ pnpm exec tsx src/app/main.ts           # http://127.0.0.1:4717
 - 저장되는 일은 "새로고침 뒤에도 남아야 함"을 고른다. "화면에 보이면 됨"은 낙관적 업데이트를 구분하지 못한다. 같은 출처의 저장 요청이 실패했을 때는 주의를 표시한다.
 - 새로고침 기준도 서버 저장의 증명은 아니다. localStorage에만 남아도 통과한다.
 - 앱은 127.0.0.1에만 열리고 다른 웹페이지의 요청을 거부한다. 기록은 `.intentguard/app/`에 남는다.
+
+### 에이전트에게 맡기기 (Skill)
+
+[`plugin/`](plugin)은 Claude Code와 Antigravity가 함께 읽는 플러그인이고, 그 안의 [`intentguard-audit`](plugin/skills/intentguard-audit/SKILL.md) 스킬이 검사 절차를 담고 있다. 에이전트에게 "이 사이트에서 AI가 ○○을 할 수 있는지 검사해 줘"라고만 하면 에이전트가 성공 기준을 정하고, 검사기를 돌리고, 판정과 근거를 전한다.
+
+```bash
+claude --plugin-dir ./plugin          # Claude Code, 이번 세션에만 불러온다
+```
+
+- 스킬은 검사를 준비하고 결과를 전할 뿐이다. 채점은 검사기가 하고, 스킬은 판정을 바꾸지 않는다.
+- 스킬 이름을 말하지 않고 "TodoMVC에서 AI가 할 일을 추가할 수 있는지 검사해 줘"라고만 시킨 Claude Code(Haiku)가 이 스킬을 스스로 골라 검사기를 돌리고, 판정·채점 근거·증거 파일·1회 결과의 한계까지 전했다.
+- `agy plugin validate plugin`과 `claude plugin validate plugin`을 통과한다.
 
 ### 배포된 URL 검사 (CLI)
 
