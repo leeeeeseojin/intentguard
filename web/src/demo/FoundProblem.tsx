@@ -40,6 +40,8 @@ export function FoundProblem() {
       </div>
       <figcaption>
         {RUN.model}의 실제 기록을 줄였습니다. <a href="#live">원본 기록 보기</a>
+        <br />
+        고친 뒤 다시 검사하니 사람 기준 결함은 풀렸지만, 에이전트용 화면에는 뒤쪽 버튼이 남아 성공률은 그대로였습니다.
       </figcaption>
     </figure>
   );
