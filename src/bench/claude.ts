@@ -19,12 +19,15 @@ export interface ClaudeRunOptions {
   timeoutMs: number;
   /** stream-json 원본을 저장할 경로 */
   rawLogPath: string;
+  signal?: AbortSignal;
+  /** 결과가 돌아온 도구 호출을 바로 알린다 */
+  onCall?: (call: ToolCall) => void;
 }
 
 export type ClaudeRunResult = Pick<
   RunRecord,
   "durationMs" | "exitReason" | "numTurns" | "costUsd" | "tokens" | "toolCalls" | "finalAnswer"
-> & { model: string; permissionDenials: number };
+> & { model: string; permissionDenials: number; stderr: string };
 
 interface ContentItem {
   type: string;
@@ -61,11 +64,15 @@ export function runClaude(o: ClaudeRunOptions): Promise<ClaudeRunResult> {
     let buffer = "";
     let final: Record<string, any> | null = null;
     let timedOut = false;
+    let stderr = "";
+    let settled = false;
 
     const timer = setTimeout(() => {
       timedOut = true;
       if (child.pid) killTree(child.pid);
     }, o.timeoutMs);
+    const abort = () => child.pid && killTree(child.pid);
+    o.signal?.addEventListener("abort", abort, { once: true });
 
     const handleLine = (line: string) => {
       if (!line.trim()) return;
@@ -91,6 +98,7 @@ export function runClaude(o: ClaudeRunOptions): Promise<ClaudeRunResult> {
             if (call) {
               call.isError = !!it.is_error;
               call.resultPreview = textOf(it.content).slice(0, 400);
+              o.onCall?.(call);
             }
           }
         }
@@ -107,12 +115,25 @@ export function runClaude(o: ClaudeRunOptions): Promise<ClaudeRunResult> {
         buffer = buffer.slice(idx + 1);
       }
     });
-    child.stderr.on("data", (chunk: Buffer) => raw.write(JSON.stringify({ type: "stderr", text: chunk.toString("utf8") }) + "\n"));
+    child.stderr.on("data", (chunk: Buffer) => {
+      stderr += chunk.toString("utf8");
+      raw.write(JSON.stringify({ type: "stderr", text: chunk.toString("utf8") }) + "\n");
+    });
+    // claude를 찾지 못하면 close 없이 error만 온다.
+    child.on("error", (err) => {
+      stderr += `Claude Code를 실행할 수 없습니다 (${err.message}). CLAUDE_BIN으로 경로를 지정하세요.`;
+      child.emit("close");
+    });
 
+    child.stdin.on("error", () => {});
     child.stdin.end(o.prompt);
+    if (o.signal?.aborted) abort();
 
     child.on("close", () => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timer);
+      o.signal?.removeEventListener("abort", abort);
       handleLine(buffer);
       raw.end();
       const f = final as Record<string, any> | null;
@@ -140,6 +161,7 @@ export function runClaude(o: ClaudeRunOptions): Promise<ClaudeRunResult> {
         finalAnswer: typeof f?.result === "string" ? f.result : "",
         model: Object.keys(f?.modelUsage ?? {})[0] ?? "",
         permissionDenials: Array.isArray(f?.permission_denials) ? f.permission_denials.length : 0,
+        stderr: stderr.slice(0, 500),
       });
     });
   });

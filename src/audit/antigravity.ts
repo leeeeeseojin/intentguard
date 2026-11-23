@@ -8,17 +8,20 @@ import type { ToolCall } from "../bench/types.js";
 const PLUGIN = "intentguard-browser";
 export const MCP_SERVER = `${PLUGIN}_playwright`;
 
-/** 사람이 화면에서 할 수 있는 조작만 허용한다. */
-const ALLOWED = [
+/** 사람이 화면에서 할 수 있는 조작만 허용한다. Claude Code로 조작할 때도 같은 목록을 쓴다. */
+export const BROWSER_ALLOWED = [
   "navigate", "navigate_back", "snapshot", "find", "click", "type", "fill_form",
   "select_option", "press_key", "hover", "drag", "handle_dialog", "wait_for", "tabs", "resize", "console_messages",
 ];
+
+/** 페이지 안에서 코드를 돌리거나 네트워크를 엿보는 브라우저 도구. 화면을 거치지 않으므로 막는다. */
+export const BROWSER_DENIED = ["evaluate", "run_code_unsafe", "file_upload", "drop", "close", "network_request", "network_requests", "take_screenshot", "emulate_media"];
 
 /** 화면을 거치지 않는 수단은 전부 막는다. Deny가 사용자의 전역 Allow보다 우선한다. */
 const DENIED = [
   "command(*)", "unsandboxed(*)", "read_file(*)", "write_file(*)", "read_url(*)", "execute_url(*)",
   // 허용도 거부도 안 된 도구를 부르면 headless 세션이 통째로 끝나므로, 쓰지 않는 도구는 빠짐없이 적는다.
-  ...["evaluate", "run_code_unsafe", "file_upload", "drop", "close", "network_request", "network_requests", "take_screenshot", "emulate_media"].map(
+  ...BROWSER_DENIED.map(
     (tool) => `mcp(${MCP_SERVER}/browser_${tool})`,
   ),
 ];
@@ -101,6 +104,7 @@ export interface AgentOptions {
   workDir: string;
   cdpEndpoint: string;
   prompt: string;
+  /** "claude-code:" 접두사가 붙으면 Claude Code가 조작한다 */
   model: string;
   timeoutMs: number;
   logPath: string;
@@ -130,7 +134,7 @@ export function runAntigravity(o: AgentOptions): Promise<AgentResult> {
     }),
   );
   const settings = path.join(o.workDir, "session.json");
-  writeFileSync(settings, JSON.stringify({ permissions: { allow: ALLOWED.map((t) => `mcp(${MCP_SERVER}/browser_${t})`), deny: DENIED } }));
+  writeFileSync(settings, JSON.stringify({ permissions: { allow: BROWSER_ALLOWED.map((t) => `mcp(${MCP_SERVER}/browser_${t})`), deny: DENIED } }));
 
   const args = [
     "--model", o.model, "--settings", settings, "--output-format", "stream-json", "--disable-slash-commands",
