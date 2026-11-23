@@ -11,7 +11,7 @@ IntentGuard는 다른 AI 에이전트에게 브라우저로 일을 시키고, **
 ## 1. 준비 확인
 
 - IntentGuard 저장소 루트에서 실행한다(`src/audit/cli.ts`가 있는 곳). 없으면 사용자에게 저장소 위치를 묻는다. 남의 저장소에 설치하지 않는다.
-- 처음 한 번 필요한 것: `pnpm install`, `pnpm exec playwright install chromium`, 로그인된 Antigravity CLI(`agy`).
+- 처음 한 번 필요한 것: `pnpm install`, `pnpm exec playwright install chromium`, 로그인된 Antigravity CLI(`agy`) 또는 Claude Code(`claude`).
 - 로그인이 필요한 화면, CAPTCHA, 자동 브라우저를 막는 사이트는 검사할 수 없다. 차단을 우회하지 않는다.
 
 ## 2. 검사 조건 정하기
@@ -40,8 +40,8 @@ IntentGuard는 다른 AI 에이전트에게 브라우저로 일을 시키고, **
 pnpm exec tsx src/audit/cli.ts --url '<주소>' --task '<시킬 일>' --expect '<문구>' [--expect '<문구>'] [--persist] [--model <모델>]
 ```
 
-- 기본 모델은 `gemini-3.8-flash-low`. 여러 모델은 `--model a,b,c`, 반복은 `--repeat N`. 쓸 수 있는 모델은 `agy models`로 본다.
-- 실행 1회에 1~4분 걸리고 사용자의 Antigravity 사용량을 쓴다. 여러 모델·반복은 사용자가 원할 때만 한다.
+- 기본 모델은 `gemini-3.8-flash-low`(Antigravity). Antigravity가 없고 Claude Code만 있으면 `claude-code:claude-haiku-5-5`처럼 `claude-code:`를 붙인 모델을 쓴다. 여러 모델은 `--model a,b,c`, 반복은 `--repeat N`.
+- 실행 1회에 1~4분 걸리고, 조작한 에이전트(Antigravity 또는 Claude Code)에 로그인한 사용자의 사용량을 쓴다. 여러 모델·반복은 사용자가 원할 때만 한다.
 - 인자는 작은따옴표로 감싸고, 값 안의 작은따옴표는 빼거나 바꾼다.
 - `--dangerously-skip-permissions`를 쓰거나 사용자의 전역 agy 설정을 바꾸지 않는다.
 

@@ -49,7 +49,7 @@ export function AppGuide() {
 
       <p role="status" className="trial-prompt">{copied}</p>
       <p className="fine trial-prompt">
-        Node.js 22, pnpm, 로그인된 Antigravity CLI(agy)가 필요하고, 검사할 때마다 내 사용량이 듭니다. 로그인이 필요한 사이트는 아직 검사할 수 없습니다.
+        Node.js 22, pnpm, 그리고 로그인된 Antigravity CLI(agy)나 Claude Code 중 하나가 필요합니다. 사이트를 조작하는 에이전트로 둘 중 하나를 고를 수 있고, 검사할 때마다 그 계정의 사용량이 듭니다. 로그인이 필요한 사이트는 아직 검사할 수 없습니다.
       </p>
     </div>
   );

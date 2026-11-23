@@ -139,7 +139,7 @@ src/guard/    IntentGuard — 위험도 판단 · 사람 승인 대기열 · 에
 src/server/   Hono REST API  (/api/*)
 src/mcp/      MCP 서버 (stdio) — REST API를 호출하므로 콘솔과 상태를 공유
 src/app/      로컬 검사 앱 서버 · 화면은 web/audit-app/
-src/audit/    배포 URL 검사기 — Antigravity CLI · 브라우저 최종 상태로 채점
+src/audit/    배포 URL 검사기 — Antigravity CLI 또는 Claude Code가 조작 · 브라우저 최종 상태로 채점
 audits/       다른 서비스용 검사 시나리오
 src/bench/    에이전트 벤치마크 — 시나리오 · 드라이버(MCP/Web) · 채점 · 실패 분류 · 리포트
 web/          React 콘솔 (v1 기본, ?ui=v2 개선판)
@@ -303,7 +303,7 @@ claude --plugin-dir ./plugin          # Claude Code, 이번 세션에만 불러�
 
 검사기를 MCP 도구 `audit_site`로 쓸 수 있다. 연결한 에이전트에게 "이 사이트에서 AI가 ○○을 할 수 있는지 검사해 줘"라고 하면 도구가 검사를 돌리고 판정, 조건별 채점 근거, 볼 곳, 증거 파일 경로를 JSON으로 돌려준다.
 
-검사는 **서버를 연결한 사람의 PC에서, 그 사람이 로그인한 Antigravity CLI로** 돈다. 공용 서버나 남의 사용량을 쓰지 않는다. 아래 `<저장소>`는 이 저장소를 받은 폴더의 절대 경로다.
+검사는 **서버를 연결한 사람의 PC에서, 그 사람이 로그인한 Antigravity CLI나 Claude Code로** 돈다. 공용 서버나 남의 사용량을 쓰지 않는다. 아래 `<저장소>`는 이 저장소를 받은 폴더의 절대 경로다.
 
 ```bash
 # Claude Code
@@ -332,7 +332,17 @@ pnpm exec tsx src/audit/cli.ts --url 'https://demo.playwright.dev/todomvc/' --ta
 
 여러 모델은 `--model a,b,c`로 돌린다. 서버 데이터를 바꾸는 과제는 본인 테스트 환경에서만 `--allow-writes`를 붙인다. MCP는 검사기가 실행마다 자동으로 연결하므로 따로 설정하지 않는다. 사이트에 공개할 기록은 `pnpm exec tsx src/audit/publish.ts <기록 폴더>`로 만든다.
 
-로그인된 [Antigravity CLI](https://antigravity.google/)(`agy`)가 필요하고, 실행할 때마다 사용량이 든다.
+로그인된 [Antigravity CLI](https://antigravity.google/)(`agy`) 또는 [Claude Code](https://claude.com/claude-code)(`claude`)가 필요하고, 실행할 때마다 그 계정의 사용량이 든다.
+
+**조작 에이전트 고르기.** 모델 이름에 `claude-code:`를 붙이면 Claude Code가, 아니면 Antigravity CLI가 사이트를 조작한다. 채점과 판정 규칙은 같다.
+
+```bash
+pnpm exec tsx src/audit/cli.ts --url 'https://demo.playwright.dev/todomvc/' --task '할 일에 장보기를 추가해줘' --expect '장보기' --persist --model claude-code:claude-haiku-5-5
+```
+
+- Claude Code는 90회 실험의 Web 경로와 같은 방식으로 격리한다. 저장소 밖 빈 폴더에서 기본 도구를 모두 끄고(`--tools ""`), 검사용 브라우저 MCP 하나만 연결하고(`--strict-mcp-config`), 사용자 설정·세션 기록을 쓰지 않는다. 허용하는 브라우저 도구 목록은 Antigravity와 같다.
+- 실제 실행 기록에서 에이전트가 받은 도구가 허용한 브라우저 도구 16개뿐이고, 연결된 MCP 서버가 검사용 브라우저 하나인 것을 확인했다.
+- 검사 앱과 MCP 도구에서도 `Claude Haiku 5.5 (Claude Code)`, `Claude Sonnet 5.5 (Claude Code)`를 고를 수 있다. 검사 앱은 이 PC에 없는 에이전트의 모델을 고를 수 없게 막는다.
 
 ```bash
 pnpm exec playwright install chromium
