@@ -2,6 +2,16 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { Hono, type Context } from "hono";
 import { BusyError, inputSchema, type AuditInput, type Audits } from "./audits.js";
+import { agentOf } from "./models.js";
+
+/** 이 PC에 설치·실행되는 조작 에이전트 */
+export interface AgentStatus {
+  ready: boolean;
+  antigravity: boolean;
+  claudeCode: boolean;
+}
+
+const AGENT_NAME = { antigravity: "Antigravity CLI(agy)", claudeCode: "Claude Code(claude)" } as const;
 
 const TYPES: Record<string, string> = {
   ".js": "text/javascript; charset=utf-8",
@@ -17,7 +27,7 @@ interface AppOptions {
   port: number;
   /** 빌드된 화면 폴더 */
   ui: string;
-  agent: () => { ready: boolean };
+  agent: () => AgentStatus;
 }
 
 /**
@@ -57,7 +67,9 @@ export function createApp({ audits, port, ui, agent }: AppOptions): Hono {
   });
 
   const start = (c: Context, input: AuditInput, previous?: string) => {
-    if (!agent().ready) return c.json({ error: "Antigravity CLI(agy)를 찾을 수 없습니다. 설치하고 로그인한 뒤 앱을 다시 켜 주세요." }, 503);
+    const status = agent();
+    const missing = [...new Set(input.models.map(agentOf))].filter((a) => !status[a]);
+    if (missing.length) return c.json({ error: `${missing.map((a) => AGENT_NAME[a]).join(", ")}를 찾을 수 없습니다. 설치하고 로그인한 뒤 앱을 다시 켜거나 다른 모델을 고르세요.` }, 503);
     try {
       return c.json(audits.start(input, previous), 201);
     } catch (err) {

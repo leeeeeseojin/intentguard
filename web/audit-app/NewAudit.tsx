@@ -1,21 +1,24 @@
 import { useState, type FormEvent } from "react";
 import type { Audit, AuditInput } from "../../src/app/audits";
-import { MODELS, MODEL_NAMES } from "../../src/app/models";
+import { agentOf, MODELS, MODEL_NAMES } from "../../src/app/models";
 import { api, messageOf } from "./api";
 
 interface Props {
   initial?: AuditInput;
   ready: boolean;
+  /** 이 PC에서 실행되는 조작 에이전트 */
+  agents: { antigravity: boolean; claudeCode: boolean };
   onStarted: (audit: Audit) => void;
 }
 
-export function NewAudit({ initial, ready, onStarted }: Props) {
+export function NewAudit({ initial, ready, agents, onStarted }: Props) {
+  const usable = (model: string) => agents[agentOf(model)];
   const [url, setUrl] = useState(initial?.url ?? "");
   const [task, setTask] = useState(initial?.task ?? "");
   const [expect, setExpect] = useState(initial?.expect.join("\n") ?? "");
   const [persist, setPersist] = useState<boolean | undefined>(initial?.persist);
   const [allowWrites, setAllowWrites] = useState(initial?.allowWrites ?? false);
-  const [models, setModels] = useState<AuditInput["models"]>(initial?.models ?? [MODELS[0]]);
+  const [models, setModels] = useState<AuditInput["models"]>(initial?.models ?? [MODELS.find(usable) ?? MODELS[0]]);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,6 +26,7 @@ export function NewAudit({ initial, ready, onStarted }: Props) {
     event.preventDefault();
     if (persist === undefined) return;
     if (!models.length) return setError("모델을 하나 이상 골라 주세요.");
+    if (models.some((m) => !usable(m))) return setError("이 PC에 없는 에이전트의 모델이 들어 있습니다. 회색으로 표시된 모델을 빼 주세요.");
     setStarting(true);
     setError("");
     try {
@@ -73,10 +77,17 @@ export function NewAudit({ initial, ready, onStarted }: Props) {
               <label className="app-choice" key={model}>
                 <input
                   type="checkbox"
+                  disabled={!usable(model)}
                   checked={models.includes(model)}
                   onChange={(e) => setModels((prev) => (e.target.checked ? [...prev, model] : prev.filter((m) => m !== model)))}
                 />
-                <span>{MODEL_NAMES[model]}</span>
+                <span>
+                  {MODEL_NAMES[model].replace(/ \(.*\)$/, "")}
+                  <small>
+                    {agentOf(model) === "claudeCode" ? "Claude Code" : "Antigravity"}
+                    {!usable(model) && "가 없어 고를 수 없음"}
+                  </small>
+                </span>
               </label>
             ))}
           </div>
@@ -92,7 +103,7 @@ export function NewAudit({ initial, ready, onStarted }: Props) {
 
         {error && <p className="app-notice" role="alert">{error}</p>}
         <button className="app-primary" type="submit" disabled={!ready || starting}>{starting ? "시작하는 중…" : "검사 시작"}</button>
-        <p className="app-hint">모델마다 보통 1~4분 걸리고 내 Antigravity 사용량을 씁니다. 로그인이 필요한 화면은 검사할 수 없습니다.</p>
+        <p className="app-hint">모델마다 보통 1~4분 걸리고 그 모델을 돌리는 에이전트(Antigravity 또는 Claude Code)의 내 사용량을 씁니다. 로그인이 필요한 화면은 검사할 수 없습니다.</p>
       </form>
   );
 }

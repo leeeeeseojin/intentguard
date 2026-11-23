@@ -13,7 +13,8 @@ const currentId = () => auditIdFrom(location.hash);
 export function App() {
   const [id, setId] = useState(currentId);
   const [history, setHistory] = useState<AuditSummary[]>([]);
-  const [ready, setReady] = useState(true);
+  const [agents, setAgents] = useState({ ready: true, antigravity: true, claudeCode: true });
+  const ready = agents.ready;
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<AuditInput>();
 
@@ -27,7 +28,7 @@ export function App() {
       setError("");
     };
     window.addEventListener("hashchange", onHash);
-    api.status().then((status) => setReady(status.ready), (err: unknown) => setError(messageOf(err)));
+    api.status().then(setAgents, (err: unknown) => setError(messageOf(err)));
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
@@ -41,7 +42,7 @@ export function App() {
 
   const alerts = (
     <>
-      {!ready && <p className="app-notice" role="alert">Antigravity CLI(agy)를 찾을 수 없습니다. 설치하고 로그인한 뒤 앱을 다시 켜 주세요.</p>}
+      {!ready && <p className="app-notice" role="alert">Antigravity CLI(agy)도 Claude Code(claude)도 찾을 수 없습니다. 둘 중 하나를 설치하고 로그인한 뒤 앱을 다시 켜 주세요.</p>}
       {error && <p className="app-notice" role="alert">{error}</p>}
     </>
   );
@@ -52,7 +53,7 @@ export function App() {
         audit={
           <div className="app embedded">
             {alerts}
-            <NewAudit key={JSON.stringify(draft ?? null)} initial={draft} ready={ready} onStarted={(audit) => (location.hash = auditHref(audit.id))} />
+            <NewAudit key={JSON.stringify(draft ?? null)} initial={draft} ready={ready} agents={agents} onStarted={(audit) => (location.hash = auditHref(audit.id))} />
             <History audits={history} />
           </div>
         }

@@ -41,7 +41,7 @@ export function createAuditMcpServer({ outRoot, run = runJob }: Options) {
         "다른 AI 에이전트에게 브라우저로 일을 시키고, 같은 브라우저의 마지막 상태로 코드가 채점한다. 판정은 이 도구의 결과를 그대로 쓰고 바꾸지 않는다.",
         "expect는 일이 끝나면 화면에 문구 전체가 그대로 보여야 할 글자다. 버튼·링크·메뉴·입력칸의 글자, 다른 문장의 일부, 시작 화면에 이미 있는 글자는 쓸 수 없다.",
         "저장되는 일(추가·수정·설정)은 persist=true로 새로고침 뒤에도 남는지 본다. allowWrites는 사용자가 본인 소유의 테스트 환경이라고 했을 때만 켠다.",
-        "모델 1개당 1~4분 걸리고 사용자의 Antigravity 사용량을 쓴다. 1회 결과로 성공률이나 모델 순위를 말하지 않는다.",
+        "models의 claude-code:로 시작하는 모델은 Claude Code가, 나머지는 Antigravity CLI가 조작한다. 모델 1개당 1~4분 걸리고 그 에이전트에 로그인한 사용자의 사용량을 쓴다. 1회 결과로 성공률이나 모델 순위를 말하지 않는다.",
       ].join(" "),
       inputSchema: {
         ...inputSchema.shape,

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { getRequestListener } from "@hono/node-server";
 import { build } from "vite";
 import { resolveAgy } from "../audit/antigravity.js";
+import { resolveClaudeBin } from "../bench/claude.js";
 import { Audits } from "./audits.js";
 import { createApp } from "./server.js";
 
@@ -26,9 +27,11 @@ await build({
   build: { outDir: ui, emptyOutDir: true },
 });
 
-const ready = !spawnSync(resolveAgy(), ["--version"], { stdio: "ignore", timeout: 15_000 }).error;
+const runs = (bin: string) => !spawnSync(bin, ["--version"], { stdio: "ignore", timeout: 15_000 }).error;
+const status = { antigravity: runs(resolveAgy()), claudeCode: runs(resolveClaudeBin()) };
+const ready = status.antigravity || status.claudeCode;
 const audits = new Audits(path.resolve(process.env.AUDIT_APP_DATA ?? path.join(root, ".intentguard/app")));
-const app = createApp({ audits, port, ui, agent: () => ({ ready }) });
+const app = createApp({ audits, port, ui, agent: () => ({ ready, ...status }) });
 const server = createServer(getRequestListener(app.fetch));
 
 server.once("error", (err) => {
@@ -37,7 +40,8 @@ server.once("error", (err) => {
 });
 server.listen(port, "127.0.0.1", () => {
   console.log(`[app] 검사 앱: http://127.0.0.1:${port}`);
-  if (!ready) console.log("[app] Antigravity CLI(agy)가 없어 검사를 시작할 수 없습니다.");
+  if (!ready) console.log("[app] Antigravity CLI(agy)도 Claude Code(claude)도 없어 검사를 시작할 수 없습니다.");
+  else console.log(`[app] 조작 에이전트: ${[status.antigravity && "Antigravity", status.claudeCode && "Claude Code"].filter(Boolean).join(", ")}`);
 });
 
 for (const signal of ["SIGINT", "SIGTERM"] as const) {

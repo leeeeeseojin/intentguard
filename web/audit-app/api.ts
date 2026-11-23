@@ -13,7 +13,7 @@ async function call<T>(path: string, body?: object): Promise<T> {
 }
 
 export const api = {
-  status: () => call<{ ready: boolean }>("/api/status"),
+  status: () => call<{ ready: boolean; antigravity: boolean; claudeCode: boolean }>("/api/status"),
   list: () => call<AuditSummary[]>("/api/audits"),
   get: (id: string) => call<Audit>(`/api/audits/${id}`),
   start: (input: AuditInput) => call<Audit>("/api/audits", input),
