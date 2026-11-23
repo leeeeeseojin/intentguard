@@ -35,7 +35,7 @@ export function CrossCheck() {
         </p>
         <p className="fine">
           {done ? `${RESULT.valid}회 완료. ` : `중간 집계: 유효 ${RESULT.valid}/${RESULT.planned}회, 나머지는 측정 중입니다. `}
-          같은 모델·같은 과제로 v1과 v2가 모두 끝난 {TOTAL.pairs}쌍만 비교했고, 사용 한도로 끊긴 실행은 제외했습니다. 확인 여부는 에이전트의 자기 보고 표식입니다.
+          같은 모델·같은 과제로 v1과 v2가 모두 끝난 {TOTAL.pairs}쌍을 비교했고, 사용 한도로 끊기거나 브라우저에 연결되지 못한 실행은 다시 돌렸습니다. 확인 여부는 에이전트의 자기 보고 표식입니다. 측정 중 사이트 배포가 두 번 바뀌었지만 콘솔 화면(접근성 트리·화면·정답 채점)은 같음을 확인했습니다.
         </p>
       </div>
       <div className="scroll" role="region" aria-label="모델별 교차 검증 표" tabIndex={0}>
