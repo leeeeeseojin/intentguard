@@ -147,6 +147,11 @@
   cursor: not-allowed;
 }
 
+.landing :is(code, pre, textarea) {
+  font-family: ui-monospace, "Cascadia Code", Consolas, "D2Coding", monospace;
+  letter-spacing: 0;
+}
+
 .trial .setup {
   overflow-x: auto;
   padding: 14px;
