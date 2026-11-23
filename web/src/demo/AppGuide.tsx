@@ -39,12 +39,12 @@ export function AppGuide() {
       </p>
 
       <label className="trial-prompt">
-        AI 에이전트에게 맡기기 (스킬)
+        AI 에이전트에게 맡기기 (스킬·MCP)
         <textarea readOnly rows={1} value={SKILL} />
       </label>
       <button type="button" className="cta secondary" onClick={() => void copy(SKILL)}>스킬 명령 복사</button>
       <p className="fine trial-prompt">
-        Claude Code나 Antigravity에 IntentGuard 스킬을 붙이면 "이 사이트에서 AI가 회원가입을 할 수 있는지 검사해 줘"라고만 말해도 에이전트가 검사기를 돌리고 결과를 전합니다. 채점은 그 에이전트가 아니라 검사기가 합니다.
+        이 명령은 스킬과 MCP 도구를 함께 붙입니다. Claude Desktop, Cursor, Antigravity 같은 다른 에이전트에는 MCP 서버(<code>audit_site</code>)만 연결하면 됩니다. 그 뒤 "이 사이트에서 AI가 회원가입을 할 수 있는지 검사해 줘"라고 말하면 에이전트가 검사기를 돌리고 결과를 전합니다. 채점은 그 에이전트가 아니라 검사기가 하고, 검사는 연결한 사람의 PC와 로그인으로 돕니다.
       </p>
 
       <p role="status" className="trial-prompt">{copied}</p>

@@ -127,7 +127,7 @@ Claude Code(Haiku)가 같은 10개 작업을 세 경로로 3회씩 수행했다 
 | 4 | v1 / v2 / MCP 성공률 비교 · 결과 리포트 → [비교 리포트](docs/results/final-comparison.md) · [v2 분석](docs/analysis-v2.md) | ✅ |
 | 5 | 집계 정정 · v2 버튼 가림 수정 · 승인 정책 보강 | ✅ |
 | 6 | 서버 없이 브라우저에서 도는 공개 데모와 리포트 | ✅ [배포](https://intentguard-plum.vercel.app) |
-| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · 앱 · Skill | CLI ✅ · 앱 ✅ · 실제 기록 공개 ✅ · [Skill](#에이전트에게-맡기기-skill) ✅ |
+| 7 | URL과 시나리오로 다른 웹 서비스를 검사하는 CLI · 앱 · Skill · MCP | CLI ✅ · 앱 ✅ · 실제 기록 공개 ✅ · [Skill](#에이전트에게-맡기기-skill) ✅ · [MCP](#mcp로-연결하기) ✅ |
 | 8 | 수정한 화면을 4개 모델로 교차 검증 | ✅ [결과](#핵심-결과) |
 | 9 | 블라인드 시나리오 · IntentGuard 개입 비율·차단율 측정 | ⬜ |
 
@@ -298,6 +298,29 @@ claude --plugin-dir ./plugin          # Claude Code, 이번 세션에만 불러�
 - 스킬은 검사를 준비하고 결과를 전할 뿐이다. 채점은 검사기가 하고, 스킬은 판정을 바꾸지 않는다.
 - 스킬 이름을 말하지 않고 "TodoMVC에서 AI가 할 일을 추가할 수 있는지 검사해 줘"라고만 시킨 Claude Code(Haiku)가 이 스킬을 스스로 골라 검사기를 돌리고, 판정·채점 근거·증거 파일·1회 결과의 한계까지 전했다.
 - `agy plugin validate plugin`과 `claude plugin validate plugin`을 통과한다.
+
+### MCP로 연결하기
+
+검사기를 MCP 도구 `audit_site`로 쓸 수 있다. 연결한 에이전트에게 "이 사이트에서 AI가 ○○을 할 수 있는지 검사해 줘"라고 하면 도구가 검사를 돌리고 판정, 조건별 채점 근거, 볼 곳, 증거 파일 경로를 JSON으로 돌려준다.
+
+검사는 **서버를 연결한 사람의 PC에서, 그 사람이 로그인한 Antigravity CLI로** 돈다. 공용 서버나 남의 사용량을 쓰지 않는다. 아래 `<저장소>`는 이 저장소를 받은 폴더의 절대 경로다.
+
+```bash
+# Claude Code
+claude mcp add intentguard -- node <저장소>/node_modules/tsx/dist/cli.mjs <저장소>/src/audit/mcp-main.ts
+# Antigravity CLI
+agy mcp add intentguard node <저장소>/node_modules/tsx/dist/cli.mjs <저장소>/src/audit/mcp-main.ts
+```
+
+Claude Desktop·Cursor 같은 다른 MCP 클라이언트는 설정 파일에 같은 명령을 넣는다.
+
+```json
+{ "mcpServers": { "intentguard": { "command": "node", "args": ["<저장소>/node_modules/tsx/dist/cli.mjs", "<저장소>/src/audit/mcp-main.ts"] } } }
+```
+
+- 이 저장소에서 Claude Code를 열면 `.mcp.json`에 등록돼 있어 승인만 하면 된다. `claude --plugin-dir ./plugin`으로 열면 스킬과 MCP 도구가 함께 붙는다.
+- 도구는 `audit_site` 하나다. `persist`(새로고침 뒤에도 남아야 하는지)는 반드시 받고, 쓰기 요청은 `allowWrites`를 켜지 않으면 막는다. 검사는 한 번에 하나만 돌고, 모델 1개당 1~4분 걸린다.
+- 기록은 이 저장소의 `.intentguard/mcp/`에 남는다.
 
 ### 배포된 URL 검사 (CLI)
 
