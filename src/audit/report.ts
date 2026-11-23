@@ -93,7 +93,7 @@ export function toMarkdown(records: AuditRecord[]): string {
   const lines = [
     "# 배포 URL 에이전트 검사",
     "",
-    `- 에이전트: Antigravity CLI · ${[...new Set(records.map((r) => r.model))].join(", ") || "-"}`,
+    `- 조작한 모델: ${[...new Set(records.map((r) => r.model))].join(", ") || "-"} (Antigravity CLI 또는 Claude Code)`,
     `- 유효 실행 ${valid.length}/${records.length} · 성공 ${ok} · 확인된 성공 ${confirmed}`,
     "- 채점: 같은 브라우저의 최종 상태. 확인 여부: 에이전트가 남긴 RESULT 표식",
     "- 단계 수는 모델 응답 횟수라서 Claude Code 실험의 턴 수와 비교할 수 없다",

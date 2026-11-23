@@ -80,7 +80,7 @@ async function main() {
   const dir = path.resolve(values.out!, new Date().toISOString().replace(/[:.]/g, "-"));
   mkdirSync(dir);
 
-  console.log(`[audit] Antigravity(${models.join(", ")}) · ${jobs.length * models.length * repeat}회 · ${dir}`);
+  console.log(`[audit] ${models.map((m) => (m.startsWith("claude-code:") ? `Claude Code(${m.slice(12)})` : `Antigravity(${m})`)).join(", ")} · ${jobs.length * models.length * repeat}회 · ${dir}`);
   const records: AuditRecord[] = [];
   let n = 0;
   for (const job of jobs) {
