@@ -108,7 +108,7 @@ export function Landing({ audit }: { audit?: ReactNode }) {
           <a href="#live">실제 기록</a>
           <a href="#case">사례</a>
         </nav>
-        <a className="cta compact" href="#audit">검사하기</a>
+        <a className="cta compact" href="#audit">{audit ? "검사하기" : "검사 방법"}</a>
       </div>
 
       <header>
@@ -122,7 +122,7 @@ export function Landing({ audit }: { audit?: ReactNode }) {
               {!audit && "내 PC의 검사 앱에 "}주소와 시킬 일을 넣으면 AI 에이전트가 실제로 해봅니다. <strong>AI의 말이 아니라 실제 상태로</strong> 성공을 판정하고, 막힌 곳을 알려줍니다.
             </p>
             <nav className="actions" aria-label="시작">
-              <a className="cta" href="#audit">내 사이트 검사하기</a>
+              <a className="cta" href="#audit">{audit ? "내 사이트 검사하기" : "내 PC에서 검사하기"}</a>
               <a className="cta secondary" href="#live">실제 기록 보기</a>
             </nav>
           </div>
@@ -164,8 +164,8 @@ export function Landing({ audit }: { audit?: ReactNode }) {
           <div className="chapter-head">
             <h2 id="audit">내 사이트 검사하기</h2>
             <p>
-              Vercel, AWS, localhost 어디든 브라우저로 열리는 주소면 됩니다.{" "}
-              {audit ? "여기서 시작하면 판정, 증거, 재검사까지 이어집니다." : "이 사이트는 정적 배포라 브라우저와 AI 에이전트를 실행할 수 없어서, 검사는 내 PC의 검사 앱이나 AI 에이전트(스킬)로 합니다."}
+              브라우저로 열리는 주소면 어디든 됩니다.{" "}
+              {audit ? "여기서 바로 검사합니다." : "검사는 내 PC에서 돌립니다."}
             </p>
           </div>
           {audit ?? <AppGuide />}
@@ -325,7 +325,7 @@ export function Landing({ audit }: { audit?: ReactNode }) {
       <section className="closing" aria-labelledby="closing">
         <h2 id="closing">AI 에이전트도 쓸 수 있는 사이트로</h2>
         <div className="actions">
-          <a className="cta" href="#audit">검사 시작하기</a>
+          <a className="cta" href="#audit">{audit ? "검사 시작하기" : "내 PC에서 검사하기"}</a>
           <a className="cta secondary" href={REPO}>GitHub에서 보기</a>
         </div>
       </section>
