@@ -51,9 +51,9 @@ afterEach(async () => {
   rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
-function setup(execute: (o: RunOptions) => Promise<AuditRecord> = finishes, ready = true) {
+function setup(execute: (o: RunOptions) => Promise<AuditRecord> = finishes, ready = true, claudeCode = ready) {
   audits = new Audits(root, execute);
-  const app = createApp({ audits, port: PORT, ui: root, agent: () => ({ ready }) });
+  const app = createApp({ audits, port: PORT, ui: root, agent: () => ({ ready: ready || claudeCode, antigravity: ready, claudeCode }) });
   const get = (url: string, headers: Record<string, string> = {}) => app.request(url, { headers: { host: HOST, ...headers } });
   const post = (url: string, body: object = INPUT, headers: Record<string, string> = {}) =>
     app.request(url, {
@@ -113,9 +113,17 @@ describe("입력", () => {
     expect((await post("/api/audits", { ...INPUT, ...patch })).status).toBe(400);
   });
 
-  it("agy가 없으면 시작하지 않는다", async () => {
+  it("조작 에이전트가 하나도 없으면 시작하지 않는다", async () => {
     const { post } = setup(finishes, false);
     expect((await post("/api/audits")).status).toBe(503);
+  });
+
+  it("고른 모델의 에이전트가 이 PC에 없으면 시작하지 않고, 있는 쪽 모델은 돌린다", async () => {
+    const { post } = setup(finishes, true, false);
+    const refused = await post("/api/audits", { ...INPUT, models: ["claude-code:claude-haiku-5-5"] });
+    expect(refused.status).toBe(503);
+    expect((await refused.json()).error).toContain("Claude Code");
+    expect((await post("/api/audits")).status).toBe(201);
   });
 });
 
