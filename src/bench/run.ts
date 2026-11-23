@@ -7,7 +7,7 @@ import { createApiClient } from "../mcp/client.js";
 import type { AuditEntry, Bucket, Instance, SecurityGroup } from "../domain/types.js";
 import { runClaude } from "./claude.js";
 import { classify } from "./classify.js";
-import { setupDriver } from "./drivers.js";
+import { resolveBrowserExecutable, setupDriver } from "./drivers.js";
 import { SCENARIOS } from "./scenarios.js";
 import type { CloudSnapshot, DriverName, RunRecord } from "./types.js";
 
@@ -69,6 +69,11 @@ async function preflight() {
     throw new Error(`MiniCloud API(${values.api})에 연결할 수 없습니다. 먼저 pnpm dev를 실행하세요.`);
   }
   if (drivers.includes("web")) {
+    const exe = resolveBrowserExecutable();
+    console.log(`[bench] Web 경로 브라우저: ${exe ?? "찾지 못함 (Playwright MCP 기본 브라우저 사용)"}`);
+    if (!exe) {
+      console.log(`[bench] 브라우저 탐색 위치: PLAYWRIGHT_BROWSERS_PATH=${process.env.PLAYWRIGHT_BROWSERS_PATH ?? "(없음)"}, LOCALAPPDATA=${process.env.LOCALAPPDATA ?? "(없음)"}`);
+    }
     const res = await fetch(values.web!).catch(() => null);
     if (!res?.ok) throw new Error(`콘솔(${values.web})에 연결할 수 없습니다. 먼저 pnpm dev를 실행하세요.`);
   }

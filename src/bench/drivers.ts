@@ -1,12 +1,22 @@
 import { existsSync, readdirSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-function playwrightBrowsersDir(): string {
-  if (process.env.PLAYWRIGHT_BROWSERS_PATH) return process.env.PLAYWRIGHT_BROWSERS_PATH;
-  if (process.platform === "win32") return path.join(process.env.LOCALAPPDATA ?? "", "ms-playwright");
-  if (process.platform === "darwin") return path.join(os.homedir(), "Library/Caches/ms-playwright");
-  return path.join(os.homedir(), ".cache/ms-playwright");
+/** 브라우저를 찾을 후보 폴더. 환경 변수가 엉뚱한 곳을 가리켜도 기본 위치를 함께 본다. */
+function playwrightBrowsersDirs(): string[] {
+  // 일부 터미널(샌드박스)에서는 AppData가 보이지 않으므로, 프로젝트 안에 설치한 브라우저를 가장 먼저 찾는다.
+  // 설치: pnpm bench:install-browser
+  const dirs: string[] = [path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.pw-browsers")];
+  if (process.env.PLAYWRIGHT_BROWSERS_PATH) dirs.push(process.env.PLAYWRIGHT_BROWSERS_PATH);
+  if (process.platform === "win32") {
+    dirs.push(path.join(process.env.LOCALAPPDATA ?? path.join(os.homedir(), "AppData/Local"), "ms-playwright"));
+  } else if (process.platform === "darwin") {
+    dirs.push(path.join(os.homedir(), "Library/Caches/ms-playwright"));
+  } else {
+    dirs.push(path.join(os.homedir(), ".cache/ms-playwright"));
+  }
+  return dirs;
 }
 
 /**
@@ -15,18 +25,25 @@ function playwrightBrowsersDir(): string {
  * PW_MCP_EXECUTABLE로 직접 지정할 수도 있다.
  */
 function executableArgs(): string[] {
-  if (process.env.PW_MCP_EXECUTABLE) return ["--executable-path", process.env.PW_MCP_EXECUTABLE];
-  const dir = playwrightBrowsersDir();
-  if (!existsSync(dir)) return [];
-  const shells = readdirSync(dir)
-    .filter((d) => d.startsWith("chromium_headless_shell-"))
-    .sort((a, b) => Number(b.split("-")[1]) - Number(a.split("-")[1]));
-  for (const shell of shells) {
-    const sub = process.platform === "win32" ? "chrome-headless-shell-win64/chrome-headless-shell.exe" : "chrome-headless-shell-linux64/chrome-headless-shell";
-    const exe = path.join(dir, shell, sub);
-    if (existsSync(exe)) return ["--executable-path", exe];
+  const exe = resolveBrowserExecutable();
+  return exe ? ["--executable-path", exe] : [];
+}
+
+/** Web 경로 에이전트가 쓸 브라우저 실행 파일. 못 찾으면 null (Playwright MCP 기본값 사용). */
+export function resolveBrowserExecutable(): string | null {
+  if (process.env.PW_MCP_EXECUTABLE) return process.env.PW_MCP_EXECUTABLE;
+  const sub = process.platform === "win32" ? "chrome-headless-shell-win64/chrome-headless-shell.exe" : "chrome-headless-shell-linux64/chrome-headless-shell";
+  for (const dir of playwrightBrowsersDirs()) {
+    if (!existsSync(dir)) continue;
+    const shells = readdirSync(dir)
+      .filter((d) => d.startsWith("chromium_headless_shell-"))
+      .sort((a, b) => Number(b.split("-")[1]) - Number(a.split("-")[1]));
+    for (const shell of shells) {
+      const exe = path.join(dir, shell, sub);
+      if (existsSync(exe)) return exe;
+    }
   }
-  return [];
+  return null;
 }
 import type { DriverName } from "./types.js";
 
